@@ -30,6 +30,7 @@ double getAvail(CURL *curl, Parameters params, std::string currency) {
 
   json_t *root = authRequest(curl, params, "https://api.bitfinex.com/v1/balances", "balances", "");
   while (json_object_get(root, "message") != NULL) {
+    sleep(1.0);
     std::cout << "<Bitfinex> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
     root = authRequest(curl, params, "https://api.bitfinex.com/v1/balances", "balances", "");
   }

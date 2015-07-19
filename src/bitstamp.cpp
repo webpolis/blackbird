@@ -34,6 +34,7 @@ double getAvail(CURL *curl, Parameters params, std::string currency) {
   double availability = 0.0;
   json_t *root = authRequest(curl, params, "https://www.bitstamp.net/api/balance/", "");
   while (json_object_get(root, "message") != NULL) {
+    sleep(1.0);
     std::cout << "<Bitstamp> Error with JSON in getAvail: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
     root = authRequest(curl, params, "https://www.bitstamp.net/api/balance/", "");
   } 

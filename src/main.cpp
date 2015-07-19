@@ -197,6 +197,18 @@ int main(int argc, char **argv) {
 
       double bid = getQuote[e](curl, true);
       double ask = getQuote[e](curl, false);
+      
+      // add previous price if bid or ask is 0.0
+      if (bid == 0.0) {
+        bid = btcVec[e]->getLastBid();
+	std::cout << "   WARNING: " << params.exchName[e] << " bid is null, use previous one" << std::endl;
+      }
+      if (ask == 0.0) {
+        ask = btcVec[e]->getLastAsk();
+	std::cout << "   WARNING: " << params.exchName[e] << " ask is null, use previous one" << std::endl;
+      }
+
+
       if (params.verbose) {
         std::cout << "   " << params.exchName[e] << ": \t" << bid << " / " << ask << std::endl;
       }

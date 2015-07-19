@@ -11,7 +11,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 all: EXEC
 
 EXEC: $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(EXEC) -lcrypto -ljansson -lcurl
+	$(CC) $(OBJECTS) -o $(EXEC) -lcrypto -ljansson -lcurl -g
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) $< -o $@
