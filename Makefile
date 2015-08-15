@@ -2,7 +2,6 @@
 
 CC = g++
 CFLAGS = -c -g -Wall -O2 
-# CFLAGS = -c -g -Wall -O2 -fno-stack-protector
 
 EXEC = blackbird
 SOURCES = $(wildcard src/*.cpp)
