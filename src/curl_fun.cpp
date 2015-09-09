@@ -9,14 +9,6 @@ size_t WriteCallback(void *contents, size_t size, size_t nmemb, void *userp) {
 
 
 json_t* getJsonFromUrl(CURL* curl, std::string url, std::string postFields) {
-
-  // JSON infomation
-  json_t *root;
-  json_error_t error;
-
-  // data in readBuffer
-  CURLcode resCurl;
-  std::string readBuffer;
   curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
   // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
   curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
@@ -24,8 +16,10 @@ json_t* getJsonFromUrl(CURL* curl, std::string url, std::string postFields) {
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
   }
   curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+  std::string readBuffer;  // data in readBuffer
   curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-  resCurl = curl_easy_perform(curl);
+  curl_easy_setopt(curl, CURLOPT_DNS_CACHE_TIMEOUT, 3600);
+  CURLcode resCurl = curl_easy_perform(curl);
 
   while (resCurl != CURLE_OK) {
     std::cout << "Error with cURL. Retry in 2 sec...\n" << std::endl;
@@ -33,12 +27,15 @@ json_t* getJsonFromUrl(CURL* curl, std::string url, std::string postFields) {
     readBuffer = "";
     resCurl = curl_easy_perform(curl);
   }
+  // JSON infomation
+  json_t *root;
+  json_error_t error;
   root = json_loads(readBuffer.c_str(), 0, &error);
-  
+
   while (!root) {
     std::cout << "Error with JSON:\n" << error.text << ". Retrying..." << std::endl;
     readBuffer = "";
-    resCurl = curl_easy_perform(curl); 
+    resCurl = curl_easy_perform(curl);
     while (resCurl != CURLE_OK) {
       std::cout << "Error with cURL. Retry in 2 sec...\n" << std::endl;
       sleep(2.0);

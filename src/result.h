@@ -31,21 +31,21 @@ struct Result {
 
   double befBalUsd;
   double aftBalUsd;
-  
+
   // return the *target* performance
   // including exchange fees
   double perfLong();
   double perfShort();
 
- double totPerf();
+  double totPerf();
 
   // get the length of the trade in minutes
   double getLength();
-  
+
   // print to the console thr Entry/Exit trades information
   void printEntry();
   void printExit();
-  
+
   // clears the structure
   // i.e. all the variables at 0
   void clear();

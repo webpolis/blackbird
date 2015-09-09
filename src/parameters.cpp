@@ -5,8 +5,7 @@
 
 // constructor
 Parameters::Parameters(json_t *root) {
-    
-  // strategy and global parameters  
+  // strategy and global parameters
   spreadEntry = json_real_value(json_object_get(root, "SpreadEntry"));
   spreadExit = json_real_value(json_object_get(root, "SpreadExit"));
   maxLength = json_integer_value(json_object_get(root, "MaxLength"));
@@ -40,7 +39,7 @@ void Parameters::addExchange(std::string n, double f, bool h) {
 
 
 // returns number of exchanges
-unsigned Parameters::nbExch() const {
+int Parameters::nbExch() const {
   return exchName.size();
 }
 

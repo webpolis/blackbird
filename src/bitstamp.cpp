@@ -6,7 +6,7 @@
 #include <sstream>
 #include <sys/time.h>
 #include "base64.h"
-#include <iomanip> 
+#include <iomanip>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
 #include <jansson.h>
@@ -16,9 +16,8 @@
 namespace Bitstamp {
 
 double getQuote(CURL *curl, bool isBid) {
-
-  double quote;
   json_t *root = getJsonFromUrl(curl, "https://www.bitstamp.net/api/ticker/", "");
+  double quote;
   if (isBid) {
     quote = atof(json_string_value(json_object_get(root, "bid")));
   } else {
@@ -30,20 +29,19 @@ double getQuote(CURL *curl, bool isBid) {
 
 
 double getAvail(CURL *curl, Parameters params, std::string currency) {
-
-  double availability = 0.0;
   json_t *root = authRequest(curl, params, "https://www.bitstamp.net/api/balance/", "");
   while (json_object_get(root, "message") != NULL) {
     sleep(1.0);
     std::cout << "<Bitstamp> Error with JSON in getAvail: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
     root = authRequest(curl, params, "https://www.bitstamp.net/api/balance/", "");
-  } 
+  }
 
+  double availability = 0.0;
   if (currency.compare("btc") == 0) {
-    availability = atof(json_string_value(json_object_get(root, "btc_balance")));    
+    availability = atof(json_string_value(json_object_get(root, "btc_balance")));
   }
   else if (currency.compare("usd") == 0) {
-    availability = atof(json_string_value(json_object_get(root, "usd_balance"))); 
+    availability = atof(json_string_value(json_object_get(root, "usd_balance")));
   }
   json_decref(root);
   return availability;
@@ -51,23 +49,21 @@ double getAvail(CURL *curl, Parameters params, std::string currency) {
 
 
 int sendOrder(CURL *curl, Parameters params, std::string direction, double quantity, double price) {
-
-  // define limit price to be sure to be executed
-  double limPrice;
+  double limPrice;  // define limit price to be sure to be executed
   if (direction.compare("buy") == 0) {
     limPrice = getLimitPrice(curl, quantity, false);
   }
   else if (direction.compare("sell") == 0) {
     limPrice = getLimitPrice(curl, quantity, true);
   }
- 
+
   std::cout << "<Bitstamp> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << limPrice << "..." << std::endl;
   std::ostringstream oss;
   oss << "https://www.bitstamp.net/api/" << direction << "/";
   std::string url = oss.str();
   oss.clear();
   oss.str("");
-  
+
   oss << "amount=" << quantity << "&price=" << std::fixed << std::setprecision(2) << limPrice;
   std::string options = oss.str();
   json_t *root = authRequest(curl, params, url, options);
@@ -83,7 +79,6 @@ int sendOrder(CURL *curl, Parameters params, std::string direction, double quant
 
 
 bool isOrderComplete(CURL *curl, Parameters params, int orderId) {
-
   if (orderId == 0) {
     return true;
   }
@@ -107,7 +102,6 @@ double getActivePos(CURL *curl, Parameters params) {
 
 
 double getLimitPrice(CURL *curl, double volume, bool isBid) {
-
   double limPrice;
   json_t *root;
   if (isBid) {
@@ -132,13 +126,10 @@ double getLimitPrice(CURL *curl, double volume, bool isBid) {
 
 
 json_t* authRequest(CURL *curl, Parameters params, std::string url, std::string options) {
-
-  std::string readBuffer;  
-  
   // nonce
   struct timeval tv;
   gettimeofday(&tv, NULL);
-  long nonce = (tv.tv_sec * 1000) + (tv.tv_usec / 1000.0) + 0.5;
+  long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
 
   std::ostringstream oss;
   oss << nonce << params.bitstampClientId << params.bitstampApi;
@@ -154,15 +145,15 @@ json_t* authRequest(CURL *curl, Parameters params, std::string url, std::string 
 
   oss.clear();
   oss.str("");
-  
+
   oss << "key=" << params.bitstampApi << "&signature=" << mdString << "&nonce=" << nonce << "&" << options;
   std::string postParams = oss.str().c_str();
 
-  // cURL request
-  CURLcode resCurl;
-//  curl = curl_easy_init();
+  CURLcode resCurl;  // cURL request
+  // curl = curl_easy_init();
   if (curl) {
-    //curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+    std::string readBuffer;
+    // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     curl_easy_setopt(curl, CURLOPT_POST,1L);
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postParams.c_str());
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -181,7 +172,7 @@ json_t* authRequest(CURL *curl, Parameters params, std::string url, std::string 
       resCurl = curl_easy_perform(curl);
     }
     root = json_loads(readBuffer.c_str(), 0, &error);
-    
+
     while (!root) {
       std::cout << "<Bitstamp> Error with JSON in authRequest:\n" << "Error: : " << error.text << ".  Retrying..." << std::endl;
       readBuffer = "";

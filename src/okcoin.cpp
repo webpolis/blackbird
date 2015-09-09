@@ -12,9 +12,8 @@
 namespace OkCoin {
 
 double getQuote(CURL *curl, bool isBid) {
-
-  double quote;
   json_t *root = getJsonFromUrl(curl, "https://www.okcoin.com/api/ticker.do?ok=1", "");
+  double quote;
   if (isBid) {
     quote = atof(json_string_value(json_object_get(json_object_get(root, "ticker"), "buy")));
   } else {
@@ -26,7 +25,6 @@ double getQuote(CURL *curl, bool isBid) {
 
 
 double getAvail(CURL *curl, Parameters params, std::string currency) {
-
   std::ostringstream oss;
   oss << "api_key=" << params.okCoinApi << "&secret_key=" << params.okCoinSecret;
   std::string signature(oss.str());
@@ -38,10 +36,10 @@ double getAvail(CURL *curl, Parameters params, std::string currency) {
   json_t *root = authRequest(curl, "https://www.okcoin.com/api/v1/userinfo.do", signature, content);
   double available;
   if (currency.compare("usd") == 0) {
-    available = atof(json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "usd"))); 
+    available = atof(json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "usd")));
   }
   else if (currency.compare("btc") == 0) {
-    available = atof(json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "btc"))); 
+    available = atof(json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "btc")));
   } else {
     available = 0.0;
   }
@@ -51,11 +49,6 @@ double getAvail(CURL *curl, Parameters params, std::string currency) {
 
 
 int sendOrder(CURL *curl, Parameters params, std::string direction, double quantity, double price) {
-
-  std::ostringstream oss;
-  std::string signature;
-  std::string content;
-
   // define limit price to be sure to be executed
   double limPrice;
   if (direction.compare("buy") == 0) {
@@ -66,17 +59,18 @@ int sendOrder(CURL *curl, Parameters params, std::string direction, double quant
   }
 
   // signature
+  std::ostringstream oss;
   oss << "amount=" << quantity << "&api_key=" << params.okCoinApi << "&price=" << limPrice << "&symbol=btc_usd&type=" << direction << "&secret_key=" << params.okCoinSecret;
-  signature = oss.str();
+  std::string signature = oss.str();
   oss.clear();
   oss.str("");
   // content
   oss << "amount=" << quantity << "&api_key=" << params.okCoinApi << "&price=" << limPrice << "&symbol=btc_usd&type=" << direction;
-  content = oss.str();
+  std::string content = oss.str();
 
   std::cout << "<OKCoin> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << limPrice << "..." << std::endl;
   json_t *root = authRequest(curl, "https://www.okcoin.com/api/v1/trade.do", signature, content);
-  int orderId = json_integer_value(json_object_get(root, "order_id")); 
+  int orderId = json_integer_value(json_object_get(root, "order_id"));
   std::cout << "<OKCoin> Done (order ID: " << orderId << ")\n" << std::endl;
 
   json_decref(root);
@@ -85,32 +79,28 @@ int sendOrder(CURL *curl, Parameters params, std::string direction, double quant
 
 
 bool isOrderComplete(CURL *curl, Parameters params, int orderId) {
-
   if (orderId == 0) {
     return true;
   }
-  int status;
-  
-  std::ostringstream oss;
-  std::string signature;
-  std::string content;
 
   // signature
+  std::ostringstream oss;
   oss << "api_key=" << params.okCoinApi << "&order_id=" << orderId << "&symbol=btc_usd" << "&secret_key=" << params.okCoinSecret;
-  signature = oss.str();
+  std::string signature = oss.str();
   oss.clear();
   oss.str("");
   // content
   oss << "api_key=" << params.okCoinApi << "&order_id=" << orderId << "&symbol=btc_usd";
-  content = oss.str();
+  std::string content = oss.str();
 
   json_t *root = authRequest(curl, "https://www.okcoin.com/api/v1/order_info.do", signature, content);
-  
-  status = json_integer_value(json_object_get(json_array_get(json_object_get(root, "orders"), 0), "status"));
+
+  int status = json_integer_value(json_object_get(json_array_get(json_object_get(root, "orders"), 0), "status"));
   json_decref(root);
   if (status == 2) {
     return true;
-  } else {
+  }
+  else {
     return false;
   }
 }
@@ -122,9 +112,8 @@ double getActivePos(CURL *curl, Parameters params) {
 
 
 double getLimitPrice(CURL *curl, double volume, bool isBid) {
-
-  double limPrice;
   json_t *root;
+  double limPrice;
   if (isBid) {
     root = json_object_get(getJsonFromUrl(curl, "https://www.okcoin.com/api/v1/depth.do", ""), "bids");
     // loop on volume
@@ -157,9 +146,6 @@ double getLimitPrice(CURL *curl, double volume, bool isBid) {
 
 
 json_t* authRequest(CURL *curl, std::string url, std::string signature, std::string content) {
-
-  std::string readBuffer;
-
   // build the signature using MD5 hash engine
   unsigned char digest[MD5_DIGEST_LENGTH];
 
@@ -181,7 +167,7 @@ json_t* authRequest(CURL *curl, std::string url, std::string signature, std::str
 
   // cURL request
   CURLcode resCurl;
-//  curl = curl_easy_init();
+  // curl = curl_easy_init();
   if (curl) {
     curl_easy_setopt(curl, CURLOPT_POST,1L);
     // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
@@ -189,6 +175,7 @@ json_t* authRequest(CURL *curl, std::string url, std::string signature, std::str
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postParameters.c_str());
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    std::string readBuffer;
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
     curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
