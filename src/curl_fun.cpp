@@ -25,6 +25,7 @@ json_t* getJsonFromUrl(CURL* curl, std::string url, std::string postFields) {
     std::cout << "Error with cURL. Retry in 2 sec...\n" << std::endl;
     sleep(2.0);
     readBuffer = "";
+    curl_easy_setopt(curl, CURLOPT_DNS_CACHE_TIMEOUT, 0);
     resCurl = curl_easy_perform(curl);
   }
   // JSON infomation
