@@ -48,7 +48,7 @@ struct Parameters {
   void addExchange(std::string n, double f, bool h);
 
   // returns the number of exchange analyzed
-  unsigned nbExch() const;  
+  int nbExch() const;  
   
 };
   

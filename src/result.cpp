@@ -4,19 +4,20 @@
 #include "time_fun.h"
 
 double Result::perfLong() {
-  return (priceLongOut - priceLongIn) / priceLongIn - 2 * feesLong;
+  return (priceLongOut - priceLongIn) / priceLongIn - 2.0 * feesLong;
 }
 
 
 double Result::perfShort() {
-  return (priceShortIn - priceShortOut) / priceShortIn - 2 * feesShort;
+  return (priceShortIn - priceShortOut) / priceShortIn - 2.0 * feesShort;
 }
 
 
 double Result::totPerf() {
   if (exposure == 0.0) {
     return 0.0;
-  } else {
+  }
+  else {
     return (aftBalUsd - befBalUsd) / (exposure * 2.0);
   }
 }
@@ -24,7 +25,7 @@ double Result::totPerf() {
 
 double Result::getLength() {
   if (entryTime > 0 && exitTime > 0) {
-    return ((double)(exitTime - entryTime)) / 60;
+    return ((double)(exitTime - entryTime)) / 60.0;
   }
   else {
     return 0;
@@ -33,7 +34,6 @@ double Result::getLength() {
 
 
 void Result::printEntry() {
-  
   std::cout << "\n[ ENTRY FOUND ]" << std::endl;
   std::cout << "   Date & Time:       "  << printDateTime(entryTime) << std::endl;
   std::cout << "   Exchange Long:     "  << exchNameLong <<  " (id " << idExchLong  << ")" << std::endl;
@@ -41,14 +41,13 @@ void Result::printEntry() {
   std::cout << "   Fees:              "  << feesLong * 100.0 << "% / " << feesShort * 100.0 << "%" << std::endl;
   std::cout << "   Price Long:        $" << priceLongIn << " (target)" << std::endl;
   std::cout << "   Price Short:       $" << priceShortIn << " (target)" << std::endl;
-  std::cout << "   Spread:            "  << spreadIn * 100.0 << "%" << std::endl;   
+  std::cout << "   Spread:            "  << spreadIn * 100.0 << "%" << std::endl;
   std::cout << "   Cash used:         $" << exposure << " on each exchange" << std::endl;
   std::cout << std::endl;
 }
 
 
 void Result::printExit() {
-  
   std::cout << "\n[ EXIT FOUND ]" << std::endl;
   std::cout << "   Date & Time:       "  << printDateTime(exitTime) << std::endl;
   std::cout << "   Duration:          "  << getLength() << " minutes" << std::endl;
@@ -63,7 +62,7 @@ void Result::printExit() {
 
 
 
-void Result::clear() {  
+void Result::clear() {
   id = 0;
   idExchLong = 0;
   idExchShort = 0;

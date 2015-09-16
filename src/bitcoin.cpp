@@ -21,7 +21,7 @@ Bitcoin::Bitcoin(unsigned i, std::string n, double f, bool h, std::vector<time_t
   id = i;
   exchName = n;
   fees = f;
-  hasShort = h;  
+  hasShort = h;
   datetime = dt;
   bid = b;
   ask = a;
@@ -80,7 +80,7 @@ std::vector<double> Bitcoin::getBid() const {
 
 double Bitcoin::getLastBid() const {
   if (bid->empty()) {
-    return 0;
+    return 0.0;
   }
   else {
     return bid->back();
@@ -97,7 +97,7 @@ std::vector<double> Bitcoin::getAsk() const {
 
 double Bitcoin::getLastAsk() const {
   if (ask->empty()) {
-    return 0;
+    return 0.0;
   }
   else {
     return ask->back();
@@ -105,15 +105,15 @@ double Bitcoin::getLastAsk() const {
 }
 
 double Bitcoin::getPrice(int i) const {
-  return ((*bid)[i] + (*ask)[i]) / 2;
+  return ((*bid)[i] + (*ask)[i]) * 0.5;
 }
 
 double Bitcoin::getLastPrice() const {
   if (bid->empty() || ask->empty()) {
-    return 0;
+    return 0.0;
   }
   else {
-    return (bid->back() + ask->back()) / 2;
+    return (bid->back() + ask->back()) * 0.5;
   }
 }
 

@@ -3,7 +3,6 @@
 #include "time_fun.h"
 
 time_t getTime_t(int y, int m, int d, int h, int n, int s) {
-
   tm ttm = {0};
   ttm.tm_year = y - 1900;
   ttm.tm_mon = m - 1;
