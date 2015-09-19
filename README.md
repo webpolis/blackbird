@@ -4,9 +4,9 @@
 Blackbird Bitcoin Arbitrage is a trading system that does automatic long/short arbitrage between Bitcoin exchanges. The software is written in C++ and runs on Linux.
 
 ### How It Works
-Bitcoin is a new and inefficient market. Several Bitcoin exchanges exist and the proposed bid/ask can be different from an exchange to another. The purpose of this software is to automatically exploit the short-term bid/ask difference between two given Bitcoin exchanges. 
+Bitcoin is still a new and inefficient market. Several Bitcoin exchanges exist and the proposed prices (_bid_ and _ask_) can be briefly different from an exchange to another. The purpose of this software is to automatically exploit these differences that occur between Bitcoin exchanges. 
 
-Here is an example with real data. The software analyzes the bid/ask information from two Bitcoin exchanges, Bitfinex and Bitstamp, every five seconds. At some point the spread between Bitfinex and Bitstamp prices is higher than an `ENTRY` threshold (first vertical dark line): an arbitrage opportunity exists and the system will buy Bitsamp and short sell Bitfinex. Then about 4.5 hours later the spread decreases below an `EXIT` threshold (second vertical dark line) so the system exits the market by selling Bitstamp and buying Bitfinex back.
+Here is an example with real data. Blackbird analyzes the bid/ask information from two Bitcoin exchanges, Bitfinex and Bitstamp, every five seconds. At some point the spread between Bitfinex and Bitstamp prices is higher than an `ENTRY` threshold (first vertical line): an arbitrage opportunity exists and Blackbird buys Bitsamp and short sells Bitfinex. Then about 4.5 hours later the spread decreases below an `EXIT` threshold (second vertical line) so Blackbird exits the market by selling Bitstamp and buying Bitfinex back.
 
 <p align="center">
 <img src="https://cloud.githubusercontent.com/assets/11370278/6548498/64764de6-c5d1-11e4-855b-c2eebb3b782b.png"  width="75%" alt="Spread Example">
@@ -18,17 +18,14 @@ Here is an example with real data. The software analyzes the bid/ask information
 __USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS. THE AUTHORS AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.__
 
 
-### Live Results
-
-As of today the program gets a 2% monthly return in average. It generates 8 trades per month on average and doesn't have any single losing trade thanks to the arbitrage mechanism. The trades usually last between 20 minutes and 7 days. The trade lengths are very variable since the system _always_ wait for the spread to close. This can take minutes or days but that is the reason why it doesn't get any losing trades. There is a control parameter named `MaxLength` that will automatically close a trade after 60 days. This parameter can be adapted or removed if needed.
-
 ### Console Output Example
 
 This is what Blackbird looks like when it is started:
 
+
 ```
 Blackbird Bitcoin Arbitrage
-Version 0.0.2
+Version 0.0.3
 DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK.
 
 [ Targets ]
@@ -36,65 +33,72 @@ DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK.
    Spread to exit: -0.40%
 
 [ Current balances ]
-   Bitfinex:    1,304.13 USD    0.000000 BTC
-   OKCoin:      1,317.13 USD    0.000236 BTC
-   Bitstamp:    36.10 USD       0.000000 BTC
-   Kraken:      0.00 USD        0.000000 BTC
+   Bitfinex:	1,434.66 USD	0.000000 BTC
+   OKCoin:	1,428.71 USD	0.000262 BTC
+   Bitstamp:	1,417.31 USD	0.000000 BTC
+   Kraken:	0.00 USD	0.000000 BTC
+   ItBit:	0.00 USD	0.000000 BTC
 
 [ Cash exposure ]
    TEST cash used
-   Value: $20.00
+   Value: $100.00
 
-[ 05/31/2015 12:31:00 ]
-   Bitfinex:    231.30 / 231.38
-   OKCoin:      231.66 / 231.69
-   Bitstamp:    231.62 / 231.77
-   Kraken:      230.96 / 232.15
+[ 09/19/2015 09:31:40 ]
+   Bitfinex: 	231.86 / 231.87
+   OKCoin: 	231.24 / 231.32
+   Bitstamp: 	230.51 / 231.20
+   Kraken: 	230.12 / 232.03
+   ItBit: 	231.00 / 231.26
    ----------------------------
-   Bitfinex/Kraken:     -0.18% [target  1.20%, min -0.18%, max -0.18%]
-   OKCoin/Bitfinex:     -0.17% [target  1.10%, min -0.17%, max -0.17%]
-   OKCoin/Kraken:       -0.32% [target  1.20%, min -0.32%, max -0.32%]
-   Bitstamp/Bitfinex:   -0.20% [target  1.20%, min -0.20%, max -0.20%]
-   Bitstamp/Kraken:     -0.35% [target  1.30%, min -0.35%, max -0.35%]
-   Kraken/Bitfinex:     -0.36% [target  1.20%, min -0.36%, max -0.36%]
+   Bitfinex/Kraken:	-0.75% [target  100.90%, min -0.75%, max -0.75%]
+   OKCoin/Bitfinex:	 0.23% [target  100.80%, min  0.23%, max  0.23%]
+   OKCoin/Kraken:	-0.52% [target  100.90%, min -0.52%, max -0.52%]
+   Bitstamp/Bitfinex:	 0.29% [target  100.90%, min  0.29%, max  0.29%]
+   Bitstamp/Kraken:	-0.47% [target  101.00%, min -0.47%, max -0.47%]
+   Kraken/Bitfinex:	-0.07% [target  100.90%, min -0.07%, max -0.07%]
+   ItBit/Bitfinex:	 0.26% [target  101.40%, min  0.26%, max  0.26%]
+   ItBit/Kraken:	-0.49% [target  101.50%, min -0.49%, max -0.49%]
 
-[ 05/31/2015 12:31:05 ]
-   Bitfinex:    231.24 / 231.38
-   OKCoin:      231.66 / 231.69
-   Bitstamp:    231.62 / 231.77
-   Kraken:      230.96 / 232.15
+[ 09/19/2015 09:31:45 ]
+   Bitfinex: 	231.86 / 231.87
+   OKCoin: 	231.31 / 231.32
+   Bitstamp: 	230.51 / 231.20
+   Kraken: 	230.12 / 232.03
+   ItBit: 	231.00 / 231.26
    ----------------------------
-   Bitfinex/Kraken:     -0.18% [target  1.20%, min -0.18%, max -0.18%]
-   OKCoin/Bitfinex:     -0.19% [target  1.10%, min -0.19%, max -0.17%]
-   OKCoin/Kraken:       -0.32% [target  1.20%, min -0.32%, max -0.32%]
-   Bitstamp/Bitfinex:   -0.23% [target  1.20%, min -0.23%, max -0.20%]
-   Bitstamp/Kraken:     -0.35% [target  1.30%, min -0.35%, max -0.35%]
-   Kraken/Bitfinex:     -0.39% [target  1.20%, min -0.39%, max -0.36%]
+   Bitfinex/Kraken:	-0.75% [target  100.90%, min -0.75%, max -0.75%]
+   OKCoin/Bitfinex:	 0.23% [target  100.80%, min  0.23%, max  0.23%]
+   OKCoin/Kraken:	-0.52% [target  100.90%, min -0.52%, max -0.52%]
+   Bitstamp/Bitfinex:	 0.29% [target  100.90%, min  0.29%, max  0.29%]
+   Bitstamp/Kraken:	-0.47% [target  101.00%, min -0.47%, max -0.47%]
+   Kraken/Bitfinex:	-0.07% [target  100.90%, min -0.07%, max -0.07%]
+   ItBit/Bitfinex:	 0.26% [target  101.40%, min  0.26%, max  0.26%]
+   ItBit/Kraken:	-0.49% [target  101.50%, min -0.49%, max -0.49%]
+
 ```
 
 ### Arbitrage Parameters
 
 The two parameters used to control the arbitrage are `SpreadEntry` and `SpreadExit`.
 
-* `SpreadEntry` is the limit above which a long/short trade is triggered
-* `SpreadExit` is the limit below which the long/short trade is closed
+* `SpreadEntry`: the limit above which a long/short trade is triggered
+* `SpreadExit`: the limit below which the long/short trade is closed
 
-`SpreadEntry` is actually the limit _after_ the exchange fees which means that `SpreadEntry` represents the net profit. If two exchanges have a 0.20% fees for every trade it means that for a full trade cycle we will have:
+`SpreadEntry` is actually the limit _after_ the exchange fees which means that `SpreadEntry` represents the net profit. If two exchanges have a 0.20% fees for every trade then we will have in total:
 
-* 0.20% entry long + 0.20% entry short + 0.20% exit long + 0.20% exit short
+* 0.20% entry long + 0.20% entry short + 0.20% exit long + 0.20% exit short = 0.80% total fees
 
-In total we have 0.80% fees. The actual value is slightly different since it is a percentage of each actual trade but in our case it is close enough. Now if the profit we target is 0.30% (`"SpreadEntry": 0.0030`) then Blackbird will set the entry threshold at 1.10% (0.80% total fees + 0.30% target).
+Note: the actual total will be slightly different since it is a percentage of each individual trade.
+Now if the profit we target is 0.30% (`"SpreadEntry": 0.0030`) then Blackbird will set the entry threshold at 1.10% (0.80% total fees + 0.30% target).
 
-A smaller spread means more trades will be generated but with less profit each.
+A smaller spread will generates more trades but with less profit each.
 
 
 ### Code Information
 
-I am not a professional developer so there are parts that are not perfectly coded and you are welcome to help me out. However the arbitrage mechanism works and the system can generate profits.
-
 Blackbird uses the base64 functions written by <a href="http://www.adp-gmbh.ch/cpp/common/base64.html" target="_target">René Nyffenegger</a> to encode and decode base64 in C++. Thank you René your code works well with Blackbird.
 
-The results are stored in CSV files (e.g. _result_20150307_204649.csv_). A new CSV file is created every time Blackbird is started.
+The trade results are stored in CSV files. A new CSV file is created every time Blackbird is started.
 
 It is possible to properly stop Blackbird after the next trade has closed. While Blackbird is running just create an empty file called _stop_after_exit_ in the working directory. This will make Blackbird automatically stop after the next trade closes.
 
@@ -107,7 +111,7 @@ Please make sure you understand the disclaimer above if you are going to test th
 
 #### Credentials
 
-You need to have accounts on Bitfinex, OKCoin and Bitstamp. Then with each account you need to create API authentication keys. This is usually in the _Settings_ section of your exchange accounts. In v0.0.2 the Kraken bid/ask information are displayed but the functions to send orders haven't been implemented yet.
+As of today you need to have accounts on Bitfinex, OKCoin and Bitstamp. Then with each account you need to create API authentication keys. This is usually in the _Settings_ section of your exchange accounts. In v0.0.3 the bid/ask information of Kraken and ItBit are displayed but the functions to send orders haven't been implemented yet.
 
 The file that contains all the parameters is _config.json_. __Never__ share this file as it will contain your exchange credentials!
 
@@ -123,9 +127,10 @@ First add your credentials to _config.json_:
 "BitstampSecretKey"
 ````
 
+
 #### Strategy parameters
 
-Modify the stategy parameters if needed. These are the ones by default:
+Modify the stategy parameters to match your trading style (few trades with high spreads or many trades with low spreads):
 ```json
 "SpreadEntry": 0.0030,
 "SpreadExit": -0.0040,
@@ -194,18 +199,25 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
 ### Changelog
 
-##### v0.0.1 - May 16th, 2015
+##### v0.0.1 - May 2015
 
 * First release
 
-##### v0.0.2 - May 31st, 2015
+##### v0.0.2 - July 2015
 
  * Bitstamp exchange added
  * Kraken exchange added (bid/ask information only, other functions to be implemented)
  * Improved JSON and cURL exceptions management
  * Added the milliseconds to the nonce used for exchange authentification
  * JSON memory leak fixed
- * Several minor fixes and improvements
+ * Minor fixes and improvements
+
+ ##### v0.0.3 - September 2015
+
+ * General performance and stability improvements (merge from `julianmi:performance_improvements`)
+ * ItBit exchange added (bid/ask information only, other functions to be implemented)
+ * Other minor fixes and improvements
+
 
 ### Links
 

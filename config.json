@@ -20,14 +20,13 @@
 
   "BitfinexApiHead": "X-BFX-APIKEY:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
   "BitfinexKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-
   "OkCoinApiKey": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
   "OkCoinSecretKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-
   "BitstampClientId": "XXXXXX",
   "BitstampApiKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
   "BitstampSecretKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-
   "KrakenApiKey": "",
-  "KrakenSecretKey": ""
+  "KrakenSecretKey": "",
+  "ItBitApiKey": "",
+  "ItBitSecretKey": ""
 }

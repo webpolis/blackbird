@@ -19,6 +19,7 @@
 #include "okcoin.h"
 #include "bitstamp.h"
 #include "kraken.h"
+#include "itbit.h"
 #include "send_email.h"
 
 // typedef
@@ -31,7 +32,7 @@ typedef double (*getLimitPriceType) (CURL *curl, double volume, bool isBid);
 
 int main(int argc, char **argv) {
   // header information
-  std::cout << "Blackbird Bitcoin Arbitrage\nVersion 0.0.2" << std::endl;
+  std::cout << "Blackbird Bitcoin Arbitrage\nVersion 0.0.3" << std::endl;
   std::cout << "DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK.\n" << std::endl;
 
   // read the config file (config.json)
@@ -56,12 +57,12 @@ int main(int argc, char **argv) {
   }
 
   // function arrays
-  getQuoteType getQuote[] = {Bitfinex::getQuote, OkCoin::getQuote, Bitstamp::getQuote, Kraken::getQuote};
-  getAvailType getAvail[] = {Bitfinex::getAvail, OkCoin::getAvail, Bitstamp::getAvail, Kraken::getAvail};
+  getQuoteType getQuote[] = {Bitfinex::getQuote, OkCoin::getQuote, Bitstamp::getQuote, Kraken::getQuote, ItBit::getQuote};
+  getAvailType getAvail[] = {Bitfinex::getAvail, OkCoin::getAvail, Bitstamp::getAvail, Kraken::getAvail, ItBit::getAvail};
   sendOrderType sendOrder[] = {Bitfinex::sendOrder, OkCoin::sendOrder, Bitstamp::sendOrder};
   isOrderCompleteType isOrderComplete[] = {Bitfinex::isOrderComplete, OkCoin::isOrderComplete, Bitstamp::isOrderComplete};
-  getActivePosType getActivePos[] = {Bitfinex::getActivePos, OkCoin::getActivePos, Bitstamp::getActivePos, Kraken::getActivePos};
-  getLimitPriceType getLimitPrice[] = {Bitfinex::getLimitPrice, OkCoin::getLimitPrice, Bitstamp::getLimitPrice, Kraken::getLimitPrice};
+  getActivePosType getActivePos[] = {Bitfinex::getActivePos, OkCoin::getActivePos, Bitstamp::getActivePos, Kraken::getActivePos, ItBit::getActivePos};
+  getLimitPriceType getLimitPrice[] = {Bitfinex::getLimitPrice, OkCoin::getLimitPrice, Bitstamp::getLimitPrice, Kraken::getLimitPrice, ItBit::getLimitPrice};
 
   // thousand separator
   std::locale mylocale("");
@@ -77,6 +78,7 @@ int main(int argc, char **argv) {
   params.addExchange("OKCoin", 0.0020, false);
   params.addExchange("Bitstamp", 0.0025, false);
   params.addExchange("Kraken", 0.0025, true);
+  params.addExchange("ItBit", 0.0050, false);
 
   // CSV file
   std::string csvFileName;
