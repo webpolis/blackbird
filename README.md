@@ -33,48 +33,47 @@ DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK.
    Spread to exit: -0.40%
 
 [ Current balances ]
-   Bitfinex:	1,434.66 USD	0.000000 BTC
-   OKCoin:	1,428.71 USD	0.000262 BTC
-   Bitstamp:	1,417.31 USD	0.000000 BTC
-   Kraken:	0.00 USD	0.000000 BTC
-   ItBit:	0.00 USD	0.000000 BTC
+   Bitfinex:    1,434.66 USD    0.000000 BTC
+   OKCoin:      1,428.71 USD    0.000262 BTC
+   Bitstamp:    1,417.31 USD    0.000000 BTC
+   Kraken:      0.00 USD        0.000000 BTC
+   ItBit:       0.00 USD        0.000000 BTC
 
 [ Cash exposure ]
    TEST cash used
    Value: $100.00
 
 [ 09/19/2015 09:31:40 ]
-   Bitfinex: 	231.86 / 231.87
-   OKCoin: 	231.24 / 231.32
-   Bitstamp: 	230.51 / 231.20
-   Kraken: 	230.12 / 232.03
-   ItBit: 	231.00 / 231.26
+   Bitfinex:    231.86 / 231.87
+   OKCoin:      231.24 / 231.32
+   Bitstamp:    230.51 / 231.20
+   Kraken:      230.12 / 232.03
+   ItBit:       231.00 / 231.26
    ----------------------------
-   Bitfinex/Kraken:	-0.75% [target  100.90%, min -0.75%, max -0.75%]
-   OKCoin/Bitfinex:	 0.23% [target  100.80%, min  0.23%, max  0.23%]
-   OKCoin/Kraken:	-0.52% [target  100.90%, min -0.52%, max -0.52%]
-   Bitstamp/Bitfinex:	 0.29% [target  100.90%, min  0.29%, max  0.29%]
-   Bitstamp/Kraken:	-0.47% [target  101.00%, min -0.47%, max -0.47%]
-   Kraken/Bitfinex:	-0.07% [target  100.90%, min -0.07%, max -0.07%]
-   ItBit/Bitfinex:	 0.26% [target  101.40%, min  0.26%, max  0.26%]
-   ItBit/Kraken:	-0.49% [target  101.50%, min -0.49%, max -0.49%]
+   Bitfinex/Kraken:     -0.75% [target  1.20%, min -0.75%, max -0.75%]
+   OKCoin/Bitfinex:      0.23% [target  1.10%, min  0.23%, max  0.23%]
+   OKCoin/Kraken:       -0.52% [target  1.20%, min -0.52%, max -0.52%]
+   Bitstamp/Bitfinex:    0.29% [target  1.20%, min  0.29%, max  0.29%]
+   Bitstamp/Kraken:     -0.47% [target  1.30%, min -0.47%, max -0.47%]
+   Kraken/Bitfinex:     -0.07% [target  1.20%, min -0.07%, max -0.07%]
+   ItBit/Bitfinex:       0.26% [target  1.70%, min  0.26%, max  0.26%]
+   ItBit/Kraken:        -0.49% [target  1.80%, min -0.49%, max -0.49%]
 
 [ 09/19/2015 09:31:45 ]
-   Bitfinex: 	231.86 / 231.87
-   OKCoin: 	231.31 / 231.32
-   Bitstamp: 	230.51 / 231.20
-   Kraken: 	230.12 / 232.03
-   ItBit: 	231.00 / 231.26
+   Bitfinex:    231.86 / 231.87
+   OKCoin:      231.31 / 231.32
+   Bitstamp:    230.51 / 231.20
+   Kraken:      230.12 / 232.03
+   ItBit:       231.00 / 231.26
    ----------------------------
-   Bitfinex/Kraken:	-0.75% [target  100.90%, min -0.75%, max -0.75%]
-   OKCoin/Bitfinex:	 0.23% [target  100.80%, min  0.23%, max  0.23%]
-   OKCoin/Kraken:	-0.52% [target  100.90%, min -0.52%, max -0.52%]
-   Bitstamp/Bitfinex:	 0.29% [target  100.90%, min  0.29%, max  0.29%]
-   Bitstamp/Kraken:	-0.47% [target  101.00%, min -0.47%, max -0.47%]
-   Kraken/Bitfinex:	-0.07% [target  100.90%, min -0.07%, max -0.07%]
-   ItBit/Bitfinex:	 0.26% [target  101.40%, min  0.26%, max  0.26%]
-   ItBit/Kraken:	-0.49% [target  101.50%, min -0.49%, max -0.49%]
-
+   Bitfinex/Kraken:     -0.75% [target  1.20%, min -0.75%, max -0.75%]
+   OKCoin/Bitfinex:      0.23% [target  1.10%, min  0.23%, max  0.23%]
+   OKCoin/Kraken:       -0.52% [target  1.20%, min -0.52%, max -0.52%]
+   Bitstamp/Bitfinex:    0.29% [target  1.20%, min  0.29%, max  0.29%]
+   Bitstamp/Kraken:     -0.47% [target  1.30%, min -0.47%, max -0.47%]
+   Kraken/Bitfinex:     -0.07% [target  1.20%, min -0.07%, max -0.07%]
+   ItBit/Bitfinex:       0.26% [target  1.70%, min  0.26%, max  0.26%]
+   ItBit/Kraken:        -0.49% [target  1.80%, min -0.49%, max -0.49%]
 ```
 
 ### Arbitrage Parameters
@@ -212,9 +211,9 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
  * JSON memory leak fixed
  * Minor fixes and improvements
 
- ##### v0.0.3 - September 2015
+##### v0.0.3 - September 2015
 
- * General performance and stability improvements (merge from `julianmi:performance_improvements`)
+ * General performance and stability improvements (merge from _julianmi:performance_improvements_)
  * ItBit exchange added (bid/ask information only, other functions to be implemented)
  * Other minor fixes and improvements
 
