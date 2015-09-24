@@ -9,16 +9,21 @@
 namespace Kraken {
 
 double getQuote(CURL *curl, bool isBid) {
-    
-  double quote;
   json_t *root = getJsonFromUrl(curl, "https://api.kraken.com/0/public/Ticker", "pair=XXBTZUSD");
+  const char *quote;
+  double quoteValue;
   if (isBid) {
-    quote = atof(json_string_value(json_array_get(json_object_get(json_object_get(json_object_get(root, "result"), "XXBTZUSD"), "b"), 0)));
+    quote = json_string_value(json_array_get(json_object_get(json_object_get(json_object_get(root, "result"), "XXBTZUSD"), "b"), 0));
   } else {
-    quote = atof(json_string_value(json_array_get(json_object_get(json_object_get(json_object_get(root, "result"), "XXBTZUSD"), "a"), 0))); 
+    quote = json_string_value(json_array_get(json_object_get(json_object_get(json_object_get(root, "result"), "XXBTZUSD"), "a"), 0)); 
+  }
+  if (quote != NULL) {
+    quoteValue = atof(quote);
+  } else {
+    quoteValue = 0.0;
   }
   json_decref(root);
-  return quote;
+  return quoteValue;
 }
 
 

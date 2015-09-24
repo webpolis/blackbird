@@ -9,16 +9,21 @@
 namespace ItBit {
 
 double getQuote(CURL *curl, bool isBid) {
-    
-  double quote;
   json_t *root = getJsonFromUrl(curl, "https://api.itbit.com/v1/markets/XBTUSD/ticker", "");
+  const char *quote;
+  double quoteValue;
   if (isBid) {
-    quote = atof(json_string_value(json_object_get(root, "bid")));
+    quote = json_string_value(json_object_get(root, "bid"));  
   } else {
-    quote = atof(json_string_value(json_object_get(root, "ask"))); 
+    quote = json_string_value(json_object_get(root, "ask")); 
+  }
+  if (quote != NULL) {
+    quoteValue = atof(quote);
+  } else {
+    quoteValue = 0.0;
   }
   json_decref(root);
-  return quote;
+  return quoteValue;
 }
 
 

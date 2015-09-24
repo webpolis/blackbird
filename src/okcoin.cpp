@@ -13,14 +13,20 @@ namespace OkCoin {
 
 double getQuote(CURL *curl, bool isBid) {
   json_t *root = getJsonFromUrl(curl, "https://www.okcoin.com/api/ticker.do?ok=1", "");
-  double quote;
+  const char* quote;
+  double quoteValue;
   if (isBid) {
-    quote = atof(json_string_value(json_object_get(json_object_get(root, "ticker"), "buy")));
+    quote = json_string_value(json_object_get(json_object_get(root, "ticker"), "buy"));
   } else {
-    quote = atof(json_string_value(json_object_get(json_object_get(root, "ticker"), "sell")));
+    quote = json_string_value(json_object_get(json_object_get(root, "ticker"), "sell"));
+  }
+  if (quote != NULL) {
+    quoteValue = atof(quote);
+  } else {
+    quoteValue = 0.0;
   }
   json_decref(root);
-  return quote;
+  return quoteValue;
 }
 
 

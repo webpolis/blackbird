@@ -41,12 +41,12 @@ bool checkEntry(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters par
       std::cout << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadIn);
       std::cout << " [target " << percToStr(limit) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]" << std::endl;
     }
-    // TODO Kraken (id 3) is not ready to be traded on
+    // TODO Kraken (id 3) and ItBit (id 4) are not ready to be traded on
     if (res.spreadIn >= limit) {
       if (priceLong > 0.0) {
         if (priceShort > 0.0) {
-          if (longId != 3) {
-            if (shortId != 3) {
+          if (longId != 3 && longId != 4) {
+            if (shortId != 3 && longId != 4) {
               // opportunity found
               res.idExchLong = longId;
               res.idExchShort = shortId;
