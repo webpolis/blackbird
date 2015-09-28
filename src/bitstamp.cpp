@@ -135,7 +135,7 @@ json_t* authRequest(CURL *curl, Parameters params, std::string url, std::string 
   // nonce
   struct timeval tv;
   gettimeofday(&tv, NULL);
-  long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
+  unsigned long long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
 
   std::ostringstream oss;
   oss << nonce << params.bitstampClientId << params.bitstampApi;
