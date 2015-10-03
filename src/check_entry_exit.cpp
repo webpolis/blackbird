@@ -18,16 +18,13 @@ std::string percToStr(double perc) {
 bool checkEntry(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters params) {
   // compute limit (fees + spreadEntry)
   double limit = 2.0 * btcLong->getFees() + 2.0 * btcShort->getFees() + params.spreadEntry;
-
   // check if btcLong is below btcShort
   if (btcShort->getHasShort()) {
-
     // btcLong:  buy looking to match ask
     // btcShort: sell looking to match bid
     double priceLong = btcLong->getAsk();
     double priceShort = btcShort->getBid();
     res.spreadIn = (priceShort - priceLong) / priceLong;
-
     // maxSpread and minSpread
     int longId = btcLong->getId();
     int shortId = btcShort->getId();
@@ -77,7 +74,6 @@ bool checkExit(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters para
   double priceLong  = btcLong->getBid();
   double priceShort = btcShort->getAsk();
   res.spreadOut = (priceShort - priceLong) / priceLong;
-
   // maxSpread and minSpread
   int longId = btcLong->getId();
   int shortId = btcShort->getId();
@@ -87,20 +83,16 @@ bool checkExit(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters para
   if (res.spreadOut < res.minSpread[longId][shortId]) {
     res.minSpread[longId][shortId] = res.spreadOut;
   }
-
   if (params.verbose) {
     std::cout << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadOut);
     std::cout << " [target " << percToStr(params.spreadExit) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]" << std::endl;
   }
-
-
   // check length
   if (period - res.entryTime >= params.maxLength) {
     res.priceLongOut  = priceLong;
     res.priceShortOut = priceShort;
     return true;
   }
-
   if (res.spreadOut <= params.spreadExit && priceLong > 0.0 && priceShort > 0.0) {
     // exit opportunity found
     res.priceLongOut  = priceLong;
