@@ -22,7 +22,6 @@
 #include "itbit.h"
 #include "send_email.h"
 
-// typedef
 typedef double (*getQuoteType) (CURL *curl, bool isBid);
 typedef double (*getAvailType) (CURL *curl, Parameters params, std::string currency);
 typedef int (*sendOrderType) (CURL *curl, Parameters params, std::string direction, double quantity, double price);
@@ -31,7 +30,6 @@ typedef double (*getActivePosType) (CURL *curl, Parameters params);
 typedef double (*getLimitPriceType) (CURL *curl, double volume, bool isBid);
 
 int main(int argc, char **argv) {
-  // header information
   std::cout << "Blackbird Bitcoin Arbitrage\nVersion 0.0.3" << std::endl;
   std::cout << "DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK.\n" << std::endl;
 
@@ -43,10 +41,8 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  // get config variables
   int gapSec = json_integer_value(json_object_get(root, "GapSec"));
   unsigned debugMaxIteration = json_integer_value(json_object_get(root, "DebugMaxIteration"));
-
   bool useFullCash = json_boolean_value(json_object_get(root, "UseFullCash"));
   double untouchedCash = json_real_value(json_object_get(root, "UntouchedCash"));
   double cashForTesting = json_real_value(json_object_get(root, "CashForTesting"));
@@ -56,7 +52,6 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  // function arrays
   getQuoteType getQuote[] = {Bitfinex::getQuote, OkCoin::getQuote, Bitstamp::getQuote, Kraken::getQuote, ItBit::getQuote};
   getAvailType getAvail[] = {Bitfinex::getAvail, OkCoin::getAvail, Bitstamp::getAvail, Kraken::getAvail, ItBit::getAvail};
   sendOrderType sendOrder[] = {Bitfinex::sendOrder, OkCoin::sendOrder, Bitstamp::sendOrder};
@@ -85,7 +80,6 @@ int main(int argc, char **argv) {
   csvFileName = "result_" + printDateTimeFileName() + ".csv";
   std::ofstream csvFile;
   csvFile.open(csvFileName.c_str(), std::ofstream::trunc);
-  // CSV header
   csvFile << "TRADE_ID,EXCHANGE_LONG,EXHANGE_SHORT,ENTRY_TIME,EXIT_TIME,DURATION,TOTAL_EXPOSURE,BALANCE_BEFORE,BALANCE_AFTER,RETURN\n";
   csvFile.flush();
 
@@ -99,7 +93,6 @@ int main(int argc, char **argv) {
     btcVec.push_back(new Bitcoin(i, params.exchName[i], params.fees[i], params.hasShort[i]));
   }
 
-  // cURL
   CURL* curl;
   curl_global_init(CURL_GLOBAL_ALL);
   curl = curl_easy_init();
@@ -139,7 +132,6 @@ int main(int argc, char **argv) {
   }
   std::cout << std::endl;
 
-  // time structure
   time_t rawtime;
   rawtime = time(NULL);
   struct tm * timeinfo;
@@ -177,9 +169,7 @@ int main(int argc, char **argv) {
     if (diffTime > 0) {
       std::cout << "WARNING: " << diffTime << " second(s) too late at " << printDateTime(currTime) << std::endl;
       // unsigned skip = (unsigned)ceil(diffTime / gapSec);
-      for (int e = 0; e < num_exchange; ++e) {
-        btcVec[e]->addData(currTime, btcVec[e]->getLastBid(), btcVec[e]->getLastAsk(), 0.0);
-      }
+      
       // go to next iteration
       timeinfo->tm_sec = timeinfo->tm_sec + (ceil(diffTime / gapSec) + 1) * gapSec;
       currTime = mktime(timeinfo);
@@ -198,31 +188,26 @@ int main(int argc, char **argv) {
         std::cout << "[ " << printDateTime(currTime) << " IN MARKET: Long " << res.exchNameLong << " / Short " << res.exchNameShort << " ]" << std::endl;
       }
     }
-    // download the exchanges prices
     for (int e = 0; e < num_exchange; ++e) {
 
       double bid = getQuote[e](curl, true);
       double ask = getQuote[e](curl, false);
 
-      // add previous price if bid or ask is 0.0
       if (bid == 0.0) {
-        bid = btcVec[e]->getLastBid();
-		    std::cout << "   WARNING: " << params.exchName[e] << " bid is null, use previous one" << std::endl;
+        std::cout << "   WARNING: " << params.exchName[e] << " bid is null, use previous one" << std::endl;
       }
       if (ask == 0.0) {
-        ask = btcVec[e]->getLastAsk();
-		    std::cout << "   WARNING: " << params.exchName[e] << " ask is null, use previous one" << std::endl;
+        std::cout << "   WARNING: " << params.exchName[e] << " ask is null, use previous one" << std::endl;
       }
 
       if (params.verbose) {
         std::cout << "   " << params.exchName[e] << ": \t" << bid << " / " << ask << std::endl;
       }
 
-      btcVec[e]->addData(currTime, bid, ask, 0.0);
+      btcVec[e]->updateData(bid, ask, 0.0);
       curl_easy_reset(curl);
     }
 
-    // load data terminated
     if (params.verbose) {
       std::cout << "   ----------------------------" << std::endl;
     }
@@ -250,16 +235,14 @@ int main(int argc, char **argv) {
               } else {
                 res.exposure = cashForTesting;  // use test money
               }
-
-  	          // check volumes
-      	      double volumeLong = res.exposure / btcVec[res.idExchLong]->getLastAsk();
-      	      double volumeShort = res.exposure / btcVec[res.idExchShort]->getLastBid();
+      	      double volumeLong = res.exposure / btcVec[res.idExchLong]->getAsk();
+      	      double volumeShort = res.exposure / btcVec[res.idExchShort]->getBid();
       	      double limPriceLong = getLimitPrice[res.idExchLong](curl, volumeLong, false);
       	      double limPriceShort = getLimitPrice[res.idExchShort](curl, volumeShort, true);
 
       	      if (limPriceLong - res.priceLongIn > 0.30 || res.priceShortIn - limPriceShort > 0.30) {
                 std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
-      		      break;
+                break;
       	      }
 
               inMarket = true;
@@ -274,10 +257,9 @@ int main(int argc, char **argv) {
               int longOrderId = 0;
               int shortOrderId = 0;
 
-              // send Long order
-              longOrderId = sendOrder[res.idExchLong](curl, params, "buy", volumeLong, btcVec[res.idExchLong]->getLastAsk());
-              // send Short order
-              shortOrderId = sendOrder[res.idExchShort](curl, params, "sell", volumeShort, btcVec[res.idExchShort]->getLastBid());
+              // send orders
+              longOrderId = sendOrder[res.idExchLong](curl, params, "buy", volumeLong, btcVec[res.idExchLong]->getAsk());
+              shortOrderId = sendOrder[res.idExchShort](curl, params, "sell", volumeShort, btcVec[res.idExchShort]->getBid());
 
               // wait for the orders to be filled
               std::cout << "Waiting for the two orders to be filled..." << std::endl;
@@ -311,10 +293,8 @@ int main(int argc, char **argv) {
         for (int i = 0; i < num_exchange; ++i) {
           btcUsed[i] = getActivePos[i](curl, params);
         }
-
-        // check volumes
-		    double volumeLong = btcUsed[res.idExchLong];
-		    double volumeShort = btcUsed[res.idExchShort];
+	double volumeLong = btcUsed[res.idExchLong];
+        double volumeShort = btcUsed[res.idExchShort];
         double limPriceLong = getLimitPrice[res.idExchLong](curl, volumeLong, true);
         double limPriceShort = getLimitPrice[res.idExchShort](curl, volumeShort, false);
 
@@ -322,7 +302,7 @@ int main(int argc, char **argv) {
           std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
 	      }
         else {
-	        res.exitTime = currTime;
+          res.exitTime = currTime;
           res.printExit();
           // send orders
           int longOrderId = 0;
@@ -331,10 +311,9 @@ int main(int argc, char **argv) {
           std::cout << std::setprecision(6) << "BTC exposure on " << params.exchName[res.idExchShort] << ": " << volumeShort << std::setprecision(2) << std::endl;
           std::cout << std::endl;
 
-          // Close Long
-          longOrderId = sendOrder[res.idExchLong](curl, params, "sell", fabs(btcUsed[res.idExchLong]), btcVec[res.idExchLong]->getLastBid());
-          // Close Short
-          shortOrderId = sendOrder[res.idExchShort](curl, params, "buy", fabs(btcUsed[res.idExchShort]), btcVec[res.idExchShort]->getLastAsk());
+          // send orders
+          longOrderId = sendOrder[res.idExchLong](curl, params, "sell", fabs(btcUsed[res.idExchLong]), btcVec[res.idExchLong]->getBid());
+          shortOrderId = sendOrder[res.idExchShort](curl, params, "buy", fabs(btcUsed[res.idExchShort]), btcVec[res.idExchShort]->getAsk());
 
           // wait for the orders to be filled
           std::cout << "Waiting for the two orders to be filled..." << std::endl;
@@ -362,8 +341,8 @@ int main(int argc, char **argv) {
 
           // update res with total balance
           for (int i = 0; i < num_exchange; ++i) {
-          	res.befBalUsd += balanceUsd[i];
-          	res.aftBalUsd += newBalUsd[i];
+            res.befBalUsd += balanceUsd[i];
+            res.aftBalUsd += newBalUsd[i];
           }
 
           // update current balances with new values
@@ -372,24 +351,17 @@ int main(int argc, char **argv) {
             balanceBtc[i] = newBalBtc[i];
           }
 
-          // display performance
           std::cout << "ACTUAL PERFORMANCE: " << "$" << res.aftBalUsd - res.befBalUsd << " (" << res.totPerf() * 100.0 << "%)\n" << std::endl;
-
-          // new csv line with result
           csvFile << res.id << "," << res.exchNameLong << "," << res.exchNameShort << "," << printDateTimeCsv(res.entryTime) << "," << printDateTimeCsv(res.exitTime);
           csvFile << "," << res.getLength() << "," << res.exposure * 2.0 << "," << res.befBalUsd << "," << res.aftBalUsd << "," << res.totPerf() << "\n";
           csvFile.flush();
 
-          // send email
           if (params.sendEmail) {
             sendEmail(res, params);
             std::cout << "Email sent" << std::endl;
           }
-
-          // delete result information
           res.clear();
 
-          // if "stop_after_exit" file exists then return
           std::ifstream infile("stop_after_exit");
           if (infile.good()) {
             std::cout << "Exit after last trade (file stop_after_exit found)" << std::endl;
@@ -409,15 +381,12 @@ int main(int argc, char **argv) {
       stillRunning = false;
     }
   }
-  // delete Bitcoin objects
   for (int i = 0; i < num_exchange; ++i) {
     delete(btcVec[i]);
   }
   json_decref(root);
-  // close cURL
   curl_easy_cleanup(curl);
   curl_global_cleanup();
-  // close csv file
   csvFile.close();
 
   return 0;
