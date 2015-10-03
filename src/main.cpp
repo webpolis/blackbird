@@ -62,11 +62,9 @@ int main(int argc, char **argv) {
   // thousand separator
   std::locale mylocale("");
   std::cout.imbue(mylocale);
-
   // print precision of two digits
   std::cout.precision(2);
   std::cout << std::fixed;
-
   // create a parameters structure
   Parameters params(root);
   params.addExchange("Bitfinex", 0.0020, true);
@@ -74,7 +72,6 @@ int main(int argc, char **argv) {
   params.addExchange("Bitstamp", 0.0025, false);
   params.addExchange("Kraken", 0.0025, true);
   params.addExchange("ItBit", 0.0050, false);
-
   // CSV file
   std::string csvFileName;
   csvFileName = "result_" + printDateTimeFileName() + ".csv";
@@ -82,17 +79,13 @@ int main(int argc, char **argv) {
   csvFile.open(csvFileName.c_str(), std::ofstream::trunc);
   csvFile << "TRADE_ID,EXCHANGE_LONG,EXHANGE_SHORT,ENTRY_TIME,EXIT_TIME,DURATION,TOTAL_EXPOSURE,BALANCE_BEFORE,BALANCE_AFTER,RETURN\n";
   csvFile.flush();
-
   // Vector of Bitcoin
   std::vector<Bitcoin*> btcVec;
-
   int num_exchange = params.nbExch();
-
   // create Bitcoin objects
   for (int i = 0; i < num_exchange; ++i) {
     btcVec.push_back(new Bitcoin(i, params.exchName[i], params.fees[i], params.hasShort[i]));
   }
-
   CURL* curl;
   curl_global_init(CURL_GLOBAL_ALL);
   curl = curl_easy_init();
@@ -101,17 +94,14 @@ int main(int argc, char **argv) {
   std::cout << "   Spread to enter: " << params.spreadEntry * 100.0 << "%" << std::endl;
   std::cout << "   Spread to exit: " << params.spreadExit * 100.0  << "%" << std::endl;
   std::cout << std::endl;
-
   // store current balances
   std::cout << "[ Current balances ]" << std::endl;
   double *balanceUsd = (double*)malloc(sizeof(double) * num_exchange);
   double *balanceBtc = (double*)malloc(sizeof(double) * num_exchange);
-
   for (int i = 0; i < num_exchange; ++i) {
     balanceUsd[i] = getAvail[i](curl, params, "usd");
     balanceBtc[i] = getAvail[i](curl, params, "btc");
   }
-
   // contains balances after a completed trade
   double *newBalUsd = (double*)malloc(sizeof(double) * num_exchange);
   double *newBalBtc = (double*)malloc(sizeof(double) * num_exchange);
@@ -123,7 +113,6 @@ int main(int argc, char **argv) {
     std::cout << balanceUsd[i] << " USD\t" << std::setprecision(6) << balanceBtc[i]  << std::setprecision(2) << " BTC" << std::endl;
   }
   std::cout << std::endl;
-
   std::cout << "[ Cash exposure ]" << std::endl;
   if (useFullCash) {
     std::cout << "   FULL cash used!" << std::endl;
@@ -136,7 +125,6 @@ int main(int argc, char **argv) {
   rawtime = time(NULL);
   struct tm * timeinfo;
   timeinfo = localtime(&rawtime);
-
   // wait the next gapSec seconds before starting
   time(&rawtime);
   timeinfo = localtime(&rawtime);
@@ -145,12 +133,10 @@ int main(int argc, char **argv) {
     time(&rawtime);
     timeinfo = localtime(&rawtime);
   }
-
   // main loop
   if (!params.verbose) {
     std::cout << "Running..." << std::endl;
   }
-
   bool inMarket = false;
   int resultId = 0;
   Result res;
@@ -164,12 +150,10 @@ int main(int argc, char **argv) {
     currTime = mktime(timeinfo);
     time(&rawtime);
     diffTime = difftime(rawtime, currTime);
-
     // check if we are already too late
     if (diffTime > 0) {
       std::cout << "WARNING: " << diffTime << " second(s) too late at " << printDateTime(currTime) << std::endl;
       // unsigned skip = (unsigned)ceil(diffTime / gapSec);
-      
       // go to next iteration
       timeinfo->tm_sec = timeinfo->tm_sec + (ceil(diffTime / gapSec) + 1) * gapSec;
       currTime = mktime(timeinfo);
@@ -179,7 +163,6 @@ int main(int argc, char **argv) {
     else if (diffTime < 0) {
       sleep(-difftime(rawtime, currTime));  // sleep until the next iteration
     }
-
     if (params.verbose) {
       if (!inMarket) {
         std::cout << "[ " << printDateTime(currTime) << " ]" << std::endl;
@@ -189,29 +172,23 @@ int main(int argc, char **argv) {
       }
     }
     for (int e = 0; e < num_exchange; ++e) {
-
       double bid = getQuote[e](curl, true);
       double ask = getQuote[e](curl, false);
-
       if (bid == 0.0) {
         std::cout << "   WARNING: " << params.exchName[e] << " bid is null, use previous one" << std::endl;
       }
       if (ask == 0.0) {
         std::cout << "   WARNING: " << params.exchName[e] << " ask is null, use previous one" << std::endl;
       }
-
       if (params.verbose) {
         std::cout << "   " << params.exchName[e] << ": \t" << bid << " / " << ask << std::endl;
       }
-
       btcVec[e]->updateData(bid, ask, 0.0);
       curl_easy_reset(curl);
     }
-
     if (params.verbose) {
       std::cout << "   ----------------------------" << std::endl;
     }
-
     // compute entry point
     if (!inMarket) {
       for (int i = 0; i < num_exchange; ++i) {
@@ -224,30 +201,25 @@ int main(int argc, char **argv) {
                 std::cout << "   WARNING: Opportunity found but no cash available. Trade canceled." << std::endl;
                 break;
               }
-
               if (useFullCash == false && res.exposure <= cashForTesting) {
                 std::cout << "   WARNING: Opportunity found but no enough cash. Need more than TEST cash (min. $" << cashForTesting << "). Trade canceled." << std::endl;
                 break;
               }
-
               if (useFullCash) {
                 res.exposure -= untouchedCash * res.exposure;  // leave untouchedCash
               } else {
                 res.exposure = cashForTesting;  // use test money
               }
-      	      double volumeLong = res.exposure / btcVec[res.idExchLong]->getAsk();
-      	      double volumeShort = res.exposure / btcVec[res.idExchShort]->getBid();
-      	      double limPriceLong = getLimitPrice[res.idExchLong](curl, volumeLong, false);
-      	      double limPriceShort = getLimitPrice[res.idExchShort](curl, volumeShort, true);
-
-      	      if (limPriceLong - res.priceLongIn > 0.30 || res.priceShortIn - limPriceShort > 0.30) {
+              double volumeLong = res.exposure / btcVec[res.idExchLong]->getAsk();
+              double volumeShort = res.exposure / btcVec[res.idExchShort]->getBid();
+              double limPriceLong = getLimitPrice[res.idExchLong](curl, volumeLong, false);
+              double limPriceShort = getLimitPrice[res.idExchShort](curl, volumeShort, true);
+              if (limPriceLong - res.priceLongIn > 0.30 || res.priceShortIn - limPriceShort > 0.30) {
                 std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
                 break;
-      	      }
-
+              }
               inMarket = true;
               resultId++;
-
               // update result
               res.id = resultId;
               res.entryTime = currTime;
@@ -256,15 +228,12 @@ int main(int argc, char **argv) {
               res.minSpread[res.idExchLong][res.idExchShort] = 1.0;
               int longOrderId = 0;
               int shortOrderId = 0;
-
               // send orders
               longOrderId = sendOrder[res.idExchLong](curl, params, "buy", volumeLong, btcVec[res.idExchLong]->getAsk());
               shortOrderId = sendOrder[res.idExchShort](curl, params, "sell", volumeShort, btcVec[res.idExchShort]->getBid());
-
               // wait for the orders to be filled
               std::cout << "Waiting for the two orders to be filled..." << std::endl;
               sleep(3.0);
-
               while (!isOrderComplete[res.idExchLong](curl, params, longOrderId) || !isOrderComplete[res.idExchShort](curl, params, shortOrderId)) {
                 sleep(3.0);
               }
@@ -287,34 +256,30 @@ int main(int argc, char **argv) {
     else if (inMarket) {
       if (checkExit(btcVec[res.idExchLong], btcVec[res.idExchShort], res, params, currTime)) {
         // exit opportunity found
-
         // check current exposure
         double *btcUsed = (double*)malloc(sizeof(double) * num_exchange);
         for (int i = 0; i < num_exchange; ++i) {
           btcUsed[i] = getActivePos[i](curl, params);
         }
-	double volumeLong = btcUsed[res.idExchLong];
+        double volumeLong = btcUsed[res.idExchLong];
         double volumeShort = btcUsed[res.idExchShort];
         double limPriceLong = getLimitPrice[res.idExchLong](curl, volumeLong, true);
         double limPriceShort = getLimitPrice[res.idExchShort](curl, volumeShort, false);
 
         if (res.priceLongOut - limPriceLong > 0.30 || limPriceShort - res.priceShortOut > 0.30) {
           std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
-	      }
+        }
         else {
           res.exitTime = currTime;
           res.printExit();
-          // send orders
           int longOrderId = 0;
           int shortOrderId = 0;
           std::cout << std::setprecision(6) << "BTC exposure on " << params.exchName[res.idExchLong] << ": " << volumeLong << std::setprecision(2) << std::endl;
           std::cout << std::setprecision(6) << "BTC exposure on " << params.exchName[res.idExchShort] << ": " << volumeShort << std::setprecision(2) << std::endl;
           std::cout << std::endl;
-
           // send orders
           longOrderId = sendOrder[res.idExchLong](curl, params, "sell", fabs(btcUsed[res.idExchLong]), btcVec[res.idExchLong]->getBid());
           shortOrderId = sendOrder[res.idExchShort](curl, params, "buy", fabs(btcUsed[res.idExchShort]), btcVec[res.idExchShort]->getAsk());
-
           // wait for the orders to be filled
           std::cout << "Waiting for the two orders to be filled..." << std::endl;
           sleep(3.0);
@@ -324,44 +289,37 @@ int main(int argc, char **argv) {
           std::cout << "Done\n" << std::endl;
           longOrderId = 0;
           shortOrderId = 0;
-          inMarket = false;  // market exited
-
+          inMarket = false;
           // new balances
           for (int i = 0; i < num_exchange; ++i) {
             newBalUsd[i] = getAvail[i](curl, params, "usd");
             newBalBtc[i] = getAvail[i](curl, params, "btc");
           }
-
           for (int i = 0; i < num_exchange; ++i) {
             std::cout << "New balance on " << params.exchName[i] << ":  \t";
             std::cout << newBalUsd[i] << " USD (perf $" << newBalUsd[i] - balanceUsd[i] << "), ";
             std::cout << std::setprecision(6) << newBalBtc[i]  << std::setprecision(2) << " BTC" << std::endl;
           }
           std::cout << std::endl;
-
           // update res with total balance
           for (int i = 0; i < num_exchange; ++i) {
             res.befBalUsd += balanceUsd[i];
             res.aftBalUsd += newBalUsd[i];
           }
-
           // update current balances with new values
           for (int i = 0; i < num_exchange; ++i) {
             balanceUsd[i] = newBalUsd[i];
             balanceBtc[i] = newBalBtc[i];
           }
-
           std::cout << "ACTUAL PERFORMANCE: " << "$" << res.aftBalUsd - res.befBalUsd << " (" << res.totPerf() * 100.0 << "%)\n" << std::endl;
           csvFile << res.id << "," << res.exchNameLong << "," << res.exchNameShort << "," << printDateTimeCsv(res.entryTime) << "," << printDateTimeCsv(res.exitTime);
           csvFile << "," << res.getLength() << "," << res.exposure * 2.0 << "," << res.befBalUsd << "," << res.aftBalUsd << "," << res.totPerf() << "\n";
           csvFile.flush();
-
           if (params.sendEmail) {
             sendEmail(res, params);
             std::cout << "Email sent" << std::endl;
           }
           res.clear();
-
           std::ifstream infile("stop_after_exit");
           if (infile.good()) {
             std::cout << "Exit after last trade (file stop_after_exit found)" << std::endl;
@@ -373,7 +331,6 @@ int main(int argc, char **argv) {
         std::cout << std::endl;
       }
     }
-    // activities for this iteration terminated
     timeinfo->tm_sec = timeinfo->tm_sec + gapSec;
     currIteration++;
     if (currIteration >= debugMaxIteration) {
