@@ -66,8 +66,7 @@ First add your credentials to _config.json_:
 "BitstampClientId"
 "BitstampApiKey"
 "BitstampSecretKey"
-[...]
-````
+```
 
 
 #### Strategy parameters
