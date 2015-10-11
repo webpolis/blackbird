@@ -30,7 +30,7 @@ typedef double (*getActivePosType) (CURL *curl, Parameters params);
 typedef double (*getLimitPriceType) (CURL *curl, double volume, bool isBid);
 
 int main(int argc, char **argv) {
-  std::cout << "Blackbird Bitcoin Arbitrage\nVersion 0.0.3" << std::endl;
+  std::cout << "Blackbird Bitcoin Arbitrage" << std::endl;
   std::cout << "DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK.\n" << std::endl;
 
   // read the config file (config.json)
@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
   bool useFullCash = json_boolean_value(json_object_get(root, "UseFullCash"));
   double untouchedCash = json_real_value(json_object_get(root, "UntouchedCash"));
   double cashForTesting = json_real_value(json_object_get(root, "CashForTesting"));
+  double volPriceDelta = 0.30;
 
   if (!useFullCash && cashForTesting < 15.0) {
     std::cout << "ERROR: Minimum test cash is $15.00.\n" << std::endl;
@@ -67,11 +68,11 @@ int main(int argc, char **argv) {
   std::cout << std::fixed;
   // create a parameters structure
   Parameters params(root);
-  params.addExchange("Bitfinex", 0.0020, true);
-  params.addExchange("OKCoin", 0.0020, false);
-  params.addExchange("Bitstamp", 0.0025, false);
-  params.addExchange("Kraken", 0.0025, true);
-  params.addExchange("ItBit", 0.0050, false);
+  params.addExchange("Bitfinex", json_real_value(json_object_get(root, "BitfinexFees")), json_boolean_value(json_object_get(root, "BitfinexCanShort")));
+  params.addExchange("OKCoin", json_real_value(json_object_get(root, "OkCoinFees")), json_boolean_value(json_object_get(root, "OkCoinCanShort")));
+  params.addExchange("Bitstamp", json_real_value(json_object_get(root, "BitstampFees")), json_boolean_value(json_object_get(root, "BitstampCanShort")));
+  params.addExchange("Kraken", json_real_value(json_object_get(root, "KrakenFees")), json_boolean_value(json_object_get(root, "KrakenCanShort")));
+  params.addExchange("ItBit", json_real_value(json_object_get(root, "ItBitFees")), json_boolean_value(json_object_get(root, "ItBitCanShort")));
   // CSV file
   std::string csvFileName;
   csvFileName = "result_" + printDateTimeFileName() + ".csv";
@@ -214,7 +215,7 @@ int main(int argc, char **argv) {
               double volumeShort = res.exposure / btcVec[res.idExchShort]->getBid();
               double limPriceLong = getLimitPrice[res.idExchLong](curl, volumeLong, false);
               double limPriceShort = getLimitPrice[res.idExchShort](curl, volumeShort, true);
-              if (limPriceLong - res.priceLongIn > 0.30 || res.priceShortIn - limPriceShort > 0.30) {
+              if (limPriceLong - res.priceLongIn > volPriceDelta || res.priceShortIn - limPriceShort > volPriceDelta) {
                 std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
                 break;
               }

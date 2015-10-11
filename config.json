@@ -6,7 +6,7 @@
 
   "UseFullCash": false,
   "UntouchedCash": 0.01, 
-  "CashForTesting": 20.00,
+  "CashForTesting": 25.00,
   
   "DebugMaxIteration": 3200000,
   "Verbose": true,
@@ -17,16 +17,30 @@
   "SenderPassword": "pa33w0rd",
   "SmtpServerAddress": "smtp.example.com:587",
   "ReceiverAddress": "mark@example.com",
+  
+  "BitfinexApiHead": "X-BFX-APIKEY:XXXXXXXX",
+  "BitfinexKey": "XXXXXXXX",
+  "BitfinexFees": 0.0020,
+  "BitfinexCanShort": true,
 
-  "BitfinexApiHead": "X-BFX-APIKEY:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  "BitfinexKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  "OkCoinApiKey": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-  "OkCoinSecretKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  "BitstampClientId": "XXXXXX",
-  "BitstampApiKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  "BitstampSecretKey": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  "OkCoinApiKey": "XXXXXXXX",
+  "OkCoinSecretKey": "XXXXXXXX",
+  "OkCoinFees": 0.0020,
+  "OkCoinCanShort": false,
+
+  "BitstampClientId": "XXXXXXXX",
+  "BitstampApiKey": "XXXXXXXX",
+  "BitstampSecretKey": "XXXXXXXX",
+  "BitstampFees": 0.0025,
+  "BitstampCanShort": false,
+
   "KrakenApiKey": "",
   "KrakenSecretKey": "",
+  "KrakenFees": 0.0025,
+  "KrakenCanShort": true,
+
   "ItBitApiKey": "",
-  "ItBitSecretKey": ""
+  "ItBitSecretKey": "",
+  "ItBitFees": 0.0050,
+  "ItBitCanShort": false
 }

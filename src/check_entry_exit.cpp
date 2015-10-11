@@ -24,7 +24,11 @@ bool checkEntry(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters par
     // btcShort: sell looking to match bid
     double priceLong = btcLong->getAsk();
     double priceShort = btcShort->getBid();
-    res.spreadIn = (priceShort - priceLong) / priceLong;
+    if (priceLong > 0.0 && priceShort > 0.0) {
+      res.spreadIn = (priceShort - priceLong) / priceLong;
+    } else {
+      res.spreadIn = 0.0;
+    }
     // maxSpread and minSpread
     int longId = btcLong->getId();
     int shortId = btcShort->getId();
@@ -73,7 +77,11 @@ bool checkExit(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters para
   // close btcShort: buy looking to match ask
   double priceLong  = btcLong->getBid();
   double priceShort = btcShort->getAsk();
-  res.spreadOut = (priceShort - priceLong) / priceLong;
+  if (priceLong > 0.0 && priceShort > 0.0) {
+    res.spreadOut = (priceShort - priceLong) / priceLong;
+  } else {
+    res.spreadOut = 0.0;
+  }
   // maxSpread and minSpread
   int longId = btcLong->getId();
   int shortId = btcShort->getId();
