@@ -47,7 +47,7 @@ bool checkEntry(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters par
         std::cout << std::endl;
       }
     }
-    // TODO Gemini, Kraken, ItBit are not ready to be traded on
+    // TODO Kraken and ItBit are not ready to be traded on
     if (res.spreadIn >= limit) {
       if (btcLong->getIsImplemented() == true) {
         if (btcShort->getIsImplemented() == true) {
