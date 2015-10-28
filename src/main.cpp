@@ -47,7 +47,7 @@ int main(int argc, char **argv) {
   bool useFullCash = json_boolean_value(json_object_get(root, "UseFullCash"));
   double untouchedCash = json_real_value(json_object_get(root, "UntouchedCash"));
   double cashForTesting = json_real_value(json_object_get(root, "CashForTesting"));
-  double volPriceDelta = 10.0; // 0.30;
+  double volPriceDelta = 0.30;
 
   if (!useFullCash && cashForTesting < 15.0) {
     std::cout << "ERROR: Minimum test cash is $15.00.\n" << std::endl;
