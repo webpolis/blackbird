@@ -15,12 +15,13 @@ class Bitcoin {
     std::string exchName;
     double fees;
     bool hasShort;
+    bool isImplemented;
     double bid;
     double ask;
     double volume;
      
   public:
-    Bitcoin(unsigned id, std::string n, double f, bool h);
+    Bitcoin(unsigned id, std::string n, double f, bool h, bool m);
     void updateData(double b, double a, double v);
 
     unsigned getId() const;
@@ -30,6 +31,7 @@ class Bitcoin {
     std::string getExchName() const;
     double getFees() const;
     bool getHasShort() const;
+    bool getIsImplemented() const;
  };
 
 #endif

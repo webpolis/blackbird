@@ -1,6 +1,6 @@
 {
-  "SpreadEntry": 0.0030,
-  "SpreadExit": -0.0040,
+  "SpreadEntry": 0.0020,
+  "SpreadExit": -0.0020,
   "MaxLength": 5184000, 
   "GapSec": 5,
 
@@ -18,21 +18,26 @@
   "SmtpServerAddress": "smtp.example.com:587",
   "ReceiverAddress": "mark@example.com",
   
-  "BitfinexApiHead": "X-BFX-APIKEY:XXXXXXXX",
-  "BitfinexKey": "XXXXXXXX",
+  "BitfinexApiHead": "",
+  "BitfinexKey": "",
   "BitfinexFees": 0.0020,
   "BitfinexCanShort": true,
 
-  "OkCoinApiKey": "XXXXXXXX",
-  "OkCoinSecretKey": "XXXXXXXX",
+  "OkCoinApiKey": "",
+  "OkCoinSecretKey": "",
   "OkCoinFees": 0.0020,
   "OkCoinCanShort": false,
 
-  "BitstampClientId": "XXXXXXXX",
-  "BitstampApiKey": "XXXXXXXX",
-  "BitstampSecretKey": "XXXXXXXX",
+  "BitstampClientId": "",
+  "BitstampApiKey": "",
+  "BitstampSecretKey": "",
   "BitstampFees": 0.0025,
   "BitstampCanShort": false,
+
+  "GeminiApiKey": "",
+  "GeminiSecretKey": "",
+  "GeminiFees": 0.0025,
+  "GeminiCanShort": false,
 
   "KrakenApiKey": "",
   "KrakenSecretKey": "",

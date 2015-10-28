@@ -12,6 +12,7 @@ json_t* getJsonFromUrl(CURL* curl, std::string url, std::string postFields) {
   curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
   // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
   curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
+  curl_easy_setopt(curl, CURLOPT_TIMEOUT, 20L);
   if (!postFields.empty()) {
     curl_easy_setopt(curl, CURLOPT_POSTFIELDS, postFields.c_str());
   }

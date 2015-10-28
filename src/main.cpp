@@ -18,6 +18,7 @@
 #include "bitfinex.h"
 #include "okcoin.h"
 #include "bitstamp.h"
+#include "gemini.h"
 #include "kraken.h"
 #include "itbit.h"
 #include "send_email.h"
@@ -46,19 +47,20 @@ int main(int argc, char **argv) {
   bool useFullCash = json_boolean_value(json_object_get(root, "UseFullCash"));
   double untouchedCash = json_real_value(json_object_get(root, "UntouchedCash"));
   double cashForTesting = json_real_value(json_object_get(root, "CashForTesting"));
-  double volPriceDelta = 0.30;
+  double volPriceDelta = 10.0; // 0.30;
 
   if (!useFullCash && cashForTesting < 15.0) {
     std::cout << "ERROR: Minimum test cash is $15.00.\n" << std::endl;
-    return -1;
+      return -1;
   }
 
-  getQuoteType getQuote[] = {Bitfinex::getQuote, OkCoin::getQuote, Bitstamp::getQuote, Kraken::getQuote, ItBit::getQuote};
-  getAvailType getAvail[] = {Bitfinex::getAvail, OkCoin::getAvail, Bitstamp::getAvail, Kraken::getAvail, ItBit::getAvail};
-  sendOrderType sendOrder[] = {Bitfinex::sendOrder, OkCoin::sendOrder, Bitstamp::sendOrder};
-  isOrderCompleteType isOrderComplete[] = {Bitfinex::isOrderComplete, OkCoin::isOrderComplete, Bitstamp::isOrderComplete};
-  getActivePosType getActivePos[] = {Bitfinex::getActivePos, OkCoin::getActivePos, Bitstamp::getActivePos, Kraken::getActivePos, ItBit::getActivePos};
-  getLimitPriceType getLimitPrice[] = {Bitfinex::getLimitPrice, OkCoin::getLimitPrice, Bitstamp::getLimitPrice, Kraken::getLimitPrice, ItBit::getLimitPrice};
+  // function arrays
+  getQuoteType getQuote[10];
+  getAvailType getAvail[10];
+  sendOrderType sendOrder[10];
+  isOrderCompleteType isOrderComplete[10];
+  getActivePosType getActivePos[10];
+  getLimitPriceType getLimitPrice[10];
 
   // thousand separator
   std::locale mylocale("");
@@ -68,11 +70,74 @@ int main(int argc, char **argv) {
   std::cout << std::fixed;
   // create a parameters structure
   Parameters params(root);
-  params.addExchange("Bitfinex", json_real_value(json_object_get(root, "BitfinexFees")), json_boolean_value(json_object_get(root, "BitfinexCanShort")));
-  params.addExchange("OKCoin", json_real_value(json_object_get(root, "OkCoinFees")), json_boolean_value(json_object_get(root, "OkCoinCanShort")));
-  params.addExchange("Bitstamp", json_real_value(json_object_get(root, "BitstampFees")), json_boolean_value(json_object_get(root, "BitstampCanShort")));
-  params.addExchange("Kraken", json_real_value(json_object_get(root, "KrakenFees")), json_boolean_value(json_object_get(root, "KrakenCanShort")));
-  params.addExchange("ItBit", json_real_value(json_object_get(root, "ItBitFees")), json_boolean_value(json_object_get(root, "ItBitCanShort")));
+  int index = 0;
+  std::string tmp;
+  tmp = json_string_value(json_object_get(root, "BitfinexApiHead"));
+  if (tmp.empty() == false) {
+    params.addExchange("Bitfinex", json_real_value(json_object_get(root, "BitfinexFees")), json_boolean_value(json_object_get(root, "BitfinexCanShort")), true);
+    getQuote[index] = Bitfinex::getQuote;
+    getAvail[index] = Bitfinex::getAvail;
+    sendOrder[index] = Bitfinex::sendOrder;
+    isOrderComplete[index] = Bitfinex::isOrderComplete;
+    getActivePos[index] = Bitfinex::getActivePos;
+    getLimitPrice[index] = Bitfinex::getLimitPrice;  
+    index++;
+  }
+  tmp = json_string_value(json_object_get(root, "OkCoinApiKey"));
+  if (tmp.empty() == false) {
+    params.addExchange("OKCoin", json_real_value(json_object_get(root, "OkCoinFees")), json_boolean_value(json_object_get(root, "OkCoinCanShort")), true);
+    getQuote[index] = OkCoin::getQuote;
+    getAvail[index] = OkCoin::getAvail;
+    sendOrder[index] = OkCoin::sendOrder;
+    isOrderComplete[index] = OkCoin::isOrderComplete;
+    getActivePos[index] = OkCoin::getActivePos;
+    getLimitPrice[index] = OkCoin::getLimitPrice;  
+    index++;
+  }
+  tmp = json_string_value(json_object_get(root, "BitstampClientId"));
+  if (tmp.empty() == false) {
+    params.addExchange("Bitstamp", json_real_value(json_object_get(root, "BitstampFees")), json_boolean_value(json_object_get(root, "BitstampCanShort")), true);
+    getQuote[index] = Bitstamp::getQuote;
+    getAvail[index] = Bitstamp::getAvail;
+    sendOrder[index] = Bitstamp::sendOrder;
+    isOrderComplete[index] = Bitstamp::isOrderComplete;
+    getActivePos[index] = Bitstamp::getActivePos;
+    getLimitPrice[index] = Bitstamp::getLimitPrice;  
+    index++;
+  }
+  tmp = json_string_value(json_object_get(root, "GeminiApiKey")); 
+  if (tmp.empty() == false) {
+    params.addExchange("Gemini", json_real_value(json_object_get(root, "GeminiFees")), json_boolean_value(json_object_get(root, "GeminiCanShort")), true);
+    getQuote[index] = Gemini::getQuote;
+    getAvail[index] = Gemini::getAvail;
+    sendOrder[index] = Gemini::sendOrder;
+    isOrderComplete[index] = Gemini::isOrderComplete;
+    getActivePos[index] = Gemini::getActivePos;
+    getLimitPrice[index] = Gemini::getLimitPrice;  
+    index++;
+  }
+  tmp = json_string_value(json_object_get(root, "KrakenApiKey")); 
+  if (tmp.empty() == false) {
+    params.addExchange("Kraken", json_real_value(json_object_get(root, "KrakenFees")), json_boolean_value(json_object_get(root, "KrakenCanShort")), false);
+    getQuote[index] = Kraken::getQuote;
+    getAvail[index] = Kraken::getAvail;
+    // sendOrder[index] = Kraken::sendOrder;
+    // isOrderComplete[index] = Kraken::isOrderComplete;
+    getActivePos[index] = Kraken::getActivePos;
+    getLimitPrice[index] = Kraken::getLimitPrice;  
+    index++;
+  }
+  tmp = json_string_value(json_object_get(root, "ItBitApiKey"));
+  if (tmp.empty() == false) {
+    params.addExchange("ItBit", json_real_value(json_object_get(root, "ItBitFees")), json_boolean_value(json_object_get(root, "ItBitCanShort")), false);
+    getQuote[index] = ItBit::getQuote;
+    getAvail[index] = ItBit::getAvail;
+    // sendOrder[index] = ItBit::sendOrder;
+    // isOrderComplete[index] = ItBit::isOrderComplete;
+    getActivePos[index] = ItBit::getActivePos;
+    getLimitPrice[index] = ItBit::getLimitPrice;  
+    index++;
+  }
   // CSV file
   std::string csvFileName;
   csvFileName = "result_" + printDateTimeFileName() + ".csv";
@@ -85,7 +150,7 @@ int main(int argc, char **argv) {
   int num_exchange = params.nbExch();
   // create Bitcoin objects
   for (int i = 0; i < num_exchange; ++i) {
-    btcVec.push_back(new Bitcoin(i, params.exchName[i], params.fees[i], params.hasShort[i]));
+    btcVec.push_back(new Bitcoin(i, params.exchName[i], params.fees[i], params.hasShort[i], params.isImplemented[i]));
   }
   CURL* curl;
   curl_global_init(CURL_GLOBAL_ALL);
@@ -217,6 +282,8 @@ int main(int argc, char **argv) {
               double limPriceShort = getLimitPrice[res.idExchShort](curl, volumeShort, true);
               if (limPriceLong - res.priceLongIn > volPriceDelta || res.priceShortIn - limPriceShort > volPriceDelta) {
                 std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
+                std::cout << "            Target long price:  " << res.priceLongIn << ", Real long price:  " << limPriceLong << std::endl;
+                std::cout << "            Target short price: " << res.priceShortIn << ", Real short price: " << limPriceShort << std::endl; 
                 break;
               }
               inMarket = true;
@@ -267,8 +334,10 @@ int main(int argc, char **argv) {
         double limPriceLong = getLimitPrice[res.idExchLong](curl, volumeLong, true);
         double limPriceShort = getLimitPrice[res.idExchShort](curl, volumeShort, false);
 
-        if (res.priceLongOut - limPriceLong > 0.30 || limPriceShort - res.priceShortOut > 0.30) {
+        if (res.priceLongOut - limPriceLong > volPriceDelta || limPriceShort - res.priceShortOut > volPriceDelta) {
           std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
+          std::cout << "            Target long price:  " << res.priceLongOut << ", Real long price:  " << limPriceLong << std::endl;
+          std::cout << "            Target short price: " << res.priceShortOut << ", Real short price: " << limPriceShort << std::endl; 
         }
         else {
           res.exitTime = currTime;

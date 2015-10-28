@@ -14,6 +14,7 @@ struct Parameters {
   std::vector<std::string> exchName;
   std::vector<double> fees;
   std::vector<bool> hasShort;
+  std::vector<bool> isImplemented;
   std::vector<std::string> tickerUrl;
     
   // strategy parameters
@@ -32,6 +33,8 @@ struct Parameters {
   const char *bitstampClientId;
   const char *bitstampApi;
   const char *bitstampSecret;
+  const char *geminiApi;
+  const char *geminiSecret;
 
   // email
   bool sendEmail;
@@ -45,7 +48,7 @@ struct Parameters {
   Parameters(json_t *root);
 
   // adds a new exchange
-  void addExchange(std::string n, double f, bool h);
+  void addExchange(std::string n, double f, bool h, bool m);
 
   // returns the number of exchange analyzed
   int nbExch() const;  

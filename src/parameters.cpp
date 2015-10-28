@@ -19,6 +19,8 @@ Parameters::Parameters(json_t *root) {
   bitstampClientId = json_string_value(json_object_get(root, "BitstampClientId"));
   bitstampApi = json_string_value(json_object_get(root, "BitstampApiKey"));
   bitstampSecret = json_string_value(json_object_get(root, "BitstampSecretKey"));
+  geminiApi = json_string_value(json_object_get(root, "GeminiApiKey"));
+  geminiSecret = json_string_value(json_object_get(root, "GeminiSecretKey"));
 
   // email
   sendEmail = json_boolean_value(json_object_get(root, "SendEmail"));
@@ -31,10 +33,11 @@ Parameters::Parameters(json_t *root) {
 
 
 // add an exchange
-void Parameters::addExchange(std::string n, double f, bool h) {
+void Parameters::addExchange(std::string n, double f, bool h, bool m) {
   exchName.push_back(n);
   fees.push_back(f);
   hasShort.push_back(h);
+  isImplemented.push_back(m);
 }
 
 

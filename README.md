@@ -52,22 +52,18 @@ Please make sure you understand the disclaimer above if you are going to test th
 
 #### Credentials
 
-As of today you need to have accounts on Bitfinex, OKCoin and Bitstamp. Then with each account you need to create API authentication keys. This is usually in the _Settings_ section of your exchange accounts. In v0.0.3 the bid/ask information of Kraken and ItBit are displayed but the functions to send orders haven't been implemented yet.
+As of today the exchanges fully implemented are Bitfinex, OkCoin, Bitstamp and Gemini. You need to create accounts for every exchange that you want to include in your arbitrage. Then with each account you need to create API authentication keys. This is usually in the _Settings_ section of your exchange accounts. Note that as of today the bid/ask information of Kraken and ItBit is displayed but the functions to send orders haven't been implemented yet.
 
 The file that contains all the parameters is _config.json_. __Never__ share this file as it will contain your exchange credentials!
 
-First add your credentials to _config.json_:
+Add your credentials to the file. If you don't have an account for an exchange just leave it blank.
 
 ```json
 "BitfinexApiKey"
 "BitfinexSecretKey"
 "OKCoinApiKey"
 "OKCoinSecretKey"
-"BitstampClientId"
-"BitstampApiKey"
-"BitstampSecretKey"
 ```
-
 
 #### Strategy parameters
 
@@ -157,7 +153,15 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
  * General performance and stability improvements (merge from _julianmi:performance_improvements_)
  * ItBit exchange added (bid/ask information only, other functions to be implemented)
- * Other minor fixes and improvements
+ * Minor fixes and improvements
+
+##### October 2015
+
+ * <a href="https://gemini.com" target="_blank">Gemini</a> exchange added and fully implemented
+ * No need to have accounts on all the exchanges anymore
+ * Bug <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> (nonce too small) fixed
+ * Bug <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> (process hangs) fixed
+ * Minor fixes and improvements
 
 
 ### Links

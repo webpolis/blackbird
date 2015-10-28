@@ -40,28 +40,29 @@ bool checkEntry(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters par
     }
     if (params.verbose) {
       std::cout << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadIn);
-      std::cout << " [target " << percToStr(limit) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]" << std::endl;
+      std::cout << " [target " << percToStr(limit) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
+      if (btcLong->getIsImplemented() == false || btcShort->getIsImplemented() == false) {
+        std::cout << "   (info only)"  << std::endl;
+      } else {
+        std::cout << std::endl;
+      }
     }
-    // TODO Kraken (id 3) and ItBit (id 4) are not ready to be traded on
+    // TODO Gemini, Kraken, ItBit are not ready to be traded on
     if (res.spreadIn >= limit) {
-      if (longId != 3) {
-        if (longId != 4) {
-          if (shortId != 3) {
-            if (shortId != 4) {
-              if (priceLong > 0.0) {
-                if (priceShort > 0.0) {
-                  // opportunity found
-                  res.idExchLong = longId;
-                  res.idExchShort = shortId;
-                  res.feesLong = btcLong->getFees();
-                  res.feesShort = btcShort->getFees();
-                  res.exchNameLong = btcLong->getExchName();
-                  res.exchNameShort = btcShort->getExchName();
-                  res.priceLongIn = priceLong;
-                  res.priceShortIn = priceShort;
-                  return true;
-                }
-              }
+      if (btcLong->getIsImplemented() == true) {
+        if (btcShort->getIsImplemented() == true) {
+          if (priceLong > 0.0) {
+            if (priceShort > 0.0) {
+              // opportunity found
+              res.idExchLong = longId;
+              res.idExchShort = shortId;
+              res.feesLong = btcLong->getFees();
+              res.feesShort = btcShort->getFees();
+              res.exchNameLong = btcLong->getExchName();
+              res.exchNameShort = btcShort->getExchName();
+              res.priceLongIn = priceLong;
+              res.priceShortIn = priceShort;
+              return true;
             }
           }
         }

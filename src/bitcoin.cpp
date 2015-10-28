@@ -1,11 +1,12 @@
 #include "bitcoin.h"
 #include <math.h>
 
-Bitcoin::Bitcoin(unsigned i, std::string n, double f, bool h) {
+Bitcoin::Bitcoin(unsigned i, std::string n, double f, bool h, bool m) {
   id = i;
   exchName = n;
   fees = f;
   hasShort = h;
+  isImplemented = m;
   bid = 0.0;
   ask = 0.0;
   volume = 0;
@@ -43,5 +44,9 @@ double Bitcoin::getFees() const {
 
 bool Bitcoin::getHasShort() const {
   return hasShort;
+}
+
+bool Bitcoin::getIsImplemented() const {
+  return isImplemented;
 }
 
