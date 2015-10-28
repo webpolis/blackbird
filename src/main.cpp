@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 
   if (!useFullCash && cashForTesting < 15.0) {
     std::cout << "ERROR: Minimum test cash is $15.00.\n" << std::endl;
-      return -1;
+    return -1;
   }
 
   // function arrays
