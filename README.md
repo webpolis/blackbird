@@ -82,9 +82,11 @@ For example, if you have:
 "UseFullCash": true,
 "UntouchedCash": 0.01,
 "CashForTesting": 20.00,
+"MaxExposure": 25000.00,
 ```
 
 And let's say you have $1,000 on your Bitfinex trading account and $1,100 on your OKCoin trading account. The system will then use $990 on each exchange (i.e. $1,000 - 1%). So in this example your total exposure will be $1,980. Now if you change `UseFullCash` to `false` then the system will use $20 per exchange (total exposure $40).
+`MaxExposure` defines the maximum exposure on each exchange. In the example above the maximum size of a trade will be $25,000 per exchange.
 
 
 ### E-mail parameters (optional)

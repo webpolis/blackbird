@@ -47,11 +47,25 @@ int main(int argc, char **argv) {
   bool useFullCash = json_boolean_value(json_object_get(root, "UseFullCash"));
   double untouchedCash = json_real_value(json_object_get(root, "UntouchedCash"));
   double cashForTesting = json_real_value(json_object_get(root, "CashForTesting"));
+  double maxExposure = json_real_value(json_object_get(root, "MaxExposure"));
   double volPriceDelta = 0.30;
 
-  if (!useFullCash && cashForTesting < 15.0) {
-    std::cout << "ERROR: Minimum test cash is $15.00.\n" << std::endl;
-    return -1;
+  // thousand separator
+  std::locale mylocale("");
+  std::cout.imbue(mylocale);
+  // print precision of two digits
+  std::cout.precision(2);
+  std::cout << std::fixed;
+  
+  if (!useFullCash) {
+    if (cashForTesting < 15.0) {
+      std::cout << "ERROR: Minimum test cash is $15.00.\n" << std::endl;
+      return -1;
+    }
+    if (cashForTesting > maxExposure) {
+      std::cout << "ERROR: Test cash ($" << cashForTesting << ") is above max exposure ($" << maxExposure << ").\n" << std::endl; 
+      return -1;
+    }
   }
 
   // function arrays
@@ -62,13 +76,7 @@ int main(int argc, char **argv) {
   getActivePosType getActivePos[10];
   getLimitPriceType getLimitPrice[10];
 
-  // thousand separator
-  std::locale mylocale("");
-  std::cout.imbue(mylocale);
-  // print precision of two digits
-  std::cout.precision(2);
-  std::cout << std::fixed;
-  // create a parameters structure
+ // create a parameters structure
   Parameters params(root);
   int index = 0;
   std::string tmp;
@@ -138,6 +146,12 @@ int main(int argc, char **argv) {
     getLimitPrice[index] = ItBit::getLimitPrice;  
     index++;
   }
+
+  if (index < 2) {
+    std::cout << "ERROR: Blackbird needs at least two Bitcoin exchanges. Please edit the config.json file to add new exchanges.\n" << std::endl;
+    return -1;
+  } 
+
   // CSV file
   std::string csvFileName;
   csvFileName = "result_" + printDateTimeFileName() + ".csv";
@@ -273,6 +287,11 @@ int main(int argc, char **argv) {
               }
               if (useFullCash) {
                 res.exposure -= untouchedCash * res.exposure;  // leave untouchedCash
+                if (res.exposure > maxExposure) {
+                  std::cout << "   WARNING: Opportunity found but exposure ($" << res.exposure << ") above the limit." << std::endl;
+                  std::cout << "            Max exposure will be used instead ($" << maxExposure << ")." << std::endl;  
+                  res.exposure = maxExposure;
+                }
               } else {
                 res.exposure = cashForTesting;  // use test money
               }

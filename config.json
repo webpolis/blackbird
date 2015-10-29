@@ -7,6 +7,7 @@
   "UseFullCash": false,
   "UntouchedCash": 0.01, 
   "CashForTesting": 25.00,
+  "MaxExposure": 25000.00,
   
   "DebugMaxIteration": 3200000,
   "Verbose": true,
