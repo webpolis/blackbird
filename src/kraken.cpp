@@ -38,7 +38,7 @@ double getActivePos(CURL *curl, Parameters params) {
   return 0.0;
 }
 
-double getLimitPrice(CURL *curl, double volume, bool isBid) {
+double getLimitPrice(CURL *curl, Parameters params, double volume, bool isBid) {
   // TODO
   return 0.0;
 }

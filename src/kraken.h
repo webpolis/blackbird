@@ -17,7 +17,7 @@ namespace Kraken {
   double getActivePos(CURL *curl, Parameters params);
 
   // get the limit price according to the requested volume
-  double getLimitPrice(CURL *curl, double volume, bool isBid);
+  double getLimitPrice(CURL *curl, Parameters params, double volume, bool isBid);
 
 }
 #endif

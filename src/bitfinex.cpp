@@ -58,10 +58,10 @@ double getAvail(CURL *curl, Parameters params, std::string currency) {
 int sendOrder(CURL *curl, Parameters params, std::string direction, double quantity, double price) {
   double limPrice;  // define limit price to be sure to be executed
   if (direction.compare("buy") == 0) {
-    limPrice = getLimitPrice(curl, quantity, false);
+    limPrice = getLimitPrice(curl, params, quantity, false);
   }
   else if (direction.compare("sell") == 0) {
-    limPrice = getLimitPrice(curl, quantity, true);
+    limPrice = getLimitPrice(curl, params, quantity, true);
   }
 
   std::cout << "<Bitfinex> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << limPrice << "..." << std::endl;
@@ -109,7 +109,7 @@ double getActivePos(CURL *curl, Parameters params) {
 }
 
 
-double getLimitPrice(CURL *curl, double volume, bool isBid) {
+double getLimitPrice(CURL *curl, Parameters params, double volume, bool isBid) {
   json_t *root;
   if (isBid) {
     root = json_object_get(getJsonFromUrl(curl, "https://api.bitfinex.com/v1/book/btcusd", ""), "bids");
@@ -124,8 +124,13 @@ double getLimitPrice(CURL *curl, double volume, bool isBid) {
     tmpVol += atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
     i++;
   }
-  // return the second next offer
-  double limPrice = atof(json_string_value(json_object_get(json_array_get(root, i+1), "price")));
+  // return the next offer
+  double limPrice = 0.0;
+  if (params.aggressiveVolume) {
+    limPrice = atof(json_string_value(json_object_get(json_array_get(root, i), "price")));
+  } else {
+    limPrice = atof(json_string_value(json_object_get(json_array_get(root, i+1), "price"))); 
+  }
   json_decref(root);
   return limPrice;
 }

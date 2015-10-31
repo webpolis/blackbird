@@ -21,6 +21,8 @@ struct Parameters {
   double spreadEntry;
   double spreadExit;
   unsigned maxLength;
+  double priceDeltaLim;
+  bool aggressiveVolume;
   
   // verbose or non-verbose mode
   bool verbose;

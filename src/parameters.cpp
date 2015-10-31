@@ -9,6 +9,8 @@ Parameters::Parameters(json_t *root) {
   spreadEntry = json_real_value(json_object_get(root, "SpreadEntry"));
   spreadExit = json_real_value(json_object_get(root, "SpreadExit"));
   maxLength = json_integer_value(json_object_get(root, "MaxLength"));
+  priceDeltaLim = json_real_value(json_object_get(root, "PriceDeltaLimit"));
+  aggressiveVolume = json_boolean_value(json_object_get(root, "AggressiveVolume"));  
   verbose = json_boolean_value(json_object_get(root, "Verbose"));
 
   // exchanges credentials

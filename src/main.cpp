@@ -28,7 +28,7 @@ typedef double (*getAvailType) (CURL *curl, Parameters params, std::string curre
 typedef int (*sendOrderType) (CURL *curl, Parameters params, std::string direction, double quantity, double price);
 typedef bool (*isOrderCompleteType) (CURL *curl, Parameters params, int orderId);
 typedef double (*getActivePosType) (CURL *curl, Parameters params);
-typedef double (*getLimitPriceType) (CURL *curl, double volume, bool isBid);
+typedef double (*getLimitPriceType) (CURL *curl, Parameters params, double volume, bool isBid);
 
 int main(int argc, char **argv) {
   std::cout << "Blackbird Bitcoin Arbitrage" << std::endl;
@@ -48,7 +48,6 @@ int main(int argc, char **argv) {
   double untouchedCash = json_real_value(json_object_get(root, "UntouchedCash"));
   double cashForTesting = json_real_value(json_object_get(root, "CashForTesting"));
   double maxExposure = json_real_value(json_object_get(root, "MaxExposure"));
-  double volPriceDelta = 0.30;
 
   // thousand separator
   std::locale mylocale("");
@@ -56,7 +55,7 @@ int main(int argc, char **argv) {
   // print precision of two digits
   std::cout.precision(2);
   std::cout << std::fixed;
-  
+ 
   if (!useFullCash) {
     if (cashForTesting < 15.0) {
       std::cout << "ERROR: Minimum test cash is $15.00.\n" << std::endl;
@@ -297,9 +296,9 @@ int main(int argc, char **argv) {
               }
               double volumeLong = res.exposure / btcVec[res.idExchLong]->getAsk();
               double volumeShort = res.exposure / btcVec[res.idExchShort]->getBid();
-              double limPriceLong = getLimitPrice[res.idExchLong](curl, volumeLong, false);
-              double limPriceShort = getLimitPrice[res.idExchShort](curl, volumeShort, true);
-              if (limPriceLong - res.priceLongIn > volPriceDelta || res.priceShortIn - limPriceShort > volPriceDelta) {
+              double limPriceLong = getLimitPrice[res.idExchLong](curl, params, volumeLong, false);
+              double limPriceShort = getLimitPrice[res.idExchShort](curl, params, volumeShort, true);
+              if (limPriceLong - res.priceLongIn > params.priceDeltaLim || res.priceShortIn - limPriceShort > params.priceDeltaLim) {
                 std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
                 std::cout << "            Target long price:  " << res.priceLongIn << ", Real long price:  " << limPriceLong << std::endl;
                 std::cout << "            Target short price: " << res.priceShortIn << ", Real short price: " << limPriceShort << std::endl; 
@@ -350,10 +349,10 @@ int main(int argc, char **argv) {
         }
         double volumeLong = btcUsed[res.idExchLong];
         double volumeShort = btcUsed[res.idExchShort];
-        double limPriceLong = getLimitPrice[res.idExchLong](curl, volumeLong, true);
-        double limPriceShort = getLimitPrice[res.idExchShort](curl, volumeShort, false);
+        double limPriceLong = getLimitPrice[res.idExchLong](curl, params, volumeLong, true);
+        double limPriceShort = getLimitPrice[res.idExchShort](curl, params, volumeShort, false);
 
-        if (res.priceLongOut - limPriceLong > volPriceDelta || limPriceShort - res.priceShortOut > volPriceDelta) {
+        if (res.priceLongOut - limPriceLong > params.priceDeltaLim || limPriceShort - res.priceShortOut > params.priceDeltaLim) {
           std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
           std::cout << "            Target long price:  " << res.priceLongOut << ", Real long price:  " << limPriceLong << std::endl;
           std::cout << "            Target short price: " << res.priceShortOut << ", Real short price: " << limPriceShort << std::endl; 

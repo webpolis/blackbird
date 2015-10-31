@@ -23,7 +23,7 @@ bool isOrderComplete(CURL *curl, Parameters params, int orderId);
 double getActivePos(CURL *curl, Parameters params);
 
 // get the limit price according to the requested volume
-double getLimitPrice(CURL *curl, double volume, bool isBid);
+double getLimitPrice(CURL *curl, Parameters params, double volume, bool isBid);
 
 // send a request to the exchange and return a json object
 json_t* authRequest(CURL *curl, std::string url, std::string signature, std::string content);

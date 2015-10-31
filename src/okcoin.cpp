@@ -58,10 +58,10 @@ int sendOrder(CURL *curl, Parameters params, std::string direction, double quant
   // define limit price to be sure to be executed
   double limPrice;
   if (direction.compare("buy") == 0) {
-    limPrice = getLimitPrice(curl, quantity, false);
+    limPrice = getLimitPrice(curl, params, quantity, false);
   }
   else if (direction.compare("sell") == 0) {
-    limPrice = getLimitPrice(curl, quantity, true);
+    limPrice = getLimitPrice(curl, params, quantity, true);
   }
 
   // signature
@@ -117,26 +117,29 @@ double getActivePos(CURL *curl, Parameters params) {
 }
 
 
-double getLimitPrice(CURL *curl, double volume, bool isBid) {
+double getLimitPrice(CURL *curl, Parameters params, double volume, bool isBid) {
   json_t *root;
-  double limPrice;
+  double limPrice = 0.0;
   if (isBid) {
     root = json_object_get(getJsonFromUrl(curl, "https://www.okcoin.com/api/v1/depth.do", ""), "bids");
     // loop on volume
-    double tmpVol = 0;
+    double tmpVol = 0.0;
     size_t i = 0;
     while (tmpVol < volume) {
       // volumes are added up until the requested volume is reached
       tmpVol += json_real_value(json_array_get(json_array_get(root, i), 1));
       i++;
     }
-    // return the second next offer
-    limPrice = json_real_value(json_array_get(json_array_get(root, i+1), 0));
-
- } else {
+    // return the next offer
+    if (params.aggressiveVolume) {
+      limPrice = json_real_value(json_array_get(json_array_get(root, i), 0));
+    } else {
+      limPrice = json_real_value(json_array_get(json_array_get(root, i+1), 0));
+    }
+  } else {
     root = json_object_get(getJsonFromUrl(curl, "https://www.okcoin.com/api/v1/depth.do", ""), "asks");
     // loop on volume
-    double tmpVol = 0;
+    double tmpVol = 0.0;
     size_t i = json_array_size(root) - 1;
     while (tmpVol < volume) {
       // volumes are added up until the requested volume is reached
@@ -144,7 +147,11 @@ double getLimitPrice(CURL *curl, double volume, bool isBid) {
       i--;
     }
     // return the next offer
-    limPrice = json_real_value(json_array_get(json_array_get(root, i), 0));
+    if (params.aggressiveVolume) {
+      limPrice = json_real_value(json_array_get(json_array_get(root, i), 0));
+    } else {
+      limPrice = json_real_value(json_array_get(json_array_get(root, i+1), 0));
+    } 
   }
   json_decref(root);
   return limPrice;
