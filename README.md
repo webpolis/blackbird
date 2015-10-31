@@ -50,11 +50,15 @@ It is possible to properly stop Blackbird after the next trade has closed. While
 
 #### Note
 
-Please make sure that you understand the disclaimer above if you want to test Blackbird with real money. You can start by testing with a limited amount of money, like $25 per exchange. Note that it is never entirely safe to just tell Blackbird to use only $25 per exchange (parameter `CashForTesting`). You also need to only have $25 available on each of your trading accounts. In this case you are sure than even if a bug with `CashForTesting` exists your maximum loss on an exchange won't be greater than $25 no matter what.
+Please make sure that you understand the disclaimer above if you want to test Blackbird with real money. You can start by testing with a limited amount of money, like $25 per exchange.
+
+Note that it is never entirely safe to just tell Blackbird to use only $25 per exchange (parameter `CashForTesting`). You also need to only have $25 available on each of your trading accounts. In this case you are sure than even if a bug with `CashForTesting` exists your maximum loss on an exchange won't be greater than $25 no matter what.
 
 #### Credentials
 
-As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_ and _Gemini_. For each of your exchange accounts you need to create API authentication keys. This is usually done in the _Settings_ section of your accounts. Then you need to add your keys in the file _config.json_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. But you need at least two exchanges and as of today one of them has to be Bitfinex.
+As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_ and _Gemini_. For each of your exchange accounts you need to create API authentication keys. This is usually done in the _Settings_ section of your accounts.
+
+Then you need to add your keys in the file _config.json_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. But you need at least two exchanges and as of today one of them has to be Bitfinex.
 
 #### Strategy parameters
 
@@ -77,17 +81,20 @@ For example, if you have:
 ```
 
 And let's say you have $1,000 on your Bitfinex trading account and $1,100 on your OKCoin trading account. Blackbird will then use $990 on each exchange (i.e. $1,000 - 1%) so your total exposure will be $1,980. Now if you change `UseFullCash` to `false` then Blackbird will use $25 per exchange (total exposure $50).
+
 `MaxExposure` defines the maximum cash exposure on each exchange. In the example above the maximum size of a trade will be $25,000 per exchange.
 
 
 ### E-mail parameters (optional)
 
 Blackbird can send you an automatic e-mail every time an arbitrage trade is completed. The e-mail contains information like the names of the traded exchanges and the trade performance.
+
 This feature is optional. If you let the parameter `SendEmail` to `false` then you don't need to fill the other e-mail parameters.
 
 #### Run the software
 
 You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a> v2.7, <a href="http://curl.haxx.se" target="_blank">cURL</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>.
+
 __Note:__ you need Jansson version __2.7__ minimum otherwise you will get the following compilation error: `'json_boolean_value' was not declared in this scope`.
 
 For instance on Ubuntu you need to install the following libaries:
