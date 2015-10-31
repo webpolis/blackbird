@@ -8,7 +8,9 @@ Blackbird Bitcoin Arbitrage is a C++ trading system that does automatic long/sho
 ### How It Works
 Bitcoin is still a new and inefficient market. Several Bitcoin exchanges exist around the world and the proposed prices (_bid_ and _ask_) can be briefly different from an exchange to another. The purpose of Blackbird is to automatically exploit these temporary price differences. 
 
-Here is an example with real data. Blackbird analyzes the bid/ask information from two Bitcoin exchanges, Bitfinex and Bitstamp, every few seconds. At some point the spread between Bitfinex and Bitstamp prices is higher than an `ENTRY` threshold (first vertical line): an arbitrage opportunity exists and Blackbird buys Bitstamp and short sells Bitfinex. Then about 4.5 hours later the spread decreases below an `EXIT` threshold (second vertical line) so Blackbird exits the market by selling Bitstamp and buying Bitfinex back.
+Here is an example with real data. Blackbird analyzes the bid/ask information from two Bitcoin exchanges, Bitfinex and Bitstamp, every few seconds. At some point the spread between Bitfinex and Bitstamp prices is higher than an `ENTRY` threshold (first vertical line): an arbitrage opportunity exists and Blackbird buys Bitstamp and short sells Bitfinex.
+
+Then, about 4.5 hours later the spread decreases below an `EXIT` threshold (second vertical line) so Blackbird exits the market by selling Bitstamp and buying Bitfinex back.
 
 <p align="center">
 <img src="https://cloud.githubusercontent.com/assets/11370278/6548498/64764de6-c5d1-11e4-855b-c2eebb3b782b.png"  width="70%" alt="Spread Example">
@@ -58,7 +60,7 @@ Note that it is never entirely safe to just tell Blackbird to use only $25 per e
 
 As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_ and _Gemini_. For each of your exchange accounts you need to create API authentication keys. This is usually done in the _Settings_ section of your accounts.
 
-Then you need to add your keys in the file _config.json_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. But you need at least two exchanges and as of today one of them has to be Bitfinex.
+Then, you need to add your keys in the file _config.json_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. But you need at least two exchanges and as of today one of them has to be Bitfinex.
 
 #### Strategy parameters
 
@@ -95,7 +97,7 @@ This feature is optional. If you let the parameter `SendEmail` to `false` then y
 
 You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a> v2.7, <a href="http://curl.haxx.se" target="_blank">cURL</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>.
 
-__Note:__ you need Jansson version __2.7__ minimum otherwise you will get the following compilation error: `'json_boolean_value' was not declared in this scope`.
+Note: you need Jansson version __2.7__ minimum otherwise you will get the following compilation error: `'json_boolean_value' was not declared in this scope`.
 
 For instance on Ubuntu you need to install the following libaries:
 ```
