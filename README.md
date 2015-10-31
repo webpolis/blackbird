@@ -162,7 +162,7 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
 ### License
 
-MIT
+* <a href="https://en.wikipedia.org/wiki/MIT_License" target="_blank">MIT</a>
 
 ### Contact
 
