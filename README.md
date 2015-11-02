@@ -166,8 +166,8 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
 ### Contact
 
-* If you found a bug, please open a new <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the tag _bug_
-* If you have a general question or have troubles running Blackbird, you can open a new  <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the tag _question_ or _help wanted_
+* If you found a bug, please open a new <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _bug_
+* If you have a general question or have troubles running Blackbird, you can open a new  <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _question_ or _help wanted_
 * For anything else you can directly contact me by email: julien.hamilton@gmail.com
 
 ### Console Output Example
