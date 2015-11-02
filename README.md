@@ -95,9 +95,9 @@ This feature is optional. If you let the parameter `SendEmail` to `false` then y
 
 #### Run the software
 
-You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a> v2.7, <a href="http://curl.haxx.se" target="_blank">cURL</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>.
+You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson v2.7</a>, <a href="http://curl.haxx.se" target="_blank">cURL</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>.
 
-Note: you need Jansson version __2.7__ minimum otherwise you will get the following compilation error: `'json_boolean_value' was not declared in this scope`.
+Note: you need Jansson version __2.7__ minimum otherwise you will get the following compilation error: `'json_boolean_value' was not declared in this scope`
 
 For instance on Ubuntu you need to install the following libaries:
 ```
@@ -166,7 +166,9 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
 ### Contact
 
-* Julien Hamilton: julien.hamilton@gmail.com
+* If you found a bug, please open a new <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the tag _bug_
+* If you have a general question or have troubles running Blackbird, you can open a new  <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the tag _question_ or _help wanted_
+* For anything else you can directly contact me by email: julien.hamilton@gmail.com
 
 ### Console Output Example
 
