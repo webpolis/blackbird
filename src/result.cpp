@@ -86,6 +86,7 @@ void Result::clear() {
     for (int j = 0; j < 8; j++) {
       minSpread[i][j] = 1.0;
       maxSpread[i][j] = -1.0;
+      trailing[i][j] = -1.0;
     }
   }
 

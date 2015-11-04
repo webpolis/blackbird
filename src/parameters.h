@@ -23,6 +23,7 @@ struct Parameters {
   unsigned maxLength;
   double priceDeltaLim;
   bool aggressiveVolume;
+  double trailingLim;
   
   // verbose or non-verbose mode
   bool verbose;

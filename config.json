@@ -10,16 +10,17 @@
   "MaxExposure": 25000.00,
   "PriceDeltaLimit": 0.30,
   "AggressiveVolume": false,
+  "TrailingSpreadLim": 0.0010,
 
   "DebugMaxIteration": 3200000,
   "Verbose": true,
   
   "SendEmail": false,
-  "SenderAddress": "john@example.com",
-  "SenderUsername": "john",
-  "SenderPassword": "pa33w0rd",
-  "SmtpServerAddress": "smtp.example.com:587",
-  "ReceiverAddress": "mark@example.com",
+  "SenderAddress": "",
+  "SenderUsername": "",
+  "SenderPassword": "",
+  "SmtpServerAddress": "",
+  "ReceiverAddress": "",
   
   "BitfinexApiHead": "",
   "BitfinexKey": "",

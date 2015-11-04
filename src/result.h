@@ -28,6 +28,8 @@ struct Result {
 
   double minSpread[8][8]; // FIXME size
   double maxSpread[8][8]; // FIXME size
+ 
+  double trailing[8][8];  // FIXME size
 
   double befBalUsd;
   double aftBalUsd;

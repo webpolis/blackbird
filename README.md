@@ -56,6 +56,8 @@ Please make sure that you understand the disclaimer above if you want to test Bl
 
 Note that it is never entirely safe to just tell Blackbird to use only $25 per exchange (parameter `CashForTesting`). You also need to only have $25 available on each of your trading accounts. In this case you are sure than even if a bug with `CashForTesting` exists your maximum loss on an exchange won't be greater than $25 no matter what.
 
+Before starting Blackbird make sure that you are 100% USD and 0% BTC on each of your exchanges.
+
 #### Credentials
 
 As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_ and _Gemini_. For each of your exchange accounts you need to create API authentication keys. This is usually done in the _Settings_ section of your accounts.
@@ -155,6 +157,10 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
  * Bug <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> (_nonce too small_) fixed
  * Bug <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> (_process hangs_) fixed
  * Minor fixes and improvements
+
+##### November 2015
+
+* Trailing spread implemented
 
 ### Links
 

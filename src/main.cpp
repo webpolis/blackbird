@@ -57,9 +57,8 @@ int main(int argc, char **argv) {
   std::cout << std::fixed;
  
   if (!useFullCash) {
-    if (cashForTesting < 15.0) {
-      std::cout << "ERROR: Minimum test cash is $15.00.\n" << std::endl;
-      return -1;
+    if (cashForTesting < 10.0) {
+      std::cout << "WARNING: Minimum test cash recommended: $10.00.\n" << std::endl;
     }
     if (cashForTesting > maxExposure) {
       std::cout << "ERROR: Test cash ($" << cashForTesting << ") is above max exposure ($" << maxExposure << ").\n" << std::endl; 
@@ -245,8 +244,7 @@ int main(int argc, char **argv) {
     if (params.verbose) {
       if (!inMarket) {
         std::cout << "[ " << printDateTime(currTime) << " ]" << std::endl;
-      }
-      else {
+      } else {
         std::cout << "[ " << printDateTime(currTime) << " IN MARKET: Long " << res.exchNameLong << " / Short " << res.exchNameShort << " ]" << std::endl;
       }
     }
@@ -301,7 +299,8 @@ int main(int argc, char **argv) {
               if (limPriceLong - res.priceLongIn > params.priceDeltaLim || res.priceShortIn - limPriceShort > params.priceDeltaLim) {
                 std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
                 std::cout << "            Target long price:  " << res.priceLongIn << ", Real long price:  " << limPriceLong << std::endl;
-                std::cout << "            Target short price: " << res.priceShortIn << ", Real short price: " << limPriceShort << std::endl; 
+                std::cout << "            Target short price: " << res.priceShortIn << ", Real short price: " << limPriceShort << std::endl;
+                res.trailing[res.idExchLong][res.idExchShort] = -1.0; 
                 break;
               }
               inMarket = true;
@@ -312,6 +311,7 @@ int main(int argc, char **argv) {
               res.printEntry();
               res.maxSpread[res.idExchLong][res.idExchShort] = -1.0;
               res.minSpread[res.idExchLong][res.idExchShort] = 1.0;
+              res.trailing[res.idExchLong][res.idExchShort] = 1.0;
               int longOrderId = 0;
               int shortOrderId = 0;
               // send orders
@@ -356,8 +356,8 @@ int main(int argc, char **argv) {
           std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
           std::cout << "            Target long price:  " << res.priceLongOut << ", Real long price:  " << limPriceLong << std::endl;
           std::cout << "            Target short price: " << res.priceShortOut << ", Real short price: " << limPriceShort << std::endl; 
-        }
-        else {
+          res.trailing[res.idExchLong][res.idExchShort] = 1.0;
+        } else {
           res.exitTime = currTime;
           res.printExit();
           int longOrderId = 0;

@@ -11,6 +11,8 @@ Parameters::Parameters(json_t *root) {
   maxLength = json_integer_value(json_object_get(root, "MaxLength"));
   priceDeltaLim = json_real_value(json_object_get(root, "PriceDeltaLimit"));
   aggressiveVolume = json_boolean_value(json_object_get(root, "AggressiveVolume"));  
+  trailingLim = json_real_value(json_object_get(root, "TrailingSpreadLim"));
+
   verbose = json_boolean_value(json_object_get(root, "Verbose"));
 
   // exchanges credentials
