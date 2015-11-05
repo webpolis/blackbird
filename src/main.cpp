@@ -297,7 +297,7 @@ int main(int argc, char **argv) {
               double limPriceLong = getLimitPrice[res.idExchLong](curl, params, volumeLong, false);
               double limPriceShort = getLimitPrice[res.idExchShort](curl, params, volumeShort, true);
               if (limPriceLong - res.priceLongIn > params.priceDeltaLim || res.priceShortIn - limPriceShort > params.priceDeltaLim) {
-                std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
+                std::cout << "   WARNING: Opportunity found but not enough liquidity. Trade canceled." << std::endl;
                 std::cout << "            Target long price:  " << res.priceLongIn << ", Real long price:  " << limPriceLong << std::endl;
                 std::cout << "            Target short price: " << res.priceShortIn << ", Real short price: " << limPriceShort << std::endl;
                 res.trailing[res.idExchLong][res.idExchShort] = -1.0; 
@@ -353,7 +353,7 @@ int main(int argc, char **argv) {
         double limPriceShort = getLimitPrice[res.idExchShort](curl, params, volumeShort, false);
 
         if (res.priceLongOut - limPriceLong > params.priceDeltaLim || limPriceShort - res.priceShortOut > params.priceDeltaLim) {
-          std::cout << "   WARNING: Opportunity found but not enough volume. Trade canceled." << std::endl;
+          std::cout << "   WARNING: Opportunity found but not enough liquidity. Trade canceled." << std::endl;
           std::cout << "            Target long price:  " << res.priceLongOut << ", Real long price:  " << limPriceLong << std::endl;
           std::cout << "            Target short price: " << res.priceShortOut << ", Real short price: " << limPriceShort << std::endl; 
           res.trailing[res.idExchLong][res.idExchShort] = 1.0;
