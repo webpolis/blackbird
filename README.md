@@ -19,7 +19,9 @@ Then, about 4.5 hours later the spread decreases below an `EXIT` threshold (seco
 
 ### Disclaimer
 
-__USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS. THE AUTHORS AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.__
+__USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS. THE AUTHORS AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.
+
+BEFORE STARTING BLACKBIRD MAKE SURE THAT YOU ARE 100% USD AND 0% BTC ON EACH OF YOUR ECHANGES.__
 
 
 ### Arbitrage Parameters
@@ -54,7 +56,7 @@ It is possible to properly stop Blackbird after the next trade has closed. While
 
 Please make sure that you understand the disclaimer above if you want to test Blackbird with real money. You can start by testing with a limited amount of money, like $25 per exchange.
 
-Note that it is never entirely safe to just tell Blackbird to use only $25 per exchange (parameter `CashForTesting`). You also need to only have $25 available on each of your trading accounts. In this case you are sure than even if a bug with `CashForTesting` exists your maximum loss on an exchange won't be greater than $25 no matter what.
+Note that it is never entirely safe to just tell Blackbird to use only $25 per exchange (parameter `CashForTesting`). You also need to only have $25 available on each of your trading accounts and 0 BTC. In this case you are sure than even if a bug with `CashForTesting` exists your maximum loss on an exchange won't be greater than $25 no matter what.
 
 __BEFORE STARTING BLACKBIRD MAKE SURE THAT YOU ARE 100% USD AND 0% BTC ON EACH OF YOUR ECHANGES.__
 
