@@ -56,7 +56,7 @@ Please make sure that you understand the disclaimer above if you want to test Bl
 
 Note that it is never entirely safe to just tell Blackbird to use only $25 per exchange (parameter `CashForTesting`). You also need to only have $25 available on each of your trading accounts. In this case you are sure than even if a bug with `CashForTesting` exists your maximum loss on an exchange won't be greater than $25 no matter what.
 
-Before starting Blackbird make sure that you are 100% USD and 0% BTC on each of your exchanges.
+__BEFORE STARTING BLACKBIRD MAKE SURE THAT YOU ARE 100% USD AND 0% BTC ON EACH OF YOUR ECHANGES.__
 
 #### Credentials
 
