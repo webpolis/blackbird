@@ -52,7 +52,9 @@ It is possible to properly stop Blackbird after the next trade has closed. While
 
 #### Note
 
-Please make sure that you understand the disclaimer above if you want to test Blackbird with real money. You can start by testing with a limited amount of money, like $25 per exchange. __IMPORTANT: all your BTC accounts on these exchanges have to be empty before starting Blackbird.__
+Please make sure that you understand the disclaimer above if you want to test Blackbird with real money. You can start by testing with a limited amount of money, like $25 per exchange.
+
+__IMPORTANT: all your BTC accounts on these exchanges have to be empty before starting Blackbird.__
 
 Note that it is never entirely safe to just tell Blackbird to use only $25 per exchange (parameter `CashForTesting`). You also need to only have $25 available on each of your trading accounts as well as 0 BTC. In this case you are sure than even if a bug with `CashForTesting` exists your maximum loss on an exchange won't be greater than $25 no matter what.
 
