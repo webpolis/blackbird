@@ -50,6 +50,6 @@
 
   "ItBitApiKey": "",
   "ItBitSecretKey": "",
-  "ItBitFees": 0.0050,
+  "ItBitFees": 0.0020,
   "ItBitCanShort": false
 }

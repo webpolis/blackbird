@@ -6,7 +6,7 @@
 Blackbird Bitcoin Arbitrage is a C++ trading system that does automatic long/short arbitrage between Bitcoin exchanges.
 
 ### How It Works
-Bitcoin is still a new and inefficient market. Several Bitcoin exchanges exist around the world and the proposed prices (_bid_ and _ask_) can be briefly different from an exchange to another. The purpose of Blackbird is to automatically exploit these temporary price differences. 
+Bitcoin is still a new and inefficient market. Several Bitcoin exchanges exist around the world and the proposed prices (_bid_ and _ask_) can be briefly different from an exchange to another. The purpose of Blackbird is to automatically profit from these temporary price differences. 
 
 Here is an example with real data. Blackbird analyzes the bid/ask information from two Bitcoin exchanges, Bitfinex and Bitstamp, every few seconds. At some point the spread between Bitfinex and Bitstamp prices is higher than an `ENTRY` threshold (first vertical line): an arbitrage opportunity exists and Blackbird buys Bitstamp and short sells Bitfinex.
 
@@ -20,8 +20,6 @@ Then, about 4.5 hours later the spread decreases below an `EXIT` threshold (seco
 ### Disclaimer
 
 __USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS. THE AUTHORS AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.__
-
-__BEFORE STARTING BLACKBIRD MAKE SURE THAT YOU ARE 100% USD AND 0% BTC ON EACH OF YOUR EXCHANGES.__
 
 
 ### Arbitrage Parameters
@@ -54,11 +52,11 @@ It is possible to properly stop Blackbird after the next trade has closed. While
 
 #### Note
 
-Please make sure that you understand the disclaimer above if you want to test Blackbird with real money. You can start by testing with a limited amount of money, like $25 per exchange.
+Please make sure that you understand the disclaimer above if you want to test Blackbird with real money. You can start by testing with a limited amount of money, like $25 per exchange. __IMPORTANT: all your BTC accounts on these exchanges have to be empty before starting Blackbird.__
 
-Note that it is never entirely safe to just tell Blackbird to use only $25 per exchange (parameter `CashForTesting`). You also need to only have $25 available on each of your trading accounts and 0 BTC. In this case you are sure than even if a bug with `CashForTesting` exists your maximum loss on an exchange won't be greater than $25 no matter what.
+Note that it is never entirely safe to just tell Blackbird to use only $25 per exchange (parameter `CashForTesting`). You also need to only have $25 available on each of your trading accounts as well as 0 BTC. In this case you are sure than even if a bug with `CashForTesting` exists your maximum loss on an exchange won't be greater than $25 no matter what.
 
-__BEFORE STARTING BLACKBIRD MAKE SURE THAT YOU ARE 100% USD AND 0% BTC ON EACH OF YOUR EXCHANGES.__
+AGAIN, BEFORE STARTING BLACKBIRD MAKE SURE THAT YOU ARE 100% USD AND 0% BTC ON EACH OF YOUR EXCHANGES.
 
 #### Credentials
 
