@@ -13,7 +13,7 @@ Here is an example with real data. Blackbird analyzes the bid/ask information fr
 Then, about 4.5 hours later the spread decreases below an `EXIT` threshold (second vertical line) so Blackbird exits the market by selling Bitstamp and buying Bitfinex back.
 
 <p align="center">
-<img src="https://cloud.githubusercontent.com/assets/11370278/6548498/64764de6-c5d1-11e4-855b-c2eebb3b782b.png"  width="70%" alt="Spread Example">
+<img src="https://cloud.githubusercontent.com/assets/11370278/11164055/5863e750-8ab3-11e5-86fc-8f7bab6818df.png"  width="70%" alt="Spread Example">
 </p>
 
 
@@ -41,11 +41,11 @@ Defining a smaller spread will generates more trades but with less profit each.
 
 ### Code Information
 
-Blackbird uses the base64 functions written by <a href="http://www.adp-gmbh.ch/cpp/common/base64.html" target="_target">René Nyffenegger</a> to encode and decode base64 in C++. Thank you René your code works well with Blackbird.
+Blackbird uses the base64 functions written by <a href="http://www.adp-gmbh.ch/cpp/common/base64.html" target="_target">René Nyffenegger</a> (thanks to him) to encode and decode base64.
 
 The trade results are stored in CSV files. A new CSV file is created every time Blackbird is started.
 
-It is possible to properly stop Blackbird after the next trade has closed. While Blackbird is running just create an empty file called _stop_after_exit_ in the working directory. This will make Blackbird automatically stop after the next trade closes.
+It is possible to properly stop Blackbird after the next trade has closed. While Blackbird is running just create an empty file named _stop_after_exit_ in the working directory. This will make Blackbird automatically stop after the next trade closes.
 
 
 ### How To Test Blackbird
@@ -54,17 +54,15 @@ It is possible to properly stop Blackbird after the next trade has closed. While
 
 Please make sure that you understand the disclaimer above if you want to test Blackbird with real money. You can start by testing with a limited amount of money, like $25 per exchange.
 
-__IMPORTANT: all your BTC accounts on these exchanges have to be empty before starting Blackbird.__
+__IMPORTANT: all your BTC accounts must be empty before starting Blackbird. Make sure that you only have USD on your accounts and no BTC.__
 
 Note that it is never entirely safe to just tell Blackbird to use only $25 per exchange (parameter `CashForTesting`). You also need to only have $25 available on each of your trading accounts as well as 0 BTC. In this case you are sure than even if a bug with `CashForTesting` exists your maximum loss on an exchange won't be greater than $25 no matter what.
 
-AGAIN, BEFORE STARTING BLACKBIRD MAKE SURE THAT YOU ARE 100% USD AND 0% BTC ON EACH OF YOUR EXCHANGES.
-
 #### Credentials
 
-As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_ and _Gemini_. For each of your exchange accounts you need to create API authentication keys. This is usually done in the _Settings_ section of your accounts.
+As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_ and _Gemini_. For each of your exchange accounts you need to create API authentication keys. This is usually done in the Settings section of your accounts.
 
-Then, you need to add your keys in the file _config.json_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. But you need at least two exchanges and as of today one of them has to be Bitfinex.
+Then, you need to add your API keys in the file _config.json_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. But you need at least two exchanges and as of today one of them has to be Bitfinex.
 
 #### Strategy parameters
 
@@ -103,13 +101,8 @@ You need the following libraries: <a href="https://www.openssl.org/docs/crypto/c
 
 Note: you need Jansson version __2.7__ minimum otherwise you will get the following compilation error: `'json_boolean_value' was not declared in this scope`
 
-For instance on Ubuntu you need to install the following libaries:
-```
-libssl-dev
-libjansson-dev
-libcurl4-openssl-dev
-sendemail
-```
+For instance on Ubuntu you need to install the following libaries: `libssl-dev`, `libjansson-dev`, `libcurl4-openssl-dev` and `sendemail`.
+
 
 Build the software by typing:
 ```
