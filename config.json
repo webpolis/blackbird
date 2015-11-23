@@ -47,7 +47,7 @@
   "KrakenApiKey": "",
   "KrakenSecretKey": "",
   "KrakenFees": 0.0025,
-  "KrakenCanShort": true,
+  "KrakenCanShort": false,
 
   "ItBitApiKey": "",
   "ItBitSecretKey": "",
