@@ -24,6 +24,16 @@ std::string printDateTime(time_t t) {
 }
 
 
+std::string printDateTime() {
+  time_t now = time(NULL);
+  struct tm timeinfo;
+  char buff[20];
+  strftime(buff, 20, "%m/%d/%Y %H:%M:%S", localtime_r(&now, &timeinfo));
+  std::string str(buff);
+  return str;
+}
+
+
 std::string printDateTimeCsv(time_t t) {
   struct tm timeinfo;
   char buff[20];

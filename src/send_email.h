@@ -4,6 +4,6 @@
 #include "result.h"
 #include "parameters.h"
 
-void sendEmail(Result res, Parameters params);
+void sendEmail(Result& res, Parameters& params);
 
 #endif

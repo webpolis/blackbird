@@ -7,7 +7,7 @@
 #include <iomanip>
 #include <unistd.h>
 
-void sendEmail(Result res, Parameters params) {
+void sendEmail(Result& res, Parameters& params) {
   char tdStyle[] =         "font-family:Georgia;font-size:11px;border-color:#A1A1A1;border-width:1px;border-style:solid;padding:2px;";
   char captionStyle[] =    "font-family:Georgia;font-size:13px;font-weight:normal;color:#0021BF;padding-bottom:6px;text-align:left;";
   char tableTitleStyle[] = "font-family:Georgia;font-variant:small-caps;font-size:13px;text-align:center;border-color:#A1A1A1;border-width:1px;border-style:solid;background-color:#EAEAEA;";
@@ -15,7 +15,6 @@ void sendEmail(Result res, Parameters params) {
   std::ostringstream oss;
   oss.precision(2);
   oss << std::fixed;
-
   oss << "sendemail -f " << params.senderAddress << " -t " << params.receiverAddress << " -u \"Blackbird Bitcoin Arbitrage - Trade " << res.id <<" (";
 
   if (res.totPerf() >= 0) {
@@ -54,14 +53,12 @@ void sendEmail(Result res, Parameters params) {
     oss << "<td style=\\\"" << tdStyle << "color:#920000;\\\">";
   }
   oss  << res.totPerf() * 100.0 << "%</td></tr>";
-
   oss << "    </table>";
   oss << "  </div>";
   oss << "</html>\" -s " << params.smtpServerAddress << " -xu " << params.senderUsername << " -xp " << params.senderPassword << " -o tls=yes -o message-content-type=html >/dev/null" << std::endl;
-
   oss.flush();
 
   if (system(oss.str().c_str()) == -1) {
-    std::cout << "Error with system call" << std::endl;
+    *params.logFile << "<sendEmail> Error with system call" << std::endl;
   }
 }

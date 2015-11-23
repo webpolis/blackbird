@@ -1,6 +1,7 @@
 #ifndef RESULT_H
 #define RESULT_H
 
+#include <fstream>
 #include <time.h>
 #include <string>
 #include <vector>
@@ -25,11 +26,11 @@ struct Result {
   double priceShortOut;
   double spreadIn;
   double spreadOut;
+  double exitTarget;
 
-  double minSpread[8][8]; // FIXME size
-  double maxSpread[8][8]; // FIXME size
- 
-  double trailing[8][8];  // FIXME size
+  double minSpread[10][10]; // FIXME size
+  double maxSpread[10][10]; // FIXME size
+  double trailing[10][10];  // FIXME size
 
   double befBalUsd;
   double aftBalUsd;
@@ -44,12 +45,9 @@ struct Result {
   // get the length of the trade in minutes
   double getLength();
 
-  // print to the console thr Entry/Exit trades information
-  void printEntry();
-  void printExit();
+  void printEntry(std::ofstream& logFile);
+  void printExit(std::ofstream& logFile);
 
-  // clears the structure
-  // i.e. all the variables at 0
   void clear();
 
 };

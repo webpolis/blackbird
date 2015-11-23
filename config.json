@@ -1,16 +1,17 @@
 {
-  "SpreadEntry": 0.0020,
-  "SpreadExit": -0.0020,
+  "SpreadEntry": 0.0080,
+  "SpreadTarget": 0.0030,
   "MaxLength": 5184000, 
   "GapSec": 3,
 
+  "InfoOnly": false,
   "UseFullCash": false,
   "UntouchedCash": 0.01, 
   "CashForTesting": 25.00,
   "MaxExposure": 25000.00,
   "PriceDeltaLimit": 0.30,
   "AggressiveVolume": false,
-  "TrailingSpreadLim": 0.0010,
+  "TrailingSpreadLim": 0.0005,
 
   "DebugMaxIteration": 3200000,
   "Verbose": true,

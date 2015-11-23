@@ -12,9 +12,9 @@
 
 namespace Bitfinex {
 
-double getQuote(CURL *curl, bool isBid) {
-  json_t *root = getJsonFromUrl(curl, "https://api.bitfinex.com/v1/ticker/btcusd", "");
-  const char *quote;
+double getQuote(Parameters& params, bool isBid) {
+  json_t* root= getJsonFromUrl(params, "https://api.bitfinex.com/v1/ticker/btcusd", "");
+  const char* quote;
   double quoteValue;
   if (isBid) {
     quote = json_string_value(json_object_get(root, "bid"));
@@ -31,12 +31,12 @@ double getQuote(CURL *curl, bool isBid) {
 }
 
 
-double getAvail(CURL *curl, Parameters params, std::string currency) {
-  json_t *root = authRequest(curl, params, "https://api.bitfinex.com/v1/balances", "balances", "");
+double getAvail(Parameters& params, std::string currency) {
+  json_t* root= authRequest(params, "https://api.bitfinex.com/v1/balances", "balances", "");
   while (json_object_get(root, "message") != NULL) {
     sleep(1.0);
-    std::cout << "<Bitfinex> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
-    root = authRequest(curl, params, "https://api.bitfinex.com/v1/balances", "balances", "");
+    *params.logFile << "<Bitfinex> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
+    root = authRequest(params, "https://api.bitfinex.com/v1/balances", "balances", "");
   }
 
   // go through the list (order not preserved for some reason)
@@ -55,30 +55,30 @@ double getAvail(CURL *curl, Parameters params, std::string currency) {
 }
 
 
-int sendOrder(CURL *curl, Parameters params, std::string direction, double quantity, double price) {
+int sendOrder(Parameters& params, std::string direction, double quantity, double price) {
   double limPrice;  // define limit price to be sure to be executed
   if (direction.compare("buy") == 0) {
-    limPrice = getLimitPrice(curl, params, quantity, false);
+    limPrice = getLimitPrice(params, quantity, false);
   }
   else if (direction.compare("sell") == 0) {
-    limPrice = getLimitPrice(curl, params, quantity, true);
+    limPrice = getLimitPrice(params, quantity, true);
   }
 
-  std::cout << "<Bitfinex> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << limPrice << "..." << std::endl;
+  *params.logFile << "<Bitfinex> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << limPrice << "..." << std::endl;
   std::ostringstream oss;
   oss << "\"symbol\":\"btcusd\", \"amount\":\"" << quantity << "\", \"price\":\"" << limPrice << "\", \"exchange\":\"bitfinex\", \"side\":\"" << direction << "\", \"type\":\"limit\"";
   std::string options = oss.str();
 
-  json_t *root = authRequest(curl, params, "https://api.bitfinex.com/v1/order/new", "order/new", options);
+  json_t* root= authRequest(params, "https://api.bitfinex.com/v1/order/new", "order/new", options);
   int orderId = json_integer_value(json_object_get(root, "order_id"));
-  std::cout << "<Bitfinex> Done (order ID: " << orderId << ")\n" << std::endl;
+  *params.logFile << "<Bitfinex> Done (order ID: " << orderId << ")\n" << std::endl;
 
   json_decref(root);
   return orderId;
 }
 
 
-bool isOrderComplete(CURL *curl, Parameters params, int orderId) {
+bool isOrderComplete(Parameters& params, int orderId) {
   if (orderId == 0) {
     return true;
   }
@@ -86,7 +86,7 @@ bool isOrderComplete(CURL *curl, Parameters params, int orderId) {
   oss << "\"order_id\":" << orderId;
   std::string options = oss.str();
 
-  json_t *root = authRequest(curl, params, "https://api.bitfinex.com/v1/order/status", "order/status", options);
+  json_t* root= authRequest(params, "https://api.bitfinex.com/v1/order/status", "order/status", options);
 
   bool isComplete = !json_boolean_value(json_object_get(root, "is_live"));
   json_decref(root);
@@ -94,12 +94,12 @@ bool isOrderComplete(CURL *curl, Parameters params, int orderId) {
 }
 
 
-double getActivePos(CURL *curl, Parameters params) {
-  json_t *root = authRequest(curl, params, "https://api.bitfinex.com/v1/positions", "positions", "");
+double getActivePos(Parameters& params) {
+  json_t* root= authRequest(params, "https://api.bitfinex.com/v1/positions", "positions", "");
 
   double position;
   if (json_array_size(root) == 0) {
-    std::cout << "<Bitfinex> WARNING: BTC position not available, return 0.0" << std::endl;
+    *params.logFile << "<Bitfinex> WARNING: BTC position not available, return 0.0" << std::endl;
     position = 0.0;
   } else {
     position = atof(json_string_value(json_object_get(json_array_get(root, 0), "amount")));
@@ -109,19 +109,23 @@ double getActivePos(CURL *curl, Parameters params) {
 }
 
 
-double getLimitPrice(CURL *curl, Parameters params, double volume, bool isBid) {
-  json_t *root;
+double getLimitPrice(Parameters& params, double volume, bool isBid) {
+  json_t* root;
   if (isBid) {
-    root = json_object_get(getJsonFromUrl(curl, "https://api.bitfinex.com/v1/book/btcusd", ""), "bids");
+    root = json_object_get(getJsonFromUrl(params, "https://api.bitfinex.com/v1/book/btcusd", ""), "bids");
   } else {
-    root = json_object_get(getJsonFromUrl(curl, "https://api.bitfinex.com/v1/book/btcusd", ""), "asks");
+    root = json_object_get(getJsonFromUrl(params, "https://api.bitfinex.com/v1/book/btcusd", ""), "asks");
   }
   // loop on volume
+  *params.logFile << "<Bitfinex> Looking for a limit price to fill " << volume << "BTC..." << std::endl;
   double tmpVol = 0.0;
   int i = 0;
   while (tmpVol < volume) {
     // volumes are added up until the requested volume is reached
-    tmpVol += atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
+    double p = atof(json_string_value(json_object_get(json_array_get(root, i), "price")));
+    double v = atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
+    *params.logFile << "<Bitfinex> order book: " << v << "@$" << p << std::endl;
+    tmpVol += v;
     i++;
   }
   // return the next offer
@@ -129,14 +133,14 @@ double getLimitPrice(CURL *curl, Parameters params, double volume, bool isBid) {
   if (params.aggressiveVolume) {
     limPrice = atof(json_string_value(json_object_get(json_array_get(root, i), "price")));
   } else {
-    limPrice = atof(json_string_value(json_object_get(json_array_get(root, i+1), "price"))); 
+    limPrice = atof(json_string_value(json_object_get(json_array_get(root, i+1), "price")));
   }
   json_decref(root);
   return limPrice;
 }
 
 
-json_t* authRequest(CURL *curl, Parameters params, std::string url, std::string request, std::string options) {
+json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options) {
   // nonce
   struct timeval tv;
   gettimeofday(&tv, NULL);
@@ -186,47 +190,47 @@ json_t* authRequest(CURL *curl, Parameters params, std::string url, std::string 
   // cURL request
   CURLcode resCurl;
 //  curl = curl_easy_init();
-  if (curl) {
+  if (params.curl) {
     std::string readBuffer;
-    curl_easy_setopt(curl, CURLOPT_POST, 1L);
-    // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-    curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "");
-    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &readBuffer);
-    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(curl, CURLOPT_CONNECTTIMEOUT, 10L);
-    resCurl = curl_easy_perform(curl);
-    json_t *root;
+    curl_easy_setopt(params.curl, CURLOPT_POST, 1L);
+    // curl_easy_setopt(params.curl, CURLOPT_VERBOSE, 1L);
+    curl_easy_setopt(params.curl, CURLOPT_HTTPHEADER, headers);
+    curl_easy_setopt(params.curl, CURLOPT_POSTFIELDS, "");
+    curl_easy_setopt(params.curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(params.curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(params.curl, CURLOPT_WRITEDATA, &readBuffer);
+    curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
+    resCurl = curl_easy_perform(params.curl);
+    json_t* root;
     json_error_t error;
 
     while (resCurl != CURLE_OK) {
-      std::cout << "<Bitfinex> Error with cURL. Retry in 2 sec...\n" << std::endl;
+      *params.logFile << "<Bitfinex> Error with cURL. Retry in 2 sec..." << std::endl;
       sleep(2.0);
       readBuffer = "";
-      resCurl = curl_easy_perform(curl);
+      resCurl = curl_easy_perform(params.curl);
     }
     root = json_loads(readBuffer.c_str(), 0, &error);
 
     while (!root) {
-      std::cout << "<Bitfinex> Error with JSON:\n" << error.text << ". Retrying..." << std::endl;
+      *params.logFile << "<Bitfinex> Error with JSON:\n" << error.text << ". Retrying..." << std::endl;
       readBuffer = "";
-      resCurl = curl_easy_perform(curl);
+      resCurl = curl_easy_perform(params.curl);
       while (resCurl != CURLE_OK) {
-        std::cout << "<Bitfinex> Error with cURL. Retry in 2 sec...\n" << std::endl;
+        *params.logFile << "<Bitfinex> Error with cURL. Retry in 2 sec..." << std::endl;
         sleep(2.0);
         readBuffer = "";
-        resCurl = curl_easy_perform(curl);
+        resCurl = curl_easy_perform(params.curl);
       }
       root = json_loads(readBuffer.c_str(), 0, &error);
     }
     curl_slist_free_all(headers);
-    curl_easy_reset(curl);
+    curl_easy_reset(params.curl);
     return root;
   }
   else {
-    std::cout << "<Bitfinex> Error with cURL init." << std::endl;
+    *params.logFile << "<Bitfinex> Error with cURL init." << std::endl;
     return NULL;
   }
 }

@@ -1,18 +1,17 @@
 #include <iostream>
-#include <iomanip>
 #include "parameters.h"
 #include "time_fun.h"
 
 // constructor
-Parameters::Parameters(json_t *root) {
+Parameters::Parameters(json_t* root) {
   // strategy and global parameters
   spreadEntry = json_real_value(json_object_get(root, "SpreadEntry"));
-  spreadExit = json_real_value(json_object_get(root, "SpreadExit"));
+  spreadTarget = json_real_value(json_object_get(root, "SpreadTarget"));
   maxLength = json_integer_value(json_object_get(root, "MaxLength"));
   priceDeltaLim = json_real_value(json_object_get(root, "PriceDeltaLimit"));
-  aggressiveVolume = json_boolean_value(json_object_get(root, "AggressiveVolume"));  
+  aggressiveVolume = json_boolean_value(json_object_get(root, "AggressiveVolume"));
   trailingLim = json_real_value(json_object_get(root, "TrailingSpreadLim"));
-
+  infoOnly = json_boolean_value(json_object_get(root, "InfoOnly"));
   verbose = json_boolean_value(json_object_get(root, "Verbose"));
 
   // exchanges credentials
@@ -26,7 +25,7 @@ Parameters::Parameters(json_t *root) {
   geminiApi = json_string_value(json_object_get(root, "GeminiApiKey"));
   geminiSecret = json_string_value(json_object_get(root, "GeminiSecretKey"));
 
-  // email
+  // email parameters
   sendEmail = json_boolean_value(json_object_get(root, "SendEmail"));
   senderAddress = json_string_value(json_object_get(root, "SenderAddress"));
   senderUsername = json_string_value(json_object_get(root, "SenderUsername"));

@@ -8,14 +8,14 @@
 
 namespace ItBit {
 
-double getQuote(CURL *curl, bool isBid) {
-  json_t *root = getJsonFromUrl(curl, "https://api.itbit.com/v1/markets/XBTUSD/ticker", "");
-  const char *quote;
+double getQuote(Parameters& params, bool isBid) {
+  json_t* root= getJsonFromUrl(params, "https://api.itbit.com/v1/markets/XBTUSD/ticker", "");
+  const char* quote;
   double quoteValue;
   if (isBid) {
-    quote = json_string_value(json_object_get(root, "bid"));  
+    quote = json_string_value(json_object_get(root, "bid"));
   } else {
-    quote = json_string_value(json_object_get(root, "ask")); 
+    quote = json_string_value(json_object_get(root, "ask"));
   }
   if (quote != NULL) {
     quoteValue = atof(quote);
@@ -27,18 +27,18 @@ double getQuote(CURL *curl, bool isBid) {
 }
 
 
-double getAvail(CURL *curl, Parameters params, std::string currency) {
+double getAvail(Parameters& params, std::string currency) {
   // TODO
   return 0.0;
 }
 
-  
-double getActivePos(CURL *curl, Parameters params) {
+
+double getActivePos(Parameters& params) {
   // TODO
   return 0.0;
 }
 
-double getLimitPrice(CURL *curl, Parameters params, double volume, bool isBid) {
+double getLimitPrice(Parameters& params, double volume, bool isBid) {
   // TODO
   return 0.0;
 }

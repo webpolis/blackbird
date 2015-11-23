@@ -15,11 +15,11 @@ std::string percToStr(double perc) {
 }
 
 
-bool checkEntry(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters params) {
-  double limit = 2.0 * btcLong->getFees() + 2.0 * btcShort->getFees() + params.spreadEntry;
+bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params) {
+
   if (btcShort->getHasShort()) {
-    // btcLong:  buy looking to match ask
-    // btcShort: sell looking to match bid
+    // btcLong:  "buy" looking to match ask
+    // btcShort: "sell" looking to match bid
     double priceLong = btcLong->getAsk();
     double priceShort = btcShort->getBid();
     if (priceLong > 0.0 && priceShort > 0.0) {
@@ -36,16 +36,16 @@ bool checkEntry(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters par
       res.minSpread[longId][shortId] = res.spreadIn;
     }
     if (params.verbose) {
-      std::cout << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadIn);
-      std::cout << " [target " << percToStr(limit) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
+      *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadIn);
+      *params.logFile << " [target " << percToStr(params.spreadEntry) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
 
       if (res.trailing[longId][shortId] != -1.0) {
-        std::cout << "   (trailing " << res.trailing[longId][shortId] * 100.0 << "%)";
+        *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "%";
       }
-      if (btcLong->getIsImplemented() == false || btcShort->getIsImplemented() == false) {
-        std::cout << "   (info only)"  << std::endl;
+      if ((btcLong->getIsImplemented() == false || btcShort->getIsImplemented() == false) && params.infoOnly == false) {
+        *params.logFile << "   info only"  << std::endl;
       } else {
-        std::cout << std::endl;
+        *params.logFile << std::endl;
       }
     }
 
@@ -53,13 +53,13 @@ bool checkEntry(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters par
       if (btcShort->getIsImplemented() == true) {
         if (priceLong > 0.0) {
           if (priceShort > 0.0) {
-            if (res.spreadIn >= limit) {
+            if (res.spreadIn >= params.spreadEntry) {
               double newTrailValue = res.spreadIn - params.trailingLim;
               if (res.trailing[longId][shortId] == -1.0) {
-                if (newTrailValue > limit) {
+                if (newTrailValue > params.spreadEntry) {
                   res.trailing[longId][shortId] = newTrailValue;
                 } else {
-                  res.trailing[longId][shortId] = limit;
+                  res.trailing[longId][shortId] = params.spreadEntry;
                 }
               } else {
                 if (newTrailValue >= res.trailing[longId][shortId]) {
@@ -74,6 +74,7 @@ bool checkEntry(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters par
                   res.exchNameShort = btcShort->getExchName();
                   res.priceLongIn = priceLong;
                   res.priceShortIn = priceShort;
+                  res.exitTarget = res.spreadIn - params.spreadTarget - (2.0 * btcLong->getFees() + 2.0 * btcShort->getFees());
                   return true;
                 }
               }
@@ -89,9 +90,9 @@ bool checkEntry(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters par
 }
 
 
-bool checkExit(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters params, time_t period) {
-  // close btcLong:  sell looking to match bid
-  // close btcShort: buy looking to match ask
+bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params, time_t period) {
+  // close btcLong:  "sell" looking to match bid
+  // close btcShort: "buy" looking to match ask
   double priceLong  = btcLong->getBid();
   double priceShort = btcShort->getAsk();
   if (priceLong > 0.0 && priceShort > 0.0) {
@@ -108,13 +109,13 @@ bool checkExit(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters para
     res.minSpread[longId][shortId] = res.spreadOut;
   }
   if (params.verbose) {
-    std::cout << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadOut);
-    std::cout << " [target " << percToStr(params.spreadExit) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
+    *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadOut);
+    *params.logFile << " [target " << percToStr(res.exitTarget) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
     if (res.trailing[longId][shortId] != 1.0) {
-      std::cout << "   (trailing " << res.trailing[longId][shortId] * 100.0 << "%)";
+      *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "%";
     }
   }
-  std::cout << std::endl;
+  *params.logFile << std::endl;
   if (period - res.entryTime >= params.maxLength) {
     res.priceLongOut  = priceLong;
     res.priceShortOut = priceShort;
@@ -122,13 +123,13 @@ bool checkExit(Bitcoin *btcLong, Bitcoin *btcShort, Result &res, Parameters para
   }
   if (priceLong > 0.0) {
     if (priceShort > 0.0) {
-      if (res.spreadOut <= params.spreadExit) {
+      if (res.spreadOut <= res.exitTarget) {
         double newTrailValue = res.spreadOut + params.trailingLim;
         if (res.trailing[longId][shortId] == 1.0) {
-          if (newTrailValue < params.spreadExit) {
+          if (newTrailValue < res.exitTarget) {
             res.trailing[longId][shortId] = newTrailValue;
           } else {
-            res.trailing[longId][shortId] = params.spreadExit;
+            res.trailing[longId][shortId] = res.exitTarget;
           }
         } else {
           if (newTrailValue <= res.trailing[longId][shortId]) {

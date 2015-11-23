@@ -1,19 +1,19 @@
 <p align="center">
-<img src="https://cloud.githubusercontent.com/assets/11370278/10808535/02230d46-7dc3-11e5-92d8-da15cae8c6e9.png" width="60%" alt="Blackbird Bitcoin Arbitrage">
+<img src="https://cloud.githubusercontent.com/assets/11370278/10808535/02230d46-7dc3-11e5-92d8-da15cae8c6e9.png" width="50%" alt="Blackbird Bitcoin Arbitrage">
 </p>
 
 ### Introduction
 Blackbird Bitcoin Arbitrage is a C++ trading system that does automatic long/short arbitrage between Bitcoin exchanges.
 
 ### How It Works
-Bitcoin is still a new and inefficient market. Several Bitcoin exchanges exist around the world and the proposed prices (_bid_ and _ask_) can be briefly different from an exchange to another. The purpose of Blackbird is to automatically profit from these temporary price differences. 
+Bitcoin is still a new and inefficient market. Several Bitcoin exchanges exist around the world and the proposed prices (_bid_ and _ask_) can be briefly different from an exchange to another. The purpose of Blackbird is to automatically profit from these temporary price differences.
 
 Here is an example with real data. Blackbird analyzes the bid/ask information from two Bitcoin exchanges, Bitfinex and Bitstamp, every few seconds. At some point the spread between Bitfinex and Bitstamp prices is higher than an `ENTRY` threshold (first vertical line): an arbitrage opportunity exists and Blackbird buys Bitstamp and short sells Bitfinex.
 
 Then, about 4.5 hours later the spread decreases below an `EXIT` threshold (second vertical line) so Blackbird exits the market by selling Bitstamp and buying Bitfinex back.
 
 <p align="center">
-<img src="https://cloud.githubusercontent.com/assets/11370278/11164055/5863e750-8ab3-11e5-86fc-8f7bab6818df.png"  width="70%" alt="Spread Example">
+<img src="https://cloud.githubusercontent.com/assets/11370278/11164055/5863e750-8ab3-11e5-86fc-8f7bab6818df.png"  width="50%" alt="Spread Example">
 </p>
 
 
@@ -24,26 +24,27 @@ __USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAS
 
 ### Arbitrage Parameters
 
-The two parameters used to control the arbitrage are `SpreadEntry` and `SpreadExit`.
+The two parameters used to control the arbitrage are `SpreadEntry` and `SpreadTarget`.
 
-* `SpreadEntry`: the limit above which the long/short trades are triggered
-* `SpreadExit`: the limit below which the long/short trades are closed
+* `SpreadEntry`: the limit above which we want the long/short trades to be triggered
+* `SpreadTarget`: the spread we want to achieve as an arbitrage opportunity. It represents the net profit
 
-`SpreadEntry` is actually the limit _after_ the exchange fees which means that `SpreadEntry` represents the net profit. If two exchanges have a 0.20% fees for every trade then we will have in total:
+`SpreadTarget` is used to define at what threshold we want to exit the trades. It takes the exchange fees into account.
+
+If two exchanges have a 0.20% fees for every trade then we will have for each arbitrage opportunity:
 
 * 0.20% entry long + 0.20% entry short + 0.20% exit long + 0.20% exit short = 0.80% total fees
 
-Note: the actual total will be slightly different since it is a percentage of each individual trade.
-Now if the profit we target is 0.30% (`"SpreadEntry": 0.0030`) then Blackbird will set the entry threshold at 1.10% (0.80% total fees + 0.30% target).
+Now let's say we have `SpreadEntry` at 1.00% and trades are generated at that level. If the net profit we target (`SpreadTarget`) is 0.30%, then Blackbird will set the exit threshold for these trades at -0.10% (1.00% spread entry - 0.80% total fees - 0.30% target = -0.10% exit threshold).
 
-Defining a smaller spread will generates more trades but with less profit each.
+Defining smaller spreads will generates more trades but with less profit each.
 
 
 ### Code Information
 
 Blackbird uses the base64 functions written by <a href="http://www.adp-gmbh.ch/cpp/common/base64.html" target="_target">René Nyffenegger</a> (thanks to him) to encode and decode base64.
 
-The trade results are stored in CSV files. A new CSV file is created every time Blackbird is started.
+The trade results are stored in CSV files. A new CSV file and a new log file are created every time Blackbird is started.
 
 It is possible to properly stop Blackbird after the next trade has closed. While Blackbird is running just create an empty file named _stop_after_exit_ in the working directory. This will make Blackbird automatically stop after the next trade closes.
 
@@ -64,12 +65,16 @@ As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_
 
 Then, you need to add your API keys in the file _config.json_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. But you need at least two exchanges and as of today one of them has to be Bitfinex.
 
+##### Demo mode
+
+It is possible to run Blackbird without any credentials. Just change the parameter `InfoOnly` to `true` and then you won't need to add any credentials to the config file. Blackbird in demo mode will simply shows you the bid/ask information, the spreads and the arbitrage opportunities but no actual trades will be generated.
+
 #### Strategy parameters
 
 Modify the stategy parameters to match your trading style (few trades with high spreads or many trades with low spreads):
 ```json
-"SpreadEntry": 0.0020,
-"SpreadExit": -0.0020,
+"SpreadEntry": 0.0080,
+"SpreadTarget": 0.0020,
 ```
 
 #### Risk parameters
@@ -103,22 +108,7 @@ Note: you need Jansson version __2.7__ minimum otherwise you will get the follow
 
 For instance on Ubuntu you need to install the following libaries: `libssl-dev`, `libjansson-dev`, `libcurl4-openssl-dev` and `sendemail`.
 
-
-Build the software by typing:
-```
-make
-```
-
-Then start the software:
-```
-./blackbird
-```
-
-Alternatively, you may want to start it in the background:
-
-```
-./blackbird > output.txt &
-```
+Build the software by typing: `make`, then start the software with the command: `./blackbird`. A log file will be generated.
 
 ### Tasks And Issues
 
@@ -132,30 +122,36 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
 ##### July 2015
 
- * Bitstamp exchange added
- * Kraken exchange added (bid/ask information only, other functions to be implemented)
- * Improved JSON and cURL exceptions management
- * Added the milliseconds to the nonce used for exchange authentification
- * JSON memory leak fixed
- * Minor fixes and improvements
+* Bitstamp exchange added
+* Kraken exchange added (bid/ask information only, other functions to be implemented)
+* Improved JSON and cURL exceptions management
+* Added the milliseconds to the nonce used for exchange authentification
+* JSON memory leak fixed
+* Minor fixes and improvements
 
 ##### September 2015
 
- * General performance and stability improvements (merge from _julianmi:performance_improvements_)
- * ItBit exchange added (bid/ask information only, other functions to be implemented)
- * Minor fixes and improvements
+* General performance and stability improvements (merge from _julianmi:performance_improvements_)
+* ItBit exchange added (bid/ask information only, other functions to be implemented)
+* Minor fixes and improvements
 
 ##### October 2015
 
- * <a href="https://gemini.com" target="_blank">Gemini</a> exchange added and fully implemented
- * No need to have accounts on all the exchanges anymore
- * Bug <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> (_nonce too small_) fixed
- * Bug <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> (_process hangs_) fixed
- * Minor fixes and improvements
+* <a href="https://gemini.com" target="_blank">Gemini</a> exchange added and fully implemented
+* No need to have accounts on all the exchanges anymore
+* Bug <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> (_nonce too small_) fixed
+* Bug <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> (_process hangs_) fixed
+* Minor fixes and improvements
 
 ##### November 2015
 
 * Trailing spread implemented
+* Replaced `SpreadExit` by `SpreadTarget`
+* _info only_ mode implemented
+* Blackbird output is now sent to a log file
+* Safety measure: Blackbird won't start if one of the BTC accounts is not empty
+* More verbosity when limit prices are calculated
+* Minor fixes and improvements
 
 ### Links
 
@@ -181,8 +177,8 @@ Blackbird Bitcoin Arbitrage
 DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK.
 
 [ Targets ]
-   Spread to enter: -0.20%
-   Spread to exit: -0.20%
+   Spread Entry:  0.80%
+   Spread Target: 0.30%
 
 [ Current balances ]
    Bitfinex:    1,857.79 USD    0.000000 BTC
@@ -199,9 +195,9 @@ DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK.
    Bitstamp:    325.37 / 325.82
    Gemini:      325.50 / 328.74
    ----------------------------
-   OKCoin/Bitfinex:     -0.27% [target  1.00%, min -0.27%, max -0.27%]
-   Bitstamp/Bitfinex:   -0.19% [target  1.10%, min -0.19%, max -0.19%]
-   Gemini/Bitfinex:     -1.07% [target  1.10%, min -1.07%, max -1.07%]
+   OKCoin/Bitfinex:     -0.27% [target  0.80%, min -0.27%, max -0.27%]
+   Bitstamp/Bitfinex:   -0.19% [target  0.80%, min -0.19%, max -0.19%]
+   Gemini/Bitfinex:     -1.07% [target  0.80%, min -1.07%, max -1.07%]
 
 [ 10/31/2015 08:32:48 ]
    Bitfinex:    325.21 / 325.58
@@ -209,7 +205,7 @@ DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK.
    Bitstamp:    325.39 / 325.68
    Gemini:      325.50 / 328.67
    ----------------------------
-   OKCoin/Bitfinex:     -0.27% [target  1.00%, min -0.27%, max -0.27%]
-   Bitstamp/Bitfinex:   -0.14% [target  1.10%, min -0.19%, max -0.14%]
-   Gemini/Bitfinex:     -1.05% [target  1.10%, min -1.07%, max -1.05%]
+   OKCoin/Bitfinex:     -0.27% [target  0.80%, min -0.27%, max -0.27%]
+   Bitstamp/Bitfinex:   -0.14% [target  0.80%, min -0.19%, max -0.14%]
+   Gemini/Bitfinex:     -1.05% [target  0.80%, min -1.07%, max -1.05%]
 ```
