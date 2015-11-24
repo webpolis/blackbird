@@ -61,7 +61,7 @@ Note that it is never entirely safe to just tell Blackbird to use only $25 per e
 
 #### Credentials
 
-As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_ and _Gemini_. For each of your exchange accounts you need to create API authentication keys. This is usually done in the Settings section of your accounts.
+As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_, _Gemini_ and _Kraken_. For each of your exchange accounts you need to create API authentication keys. This is usually done in the Settings section of your accounts.
 
 Then, you need to add your API keys in the file _config.json_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. But you need at least two exchanges and as of today one of them has to be Bitfinex.
 
