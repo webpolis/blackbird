@@ -125,13 +125,13 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = Gemini::getLimitPrice;
     index++;
   }
-  tmp = json_string_value(json_object_get(root, "KrakenApiKey"));
+  tmp = json_string_value(json_object_get(root, "KrakenApiKey")); 
   if (tmp.empty() == false || infoOnly == true) {
-    params.addExchange("Kraken", json_real_value(json_object_get(root, "KrakenFees")), json_boolean_value(json_object_get(root, "KrakenCanShort")), false);
+    params.addExchange("Kraken", json_real_value(json_object_get(root, "KrakenFees")), json_boolean_value(json_object_get(root, "KrakenCanShort")), true);
     getQuote[index] = Kraken::getQuote;
     getAvail[index] = Kraken::getAvail;
-    // sendOrder[index] = Kraken::sendOrder;
-    // isOrderComplete[index] = Kraken::isOrderComplete;
+    sendOrder[index] = Kraken::sendOrder;
+    isOrderComplete[index] = Kraken::isOrderComplete;
     getActivePos[index] = Kraken::getActivePos;
     getLimitPrice[index] = Kraken::getLimitPrice;
     index++;
@@ -305,6 +305,7 @@ int main(int argc, char** argv) {
     if (params.verbose) {
       logFile << "   ----------------------------" << std::endl;
     }
+      
     // compute entry point
     if (!inMarket) {
       for (int i = 0; i < num_exchange; ++i) {
