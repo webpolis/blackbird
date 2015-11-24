@@ -32,17 +32,17 @@ struct Parameters {
   std::ofstream* logFile;
 
   // credentials
-  const char *bitfinexApi;
-  const char *bitfinexSecret;
-  const char *okCoinApi;
-  const char *okCoinSecret;
-  const char *bitstampClientId;
-  const char *bitstampApi;
-  const char *bitstampSecret;
-  const char *geminiApi;
-  const char *geminiSecret;
-  const char *krakenApi;
-  const char *krakenSecret;
+  const char* bitfinexApi;
+  const char* bitfinexSecret;
+  const char* okCoinApi;
+  const char* okCoinSecret;
+  const char* bitstampClientId;
+  const char* bitstampApi;
+  const char* bitstampSecret;
+  const char* geminiApi;
+  const char* geminiSecret;
+  const char* krakenApi;
+  const char* krakenSecret;
 
   // email
   bool sendEmail;

@@ -4,7 +4,7 @@
   "MaxLength": 5184000, 
   "GapSec": 3,
 
-  "InfoOnly": false,
+  "InfoOnly": true,
   "UseFullCash": false,
   "UntouchedCash": 0.01, 
   "CashForTesting": 25.00,

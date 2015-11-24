@@ -53,7 +53,7 @@ int main(int argc, char** argv) {
   double untouchedCash = json_real_value(json_object_get(root, "UntouchedCash"));
   double cashForTesting = json_real_value(json_object_get(root, "CashForTesting"));
   double maxExposure = json_real_value(json_object_get(root, "MaxExposure"));
-  bool infoOnly = json_boolean_value(json_object_get(root, "infoOnly"));
+  bool infoOnly = json_boolean_value(json_object_get(root, "InfoOnly"));
 
   std::locale mylocale("");
 
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = Gemini::getLimitPrice;
     index++;
   }
-  tmp = json_string_value(json_object_get(root, "KrakenApiKey")); 
+  tmp = json_string_value(json_object_get(root, "KrakenApiKey"));
   if (tmp.empty() == false || infoOnly == true) {
     params.addExchange("Kraken", json_real_value(json_object_get(root, "KrakenFees")), json_boolean_value(json_object_get(root, "KrakenCanShort")), true);
     getQuote[index] = Kraken::getQuote;
@@ -305,7 +305,7 @@ int main(int argc, char** argv) {
     if (params.verbose) {
       logFile << "   ----------------------------" << std::endl;
     }
-      
+
     // compute entry point
     if (!inMarket) {
       for (int i = 0; i < num_exchange; ++i) {
