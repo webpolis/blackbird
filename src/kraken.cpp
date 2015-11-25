@@ -49,9 +49,9 @@ double getAvail(Parameters& params, std::string currency) {
 
   while (json_object_size(result) == 0) {
     sleep(1.0);
-	*params.logFile << "<Kraken> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
+    *params.logFile << "<Kraken> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
     root = authRequest(params, "https://api.kraken.com", "/0/private/Balance");
-	result = json_object_get(root, "result");
+    result = json_object_get(root, "result");
   }
   
   double available = 0.0;
