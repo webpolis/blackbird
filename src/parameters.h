@@ -43,6 +43,8 @@ struct Parameters {
   const char* geminiSecret;
   const char* krakenApi;
   const char* krakenSecret;
+  const char* btceApi;
+  const char* btceSecret;
 
   // email
   bool sendEmail;

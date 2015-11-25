@@ -21,6 +21,7 @@
 #include "gemini.h"
 #include "kraken.h"
 #include "itbit.h"
+#include "btce.h"
 #include "send_email.h"
 
 typedef double (*getQuoteType) (Parameters& params, bool isBid);
@@ -145,6 +146,17 @@ int main(int argc, char** argv) {
     // isOrderComplete[index] = ItBit::isOrderComplete;
     getActivePos[index] = ItBit::getActivePos;
     getLimitPrice[index] = ItBit::getLimitPrice;
+    index++;
+  }
+  tmp = json_string_value(json_object_get(root, "BTCeApiKey"));
+  if (tmp.empty() == false || infoOnly == true) {
+    params.addExchange("BTCe", json_real_value(json_object_get(root, "BTCeFees")), json_boolean_value(json_object_get(root, "BTCeCanShort")), false);
+    getQuote[index] = BTCe::getQuote;
+    getAvail[index] = BTCe::getAvail;
+    // sendOrder[index] = BTCe::sendOrder;
+    // isOrderComplete[index] = BTCe::isOrderComplete;
+    getActivePos[index] = BTCe::getActivePos;
+    getLimitPrice[index] = BTCe::getLimitPrice;
     index++;
   }
 

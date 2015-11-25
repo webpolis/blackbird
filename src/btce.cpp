@@ -3,24 +3,19 @@
 #include <sstream>
 #include <unistd.h>
 #include <jansson.h>
-#include "itbit.h"
+#include "btce.h"
 #include "curl_fun.h"
 
-namespace ItBit {
+namespace BTCe {
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "https://api.itbit.com/v1/markets/XBTUSD/ticker", "");
-  const char* quote;
+  json_t* root = getJsonFromUrl(params, "https://btc-e.com/api/3/ticker/btc_usd", "");
+
   double quoteValue;
   if (isBid) {
-    quote = json_string_value(json_object_get(root, "bid"));
+    quoteValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "buy"));
   } else {
-    quote = json_string_value(json_object_get(root, "ask"));
-  }
-  if (quote != NULL) {
-    quoteValue = atof(quote);
-  } else {
-    quoteValue = 0.0;
+    quoteValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "sell"));
   }
   json_decref(root);
   return quoteValue;

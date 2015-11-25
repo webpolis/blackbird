@@ -26,6 +26,8 @@ Parameters::Parameters(json_t* root) {
   geminiSecret = json_string_value(json_object_get(root, "GeminiSecretKey"));
   krakenApi = json_string_value(json_object_get(root, "KrakenApiKey"));
   krakenSecret = json_string_value(json_object_get(root, "KrakenSecretKey"));
+  btceApi = json_string_value(json_object_get(root, "BTCeApiKey"));
+  btceSecret = json_string_value(json_object_get(root, "BTCeSecretKey"));
     
   // email parameters
   sendEmail = json_boolean_value(json_object_get(root, "SendEmail"));

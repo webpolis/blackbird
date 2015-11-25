@@ -150,6 +150,7 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 * _Demo mode_ implemented
 * Blackbird output is now sent to a log file
 * Kraken fully implemented (to be tested)
+* BTC-e (info only) added
 * Safety measure: Blackbird won't start if one of the BTC accounts is not empty
 * More verbosity when limit prices are calculated
 * Minor fixes and improvements

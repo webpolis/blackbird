@@ -52,5 +52,10 @@
   "ItBitApiKey": "",
   "ItBitSecretKey": "",
   "ItBitFees": 0.0020,
-  "ItBitCanShort": false
+  "ItBitCanShort": false,
+
+  "BTCeApiKey": "",
+  "BTCeSecretKey": "",
+  "BTCeFees": 0.0020,
+  "BTCeCanShort": false
 }
