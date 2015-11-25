@@ -45,11 +45,20 @@ double getQuote(Parameters& params, bool isBid) {
 double getAvail(Parameters& params, std::string currency) {
 
   json_t* root = authRequest(params, "https://api.kraken.com", "/0/private/Balance");
-  double available = 0;
+  json_t* result = json_object_get(root, "result");
+
+  while (json_object_size(result) == 0) {
+    sleep(1.0);
+	*params.logFile << "<Kraken> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
+    root = authRequest(params, "https://api.kraken.com", "/0/private/Balance");
+	result = json_object_get(root, "result");
+  }
+  
+  double available = 0.0;
   if (currency.compare("usd") == 0) {
-    available = atof(json_string_value(json_object_get(json_object_get(root, "result"), "ZUSD")));
+    available = atof(json_string_value(json_object_get(result, "ZUSD")));
   } else if(currency.compare("btc") == 0) {
-    available = atof(json_string_value(json_object_get(json_object_get(root, "result"), "XXBT")));
+    available = atof(json_string_value(json_object_get(result, "XXBT")));
   } else {
     *params.logFile << "Currency not supported" << std::endl;
   }
