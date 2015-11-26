@@ -118,21 +118,24 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   // loop on volume
   *params.logFile << "<Bitstamp> Looking for a limit price to fill " << volume << " BTC..." << std::endl;
   double tmpVol = 0.0;
+  double p;
+  double v;
   int i = 0;
-  while (tmpVol < volume) {
-    // volumes are added up until the requested volume is reached
-    double p = atof(json_string_value(json_array_get(json_array_get(root, i), 0)));
-    double v = atof(json_string_value(json_array_get(json_array_get(root, i), 1)));
+  while (tmpVol < volume * 2.0) {
+    p = atof(json_string_value(json_array_get(json_array_get(root, i), 0)));
+    v = atof(json_string_value(json_array_get(json_array_get(root, i), 1)));
     *params.logFile << "<Bitstamp> order book: " << v << "@$" << p << std::endl;
     tmpVol += v;
     i++;
   }
-  // return the next offer
   double limPrice = 0.0;
   if (params.aggressiveVolume) {
-    limPrice = atof(json_string_value(json_array_get(json_array_get(root, i), 0)));
+    limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
   } else {
-    limPrice = atof(json_string_value(json_array_get(json_array_get(root, i+1), 0)));
+    p = atof(json_string_value(json_array_get(json_array_get(root, i), 0)));
+    v = atof(json_string_value(json_array_get(json_array_get(root, i), 1)));
+    *params.logFile << "<Bitstamp> order book: " << v << "@$" << p << " (non-aggressive)" << std::endl;
+    limPrice = p;
   }
   json_decref(root);
   return limPrice;
