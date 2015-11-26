@@ -35,7 +35,7 @@ double getQuote(Parameters& params, bool isBid) {
 
 
 double getAvail(Parameters& params, std::string currency) {
-  json_t* root= authRequest(params, "https://www.bitstamp.net/api/balance/", "");
+  json_t* root = authRequest(params, "https://www.bitstamp.net/api/balance/", "");
   while (json_object_get(root, "message") != NULL) {
     sleep(1.0);
     *params.logFile << "<Bitstamp> Error with JSON in getAvail: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
@@ -72,7 +72,7 @@ int sendOrder(Parameters& params, std::string direction, double quantity, double
 
   oss << "amount=" << quantity << "&price=" << std::fixed << std::setprecision(2) << limPrice;
   std::string options = oss.str();
-  json_t* root= authRequest(params, url, options);
+  json_t* root = authRequest(params, url, options);
 
   int orderId = json_integer_value(json_object_get(root, "id"));
   if (orderId == 0) {
@@ -91,7 +91,7 @@ bool isOrderComplete(Parameters& params, int orderId) {
   std::ostringstream oss;
   oss << "id=" << orderId;
   std::string options = oss.str();
-  json_t* root= authRequest(params, "https://www.bitstamp.net/api/order_status/", options);
+  json_t* root = authRequest(params, "https://www.bitstamp.net/api/order_status/", options);
   std::string status = json_string_value(json_object_get(root, "status"));
   json_decref(root);
   if (status.compare("Finished") == 0) {
@@ -116,7 +116,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   }
 
   // loop on volume
-  *params.logFile << "<Bitstamp> Looking for a limit price to fill " << volume << "BTC..." << std::endl;
+  *params.logFile << "<Bitstamp> Looking for a limit price to fill " << volume << " BTC..." << std::endl;
   double tmpVol = 0.0;
   int i = 0;
   while (tmpVol < volume) {

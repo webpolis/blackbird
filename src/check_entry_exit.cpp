@@ -7,7 +7,7 @@ std::string percToStr(double perc) {
 
   std::ostringstream s;
   if (perc < 0.0) {
-    s << std::fixed << std::setprecision(2) <<  perc * 100.0 << "%";
+    s << std::fixed << std::setprecision(2) << perc * 100.0 << "%";
   } else {
     s << " " << std::fixed << std::setprecision(2) << perc * 100.0 << "%";
   }
@@ -40,7 +40,7 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
       *params.logFile << " [target " << percToStr(params.spreadEntry) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
 
       if (res.trailing[longId][shortId] != -1.0) {
-        *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "%";
+        *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]);
       }
       if ((btcLong->getIsImplemented() == false || btcShort->getIsImplemented() == false) && params.infoOnly == false) {
         *params.logFile << "   info only"  << std::endl;
@@ -112,7 +112,7 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
     *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadOut);
     *params.logFile << " [target " << percToStr(res.exitTarget) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
     if (res.trailing[longId][shortId] != 1.0) {
-      *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "%";
+      *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]);
     }
   }
   *params.logFile << std::endl;

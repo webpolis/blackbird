@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
 
   // read the config file (config.json)
   json_error_t error;
-  json_t* root= json_load_file("config.json", 0, &error);
+  json_t* root = json_load_file("config.json", 0, &error);
   if (!root) {
     std::cout << "ERROR: config.json incorrect (" << error.text << ")\n" << std::endl;
     return -1;
@@ -327,22 +327,22 @@ int main(int argc, char** argv) {
               // entry opportunity found
               res.exposure = std::min(balanceUsd[res.idExchLong], balanceUsd[res.idExchShort]);
               if (infoOnly) {
-                logFile << "   INFO: Opportunity found but no trade will be generated (Demo mode)" << std::endl;
+                logFile << "INFO: Opportunity found but no trade will be generated (Demo mode)" << std::endl;
                 break;
               }
               if (res.exposure == 0.0) {
-                logFile << "   WARNING: Opportunity found but no cash available. Trade canceled" << std::endl;
+                logFile << "WARNING: Opportunity found but no cash available. Trade canceled" << std::endl;
                 break;
               }
               if (useFullCash == false && res.exposure <= cashForTesting) {
-                logFile << "   WARNING: Opportunity found but no enough cash. Need more than TEST cash (min. $" << cashForTesting << "). Trade canceled" << std::endl;
+                logFile << "WARNING: Opportunity found but no enough cash. Need more than TEST cash (min. $" << cashForTesting << "). Trade canceled" << std::endl;
                 break;
               }
               if (useFullCash) {
                 res.exposure -= untouchedCash * res.exposure;  // leave untouchedCash
                 if (res.exposure > maxExposure) {
-                  logFile << "   WARNING: Opportunity found but exposure ($" << res.exposure << ") above the limit" << std::endl;
-                  logFile << "            Max exposure will be used instead ($" << maxExposure << ")" << std::endl;
+                  logFile << "WARNING: Opportunity found but exposure ($" << res.exposure << ") above the limit" << std::endl;
+                  logFile << "         Max exposure will be used instead ($" << maxExposure << ")" << std::endl;
                   res.exposure = maxExposure;
                 }
               } else {
@@ -353,9 +353,9 @@ int main(int argc, char** argv) {
               double limPriceLong = getLimitPrice[res.idExchLong](params, volumeLong, false);
               double limPriceShort = getLimitPrice[res.idExchShort](params, volumeShort, true);
               if (limPriceLong - res.priceLongIn > params.priceDeltaLim || res.priceShortIn - limPriceShort > params.priceDeltaLim) {
-                logFile << "   WARNING: Opportunity found but not enough liquidity. Trade canceled" << std::endl;
-                logFile << "            Target long price:  " << res.priceLongIn << ", Real long price:  " << limPriceLong << std::endl;
-                logFile << "            Target short price: " << res.priceShortIn << ", Real short price: " << limPriceShort << std::endl;
+                logFile << "WARNING: Opportunity found but not enough liquidity. Trade canceled" << std::endl;
+                logFile << "         Target long price:  " << res.priceLongIn << ", Real long price:  " << limPriceLong << std::endl;
+                logFile << "         Target short price: " << res.priceShortIn << ", Real short price: " << limPriceShort << std::endl;
                 res.trailing[res.idExchLong][res.idExchShort] = -1.0;
                 break;
               }
@@ -409,9 +409,9 @@ int main(int argc, char** argv) {
         double limPriceShort = getLimitPrice[res.idExchShort](params, volumeShort, false);
 
         if (res.priceLongOut - limPriceLong > params.priceDeltaLim || limPriceShort - res.priceShortOut > params.priceDeltaLim) {
-          logFile << "   WARNING: Opportunity found but not enough liquidity. Trade canceled" << std::endl;
-          logFile << "            Target long price:  " << res.priceLongOut << ", Real long price:  " << limPriceLong << std::endl;
-          logFile << "            Target short price: " << res.priceShortOut << ", Real short price: " << limPriceShort << std::endl;
+          logFile << "WARNING: Opportunity found but not enough liquidity. Trade canceled" << std::endl;
+          logFile << "         Target long price:  " << res.priceLongOut << ", Real long price:  " << limPriceLong << std::endl;
+          logFile << "         Target short price: " << res.priceShortOut << ", Real short price: " << limPriceShort << std::endl;
           res.trailing[res.idExchLong][res.idExchShort] = 1.0;
         } else {
           res.exitTime = currTime;

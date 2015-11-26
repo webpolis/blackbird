@@ -9,9 +9,9 @@
   "UntouchedCash": 0.01, 
   "CashForTesting": 25.00,
   "MaxExposure": 25000.00,
-  "PriceDeltaLimit": 0.30,
+  "PriceDeltaLimit": 0.40,
   "AggressiveVolume": false,
-  "TrailingSpreadLim": 0.0005,
+  "TrailingSpreadLim": 0.0015,
 
   "DebugMaxIteration": 3200000,
   "Verbose": true,

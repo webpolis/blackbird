@@ -123,7 +123,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   if (isBid) {
     root = json_object_get(getJsonFromUrl(params, "https://www.okcoin.com/api/v1/depth.do", ""), "bids");
     // loop on volume
-    *params.logFile << "<OKCoin> Looking for a limit price to fill " << volume << "BTC..." << std::endl;
+    *params.logFile << "<OKCoin> Looking for a limit price to fill " << volume << " BTC..." << std::endl;
     double tmpVol = 0.0;
     size_t i = 0;
     while (tmpVol < volume) {

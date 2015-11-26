@@ -27,7 +27,7 @@ namespace Kraken {
 
   // send a request to the exchange and return a JSON object
   json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options="");
-    
+
 }
 
 #endif

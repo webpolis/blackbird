@@ -13,7 +13,7 @@
 namespace Bitfinex {
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root= getJsonFromUrl(params, "https://api.bitfinex.com/v1/ticker/btcusd", "");
+  json_t* root = getJsonFromUrl(params, "https://api.bitfinex.com/v1/ticker/btcusd", "");
   const char* quote;
   double quoteValue;
   if (isBid) {
@@ -32,7 +32,7 @@ double getQuote(Parameters& params, bool isBid) {
 
 
 double getAvail(Parameters& params, std::string currency) {
-  json_t* root= authRequest(params, "https://api.bitfinex.com/v1/balances", "balances", "");
+  json_t* root = authRequest(params, "https://api.bitfinex.com/v1/balances", "balances", "");
   while (json_object_get(root, "message") != NULL) {
     sleep(1.0);
     *params.logFile << "<Bitfinex> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
@@ -69,7 +69,7 @@ int sendOrder(Parameters& params, std::string direction, double quantity, double
   oss << "\"symbol\":\"btcusd\", \"amount\":\"" << quantity << "\", \"price\":\"" << limPrice << "\", \"exchange\":\"bitfinex\", \"side\":\"" << direction << "\", \"type\":\"limit\"";
   std::string options = oss.str();
 
-  json_t* root= authRequest(params, "https://api.bitfinex.com/v1/order/new", "order/new", options);
+  json_t* root = authRequest(params, "https://api.bitfinex.com/v1/order/new", "order/new", options);
   int orderId = json_integer_value(json_object_get(root, "order_id"));
   *params.logFile << "<Bitfinex> Done (order ID: " << orderId << ")\n" << std::endl;
 
@@ -86,7 +86,7 @@ bool isOrderComplete(Parameters& params, int orderId) {
   oss << "\"order_id\":" << orderId;
   std::string options = oss.str();
 
-  json_t* root= authRequest(params, "https://api.bitfinex.com/v1/order/status", "order/status", options);
+  json_t* root = authRequest(params, "https://api.bitfinex.com/v1/order/status", "order/status", options);
 
   bool isComplete = !json_boolean_value(json_object_get(root, "is_live"));
   json_decref(root);
@@ -95,7 +95,7 @@ bool isOrderComplete(Parameters& params, int orderId) {
 
 
 double getActivePos(Parameters& params) {
-  json_t* root= authRequest(params, "https://api.bitfinex.com/v1/positions", "positions", "");
+  json_t* root = authRequest(params, "https://api.bitfinex.com/v1/positions", "positions", "");
 
   double position;
   if (json_array_size(root) == 0) {
@@ -117,7 +117,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
     root = json_object_get(getJsonFromUrl(params, "https://api.bitfinex.com/v1/book/btcusd", ""), "asks");
   }
   // loop on volume
-  *params.logFile << "<Bitfinex> Looking for a limit price to fill " << volume << "BTC..." << std::endl;
+  *params.logFile << "<Bitfinex> Looking for a limit price to fill " << volume << " BTC..." << std::endl;
   double tmpVol = 0.0;
   int i = 0;
   while (tmpVol < volume) {
