@@ -56,9 +56,11 @@ double getAvail(Parameters& params, std::string currency) {
   
   double available = 0.0;
   if (currency.compare("usd") == 0) {
-    available = atof(json_string_value(json_object_get(result, "ZUSD")));
-  } else if(currency.compare("btc") == 0) {
-    available = atof(json_string_value(json_object_get(result, "XXBT")));
+    const char * avail_str = json_string_value(json_object_get(result, "ZUSD"));
+    available = avail_str ? atof(avail_str) : 0.0;
+  } else if (currency.compare("btc") == 0) {
+    const char * avail_str = json_string_value(json_object_get(result, "XXBT"));
+    available = avail_str ? atof(avail_str) : 0.0;
   } else {
     *params.logFile << "Currency not supported" << std::endl;
   }
