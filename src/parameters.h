@@ -45,6 +45,8 @@ struct Parameters {
   const char* krakenSecret;
   const char* btceApi;
   const char* btceSecret;
+  const char* sevennintysixApi;
+  const char* sevennintysixSecret;
 
   // email
   bool sendEmail;
