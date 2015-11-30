@@ -2,6 +2,7 @@
 #include <iostream>
 #include <unistd.h>
 #include <sstream>
+#include <math.h>
 #include <sys/time.h>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
@@ -122,7 +123,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   double p;
   double v;
   int i = 0;
-  while (tmpVol < volume * 2.0) {
+  while (tmpVol < fabs(volume) * 2.0) {
     p = atof(json_string_value(json_object_get(json_array_get(root, i), "price")));
     v = atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
     *params.logFile << "<Bitfinex> order book: " << v << "@$" << p << std::endl;
