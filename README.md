@@ -61,7 +61,7 @@ Note that it is never entirely safe to just tell Blackbird to use only $25 per e
 
 #### Credentials
 
-As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_, _Gemini_ and _Kraken_. For each of your exchange accounts you need to create API authentication keys. This is usually done in the Settings section of your accounts.
+As of today the exchanges fully implemented are _Bitfinex_, _OKCoin_, _Bitstamp_, _Gemini_, _Kraken_ and _796.com_. For each of your exchange accounts you need to create API authentication keys. This is usually done in the Settings section of your accounts.
 
 Then, you need to add your API keys in the file _config.json_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. But you need at least two exchanges and as of today one of them has to be Bitfinex.
 
@@ -149,7 +149,8 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 * Replaced `SpreadExit` by `SpreadTarget`
 * _Demo mode_ implemented
 * Blackbird output is now sent to a log file
-* Kraken fully implemented (to be tested)
+* Kraken fully implemented (__to be tested__)
+* 796.com fuly implemented (__to be tested__)
 * BTC-e (info only) added
 * Safety measure: Blackbird won't start if one of the BTC accounts is not empty
 * More verbosity when limit prices are calculated
