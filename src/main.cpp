@@ -22,6 +22,7 @@
 #include "kraken.h"
 #include "itbit.h"
 #include "btce.h"
+#include "sevennintysix.h"
 #include "send_email.h"
 
 typedef double (*getQuoteType) (Parameters& params, bool isBid);
@@ -82,6 +83,7 @@ int main(int argc, char** argv) {
   Parameters params(root);
   int index = 0;
   std::string tmp;
+
   tmp = json_string_value(json_object_get(root, "BitfinexApiHead"));
   if (tmp.empty() == false || infoOnly == true) {
     params.addExchange("Bitfinex", json_real_value(json_object_get(root, "BitfinexFees")), json_boolean_value(json_object_get(root, "BitfinexCanShort")), true);
@@ -159,6 +161,19 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = BTCe::getLimitPrice;
     index++;
   }
+  //This will help you while trading with 796.com
+  tmp = json_string_value(json_object_get(root, "SevenNintySixApiKey"));
+  if (tmp.empty() == false || infoOnly == true) {
+    params.addExchange("SevenNintySix", json_real_value(json_object_get(root, "SevenNintySixFees")), json_boolean_value(json_object_get(root, "SevenNintySixCanShort")), true);
+    getQuote[index] = SevenNintySix::getQuote;
+    getAvail[index] = SevenNintySix::getAvail;
+    sendOrder[index] = SevenNintySix::sendOrder;
+    isOrderComplete[index] = SevenNintySix::isOrderComplete;
+    getActivePos[index] = SevenNintySix::getActivePos;
+    getLimitPrice[index] = SevenNintySix::getLimitPrice;
+    index++;
+  }
+
 
   if (index < 2) {
     std::cout << "ERROR: Blackbird needs at least two Bitcoin exchanges. Please edit the config.json file to add new exchanges\n" << std::endl;
