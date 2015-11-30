@@ -1,0 +1,64 @@
+#include <string.h>
+#include <iostream>
+#include <unistd.h>
+#include <sstream>
+#include <sys/time.h>
+#include <openssl/sha.h>
+#include <openssl/hmac.h>
+#include "base64.h"
+#include <jansson.h>
+#include "sevennintysix.h"
+#include "curl_fun.h"
+
+namespace SevenNintySix {
+	double getQuote(Parameters& params, bool isBid) {
+		json_t* root = getJsonFromUrl(params, "http://api.796.com/v3/futures/depth.html?type=weekly", "");
+		const char* quote;
+		double quoteValue;
+		if (isBid) {
+			quote = json_string_value(json_object_get(root, "bid"));
+		} else {
+			quote = json_string_value(json_object_get(root, "ask"));
+		}
+		if (quote != NULL) {
+			quoteValue = atof(quote);
+		} else {
+			quoteValue = 0.0;
+		}
+		json_decref(root);
+		return quoteValue;
+}
+
+
+double getAvail(Parameters& params, std::string currency){
+	double _double = 0;
+	return _double;
+}
+	int sendOrder(Parameters& params, std::string direction, double quantity, double price){
+	int i = 0;
+	return i;
+}
+
+// check the status of the order
+bool isOrderComplete(Parameters& params, int orderId){
+	bool x = false;
+	return x;
+}
+
+// get the Bitcoin exposition
+double getActivePos(Parameters& params){
+double _double = 0;
+	return _double;
+}
+
+// get the limit price according to the requested volume
+double getLimitPrice(Parameters& params, double volume, bool isBid){
+	double _double = 0;
+	return _double;
+}
+
+// send a request to the exchange and return a JSON object
+json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options){
+	return NULL;
+}
+}

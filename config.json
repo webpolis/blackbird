@@ -57,5 +57,10 @@
   "BTCeApiKey": "",
   "BTCeSecretKey": "",
   "BTCeFees": 0.0020,
-  "BTCeCanShort": false
+  "BTCeCanShort": false,
+  
+  "SevenNintySixApiKey": "",
+  "SevenNintySixSecretKey": "",
+  "SevenNintySixFees": 0.0025,
+  "SevenNintySixCanShort": false
 }
