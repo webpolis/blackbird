@@ -164,7 +164,7 @@ int main(int argc, char** argv) {
   //This will help you while trading with 796.com
   tmp = json_string_value(json_object_get(root, "SevenNintySixApiKey"));
   if (tmp.empty() == false || infoOnly == true) {
-    params.addExchange("SevenNintySix", json_real_value(json_object_get(root, "SevenNintySixFees")), json_boolean_value(json_object_get(root, "SevenNintySixCanShort")), true);
+    params.addExchange("796.com", json_real_value(json_object_get(root, "SevenNintySixFees")), json_boolean_value(json_object_get(root, "SevenNintySixCanShort")), true);
     getQuote[index] = SevenNintySix::getQuote;
     getAvail[index] = SevenNintySix::getAvail;
     sendOrder[index] = SevenNintySix::sendOrder;
