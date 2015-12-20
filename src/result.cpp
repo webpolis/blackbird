@@ -89,6 +89,7 @@ void Result::clear() {
       minSpread[i][j] = 1.0;
       maxSpread[i][j] = -1.0;
       trailing[i][j] = -1.0;
+      trailingWait[i][j] = 0;
     }
   }
 

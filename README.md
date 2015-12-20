@@ -13,7 +13,7 @@ Here is an example with real data. Blackbird analyzes the bid/ask information fr
 Then, about 4.5 hours later the spread decreases below an `EXIT` threshold (second vertical line) so Blackbird exits the market by selling Bitstamp and buying Bitfinex back.
 
 <p align="center">
-<img src="https://cloud.githubusercontent.com/assets/11370278/11164055/5863e750-8ab3-11e5-86fc-8f7bab6818df.png"  width="50%" alt="Spread Example">
+<img src="https://cloud.githubusercontent.com/assets/11370278/11164055/5863e750-8ab3-11e5-86fc-8f7bab6818df.png"  width="60%" alt="Spread Example">
 </p>
 
 
@@ -31,7 +31,7 @@ The two parameters used to control the arbitrage are `SpreadEntry` and `SpreadTa
 
 If two exchanges have a 0.20% fees for every trade then we will have for each arbitrage opportunity:
 
-* 0.20% entry long + 0.20% entry short + 0.20% exit long + 0.20% exit short = 0.80% total fees
+0.20% entry long + 0.20% entry short + 0.20% exit long + 0.20% exit short = 0.80% total fees
 
 Now let's say we have `SpreadEntry` at 1.00% and trades are generated at that level. If the net profit we target (`SpreadTarget`) is 0.30%, then Blackbird will set the exit threshold for these trades at -0.10% (1.00% spread entry - 0.80% total fees - 0.30% target = -0.10% exit threshold).
 
@@ -95,7 +95,9 @@ CashForTesting=25.00
 MaxExposure=25000.00
 ```
 
-And let's say you have $1,000 on your Bitfinex trading account and $1,100 on your OKCoin trading account. Blackbird will then use $990 on each exchange (i.e. $1,000 - 1.00%) so your total exposure will be $1,980. Now if you set `UseFullCash=false` then Blackbird will use $25 per exchange (total exposure $50).
+And let's say you have $1,000 on your Bitfinex trading account and $1,100 on your OKCoin trading account. Blackbird will then use $990 on each exchange, i.e. $1,000 - (1.00% * $1,000) so your total exposure will be $1,980.
+
+Now if you set `UseFullCash=false` then Blackbird will use $25 per exchange (total exposure $50).
 
 `MaxExposure` defines the maximum cash exposure on each exchange ($25,000 per exchange in the example above).
 
@@ -112,9 +114,22 @@ __Note:__ you need Jansson version 2.7 minimum otherwise you will get the follow
 
 `'json_boolean_value' was not declared in this scope`
 
-For instance, on Ubuntu you need to install the following: `ibssl-dev libjansson-dev libcurl4-openssl-dev sendemail`.
+For instance, on Ubuntu you need to install the following libraries:
 
-Build the software by typing `make` then start the software with the command `./blackbird`.
+```
+ibssl-dev
+libjansson-dev
+libcurl4-openssl-dev
+sendemail
+```
+
+Build Blackbird by typing:
+
+`make`
+
+Then start it by typing:
+
+`./blackbird`
 
 ### Tasks And Issues
 
@@ -129,7 +144,7 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 ##### July 2015
 
 * Bitstamp exchange added
-* Kraken exchange added (bid/ask information only, other functions to be implemented)
+* Kraken exchange added (bid/ask info only)
 * Improved JSON and cURL exceptions management
 * Added the milliseconds to the nonce used for exchange authentification
 * Minor fixes and improvements
@@ -137,7 +152,7 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 ##### September 2015
 
 * General performance and stability improvements (merge from _julianmi:performance_improvements_)
-* ItBit exchange added (info only)
+* ItBit exchange added (bid/ask info only)
 * Minor fixes and improvements
 
 ##### October 2015
@@ -156,7 +171,7 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 * Blackbird output is now sent to a log file
 * Kraken fully implemented (__to be tested__)
 * 796.com fully implemented (__to be tested__)
-* BTC-e (info only) added
+* BTC-e exchange added (bid/ask info only)
 * Safety measure: Blackbird won't start if one of the BTC accounts is not empty
 * More verbosity when limit prices are calculated
 * Minor fixes and improvements
@@ -165,7 +180,6 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 ##### December 2015
 
 * More user-friendly config file (_blackbird.conf_)
-
 
 ### Links
 

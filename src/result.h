@@ -28,9 +28,10 @@ struct Result {
   double spreadOut;
   double exitTarget;
 
-  double minSpread[10][10]; // FIXME size
-  double maxSpread[10][10]; // FIXME size
-  double trailing[10][10];  // FIXME size
+  double minSpread[10][10];      // FIXME size
+  double maxSpread[10][10];      // FIXME size
+  double trailing[10][10];       // FIXME size
+  unsigned trailingWait[10][10]; // FIXME size
 
   double befBalUsd;
   double aftBalUsd;

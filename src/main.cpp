@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.btceApi.empty() == false || params.demoMode == true) {
-    params.addExchange("BTCe", params.btceFees, params.btceCanShort, false);
+    params.addExchange("BTC-e", params.btceFees, params.btceCanShort, false);
     getQuote[index] = BTCe::getQuote;
     getAvail[index] = BTCe::getAvail;
     // sendOrder[index] = BTCe::sendOrder;

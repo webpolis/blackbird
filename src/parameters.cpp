@@ -2,6 +2,7 @@
 #include "parameters.h"
 #include "time_fun.h"
 
+
 Parameters::Parameters(std::string fileName) {
 
   std::ifstream configFile(fileName.c_str());
@@ -81,7 +82,6 @@ void Parameters::addExchange(std::string n, double f, bool h, bool m) {
 }
 
 
-// returns number of exchanges
 int Parameters::nbExch() const {
   return exchName.size();
 }
@@ -109,7 +109,6 @@ std::string getParameter(std::string parameter, std::ifstream& configFile) {
     return "error";
   }
 }
-
 
 
 bool getBool(std::string value) {

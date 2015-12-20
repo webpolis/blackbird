@@ -48,7 +48,6 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
         *params.logFile << std::endl;
       }
     }
-
     if (btcLong->getIsImplemented() == true) {
       if (btcShort->getIsImplemented() == true) {
         if (priceLong > 0.0) {
@@ -64,22 +63,31 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
               } else {
                 if (newTrailValue >= res.trailing[longId][shortId]) {
                   res.trailing[longId][shortId] = newTrailValue;
+                  res.trailingWait[longId][shortId] = 0;
                 }
                 if (res.spreadIn < res.trailing[longId][shortId]) {
-                  res.idExchLong = longId;
-                  res.idExchShort = shortId;
-                  res.feesLong = btcLong->getFees();
-                  res.feesShort = btcShort->getFees();
-                  res.exchNameLong = btcLong->getExchName();
-                  res.exchNameShort = btcShort->getExchName();
-                  res.priceLongIn = priceLong;
-                  res.priceShortIn = priceShort;
-                  res.exitTarget = res.spreadIn - params.spreadTarget - (2.0 * btcLong->getFees() + 2.0 * btcShort->getFees());
-                  return true;
+                  if (res.trailingWait[longId][shortId] < 2) {
+                    res.trailingWait[longId][shortId]++;
+                  } else {
+                    res.idExchLong = longId;
+                    res.idExchShort = shortId;
+                    res.feesLong = btcLong->getFees();
+                    res.feesShort = btcShort->getFees();
+                    res.exchNameLong = btcLong->getExchName();
+                    res.exchNameShort = btcShort->getExchName();
+                    res.priceLongIn = priceLong;
+                    res.priceShortIn = priceShort;
+                    res.exitTarget = res.spreadIn - params.spreadTarget - (2.0 * btcLong->getFees() + 2.0 * btcShort->getFees());
+                    res.trailingWait[longId][shortId] = 0;
+                    return true;
+                  }
+                } else {
+                  res.trailingWait[longId][shortId] = 0;
                 }
               }
             } else {
               res.trailing[longId][shortId] = -1.0;
+              res.trailingWait[longId][shortId] = 0;
             }
           }
         }
@@ -134,15 +142,24 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
         } else {
           if (newTrailValue <= res.trailing[longId][shortId]) {
             res.trailing[longId][shortId] = newTrailValue;
+            res.trailingWait[longId][shortId] = 0;
           }
           if (res.spreadOut > res.trailing[longId][shortId]) {
-            res.priceLongOut  = priceLong;
-            res.priceShortOut = priceShort;
-            return true;
+            if (res.trailingWait[longId][shortId] < 2) {
+              res.trailingWait[longId][shortId]++;
+            } else {
+              res.priceLongOut  = priceLong;
+              res.priceShortOut = priceShort;
+              res.trailingWait[longId][shortId] = 0;
+              return true;
+            }
+          } else {
+            res.trailingWait[longId][shortId] = 0;
           }
         }
       } else {
         res.trailing[longId][shortId] = 1.0;
+        res.trailingWait[longId][shortId] = 0;
       }
     }
   }
