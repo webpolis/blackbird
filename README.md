@@ -112,7 +112,7 @@ __Note:__ you need Jansson version 2.7 minimum otherwise you will get the follow
 
 `'json_boolean_value' was not declared in this scope`
 
-For instance, on Ubuntu you need to install the following: ibssl-dev libjansson-dev libcurl4-openssl-dev sendemail`.
+For instance, on Ubuntu you need to install the following: `ibssl-dev libjansson-dev libcurl4-openssl-dev sendemail`.
 
 Build the software by typing `make` then start the software with the command `./blackbird`.
 
