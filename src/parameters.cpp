@@ -55,7 +55,7 @@ Parameters::Parameters(std::string fileName) {
   btceApi = getParameter("BTCeApiKey", configFile);
   btceSecret = getParameter("BTCeSecretKey", configFile);
   btceFees = getDouble(getParameter("BTCeFees", configFile));
-  btceCanShort = getBool(getParameter("BTCeCanShortxxxx", configFile));
+  btceCanShort = getBool(getParameter("BTCeCanShort", configFile));
 
   sevennintysixApi = getParameter("SevenNintySixApiKey", configFile);
   sevennintysixSecret = getParameter("SevenNintySixSecretKey", configFile);
