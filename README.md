@@ -59,7 +59,15 @@ Note that it is never entirely safe to just tell Blackbird to use only $25 per e
 
 #### Credentials
 
-As of today the exchanges fully implemented are <a href="https://www.bitfinex.com" target="_blank">Bitfinex</a>, <a href="https://www.okcoin.com" target="_blank">OKCoin</a>, <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a>, <a href="https://gemini.com" target="_blank">Gemini</a>, <a href="https://www.kraken.com" target="_blank">Kraken</a> and <a href="https://796.com/?lang=en" target="_blank">796.com (Bitcoin futures)</a>. For each of your exchange accounts you need to create API authentication keys. This is usually done in the Settings section of your accounts.
+As of today the exchanges fully implemented are:
+* <a href="https://www.bitfinex.com" target="_blank">Bitfinex</a>
+* <a href="https://www.okcoin.com" target="_blank">OKCoin</a>
+* <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a>
+* <a href="https://gemini.com" target="_blank">Gemini</a>
+* <a href="https://www.kraken.com" target="_blank">Kraken</a>
+* <a href="https://796.com/?lang=en" target="_blank">796.com</a> (Bitcoin futures)
+
+For each of your exchange accounts you need to create API authentication keys. This is usually done in the Settings section of your accounts.
 
 Then, you need to add your API keys in the file _blackbird.conf_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. However, you need at least two exchanges and one of them should allow short selling.
 
@@ -70,7 +78,7 @@ It is possible to run Blackbird without any credentials. Just set the parameter 
 #### Strategy parameters
 
 Modify the stategy parameters to match your trading style (few trades with high spreads or many trades with low spreads):
-```
+```javascript
 SpreadEntry=0.0080
 SpreadTarget=0.0020
 ```
@@ -80,14 +88,14 @@ SpreadTarget=0.0020
 If you set `UseFullCash=true` then Blackbird will use the minimum cash on the accounts of your two trades, minus a small percentage defined by `UntouchedCash`.
 For example, if you have:
 
-```
+```javascript
 UseFullCash=true
 UntouchedCash=0.01
 CashForTesting=25.00
 MaxExposure=25000.00
 ```
 
-And let's say you have $1,000 on your Bitfinex trading account and $1,100 on your OKCoin trading account. Blackbird will then use $990 on each exchange (i.e. $1,000 - 1%) so your total exposure will be $1,980. Now if you set `UseFullCash=false` then Blackbird will use $25 per exchange (total exposure $50).
+And let's say you have $1,000 on your Bitfinex trading account and $1,100 on your OKCoin trading account. Blackbird will then use $990 on each exchange (i.e. $1,000 - 1.00%) so your total exposure will be $1,980. Now if you set `UseFullCash=false` then Blackbird will use $25 per exchange (total exposure $50).
 
 `MaxExposure` defines the maximum cash exposure on each exchange ($25,000 per exchange in the example above).
 
@@ -104,7 +112,7 @@ __Note:__ you need Jansson version 2.7 minimum otherwise you will get the follow
 
 `'json_boolean_value' was not declared in this scope`
 
-For instance, on Ubuntu you need to install the following four libaries: `libssl-dev libjansson-dev libcurl4-openssl-dev sendemail`.
+For instance, on Ubuntu you need to install the following: ibssl-dev libjansson-dev libcurl4-openssl-dev sendemail`.
 
 Build the software by typing `make` then start the software with the command `./blackbird`.
 
@@ -124,21 +132,20 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 * Kraken exchange added (bid/ask information only, other functions to be implemented)
 * Improved JSON and cURL exceptions management
 * Added the milliseconds to the nonce used for exchange authentification
-* JSON memory leak fixed
 * Minor fixes and improvements
 
 ##### September 2015
 
 * General performance and stability improvements (merge from _julianmi:performance_improvements_)
-* ItBit exchange added (bid/ask information only, other functions to be implemented)
+* ItBit exchange added (info only)
 * Minor fixes and improvements
 
 ##### October 2015
 
 * Gemini exchange added and fully implemented
 * No need to have accounts on all the exchanges anymore
-* Bug <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> (_nonce too small_) fixed
-* Bug <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> (_process hangs_) fixed
+* Bug <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> fixed
+* Bug <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> fixed
 * Minor fixes and improvements
 
 ##### November 2015
