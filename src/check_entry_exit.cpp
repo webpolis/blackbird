@@ -40,7 +40,7 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
       *params.logFile << " [target " << percToStr(params.spreadEntry) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
 
       if (res.trailing[longId][shortId] != -1.0) {
-        *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]);
+        *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWait[longId][shortId] << "/2";
       }
       if ((btcLong->getIsImplemented() == false || btcShort->getIsImplemented() == false) && params.demoMode == false) {
         *params.logFile << "   info only"  << std::endl;
@@ -120,7 +120,7 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
     *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadOut);
     *params.logFile << " [target " << percToStr(res.exitTarget) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
     if (res.trailing[longId][shortId] != 1.0) {
-      *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]);
+      *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWait[longId][shortId] << "/2";
     }
   }
   *params.logFile << std::endl;
