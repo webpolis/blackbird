@@ -174,7 +174,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   unsigned char* digest;
 
   // Using sha384 hash engine
-  digest = HMAC(EVP_sha384(), params.bitfinexSecret, strlen(params.bitfinexSecret), (unsigned char*)tmpPayload.c_str(), strlen(tmpPayload.c_str()), NULL, NULL);
+  digest = HMAC(EVP_sha384(), params.bitfinexSecret.c_str(), strlen(params.bitfinexSecret.c_str()), (unsigned char*)tmpPayload.c_str(), strlen(tmpPayload.c_str()), NULL, NULL);
 
   char mdString[SHA384_DIGEST_LENGTH+100];   // FIXME +100
   for (int i = 0; i < SHA384_DIGEST_LENGTH; ++i) {

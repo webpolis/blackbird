@@ -121,7 +121,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   double p;
   double v;
   int i = 0;
-  while (tmpVol < volume * 2.0) {
+  while (tmpVol < volume * params.orderBookFactor) {
     p = atof(json_string_value(json_array_get(json_array_get(root, i), 0)));
     v = atof(json_string_value(json_array_get(json_array_get(root, i), 1)));
     *params.logFile << "<Bitstamp> order book: " << v << "@$" << p << std::endl;
@@ -153,7 +153,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string options) {
   unsigned char* digest;
 
   // Using sha256 hash engine
-  digest = HMAC(EVP_sha256(), params.bitstampSecret, strlen(params.bitstampSecret), (unsigned char*)oss.str().c_str(), strlen(oss.str().c_str()), NULL, NULL);
+  digest = HMAC(EVP_sha256(), params.bitstampSecret.c_str(), strlen(params.bitstampSecret.c_str()), (unsigned char*)oss.str().c_str(), strlen(oss.str().c_str()), NULL, NULL);
 
   char mdString[SHA256_DIGEST_LENGTH+100];  // FIXME +100
   for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i) {

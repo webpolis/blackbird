@@ -117,7 +117,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   double p;
   double v;
   int i = 0;
-  while (tmpVol < volume * 2.0) {
+  while (tmpVol < volume * params.orderBookFactor) {
     p = atof(json_string_value(json_object_get(json_array_get(root, i), "price")));
     v = atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
     *params.logFile << "<Gemini> order book: " << v << "@$" << p << std::endl;
@@ -168,7 +168,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   unsigned char* digest;
 
   // Using sha384 hash engine
-  digest = HMAC(EVP_sha384(), params.geminiSecret, strlen(params.geminiSecret), (unsigned char*)tmpPayload.c_str(), strlen(tmpPayload.c_str()), NULL, NULL);
+  digest = HMAC(EVP_sha384(), params.geminiSecret.c_str(), strlen(params.geminiSecret.c_str()), (unsigned char*)tmpPayload.c_str(), strlen(tmpPayload.c_str()), NULL, NULL);
 
   char mdString[SHA384_DIGEST_LENGTH+100];   // FIXME +100
   for (int i = 0; i < SHA384_DIGEST_LENGTH; ++i) {

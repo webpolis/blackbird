@@ -2,50 +2,81 @@
 #include "parameters.h"
 #include "time_fun.h"
 
-// constructor
-Parameters::Parameters(json_t* root) {
-  // strategy and global parameters
-  spreadEntry = json_real_value(json_object_get(root, "SpreadEntry"));
-  spreadTarget = json_real_value(json_object_get(root, "SpreadTarget"));
-  maxLength = json_integer_value(json_object_get(root, "MaxLength"));
-  priceDeltaLim = json_real_value(json_object_get(root, "PriceDeltaLimit"));
-  aggressiveVolume = json_boolean_value(json_object_get(root, "AggressiveVolume"));
-  trailingLim = json_real_value(json_object_get(root, "TrailingSpreadLim"));
-  infoOnly = json_boolean_value(json_object_get(root, "InfoOnly"));
-  verbose = json_boolean_value(json_object_get(root, "Verbose"));
+Parameters::Parameters(std::string fileName) {
 
-  // exchanges credentials
-  bitfinexApi = json_string_value(json_object_get(root, "BitfinexApiHead"));
-  bitfinexSecret = json_string_value(json_object_get(root, "BitfinexKey"));
-  okCoinApi = json_string_value(json_object_get(root, "OkCoinApiKey"));
-  okCoinSecret = json_string_value(json_object_get(root, "OkCoinSecretKey"));
-  bitstampClientId = json_string_value(json_object_get(root, "BitstampClientId"));
-  bitstampApi = json_string_value(json_object_get(root, "BitstampApiKey"));
-  bitstampSecret = json_string_value(json_object_get(root, "BitstampSecretKey"));
-  geminiApi = json_string_value(json_object_get(root, "GeminiApiKey"));
-  geminiSecret = json_string_value(json_object_get(root, "GeminiSecretKey"));
-  krakenApi = json_string_value(json_object_get(root, "KrakenApiKey"));
-  krakenSecret = json_string_value(json_object_get(root, "KrakenSecretKey"));
-  btceApi = json_string_value(json_object_get(root, "BTCeApiKey"));
-  btceSecret = json_string_value(json_object_get(root, "BTCeSecretKey"));
-  sevennintysixApi = json_string_value(json_object_get(root, "SevenNintySixApiKey"));
-  sevennintysixSecret = json_string_value(json_object_get(root, "SevenNintySixSecretKey"));
-    
-  // email parameters
-  sendEmail = json_boolean_value(json_object_get(root, "SendEmail"));
-  senderAddress = json_string_value(json_object_get(root, "SenderAddress"));
-  senderUsername = json_string_value(json_object_get(root, "SenderUsername"));
-  senderPassword = json_string_value(json_object_get(root, "SenderPassword"));
-  smtpServerAddress = json_string_value(json_object_get(root, "SmtpServerAddress"));
-  receiverAddress = json_string_value(json_object_get(root, "ReceiverAddress"));
+  std::ifstream configFile(fileName.c_str());
+  spreadEntry = getDouble(getParameter("SpreadEntry", configFile));
+  spreadTarget = getDouble(getParameter("SpreadTarget", configFile));
+  maxLength = getUnsigned(getParameter("MaxLength", configFile));
+  priceDeltaLim = getDouble(getParameter("PriceDeltaLimit", configFile));
+  aggressiveVolume = getDouble(getParameter("AggressiveVolume", configFile));
+  trailingLim = getDouble(getParameter("TrailingSpreadLim", configFile));
+  orderBookFactor = getDouble(getParameter("OrderBookFactor", configFile));
+  demoMode = getBool(getParameter("DemoMode", configFile));
+  verbose = getBool(getParameter("Verbose", configFile));
+  gapSec = getUnsigned(getParameter("GapSec", configFile));
+  debugMaxIteration = getUnsigned(getParameter("DebugMaxIteration", configFile));
+  useFullCash = getBool(getParameter("UseFullCash", configFile));
+  untouchedCash = getDouble(getParameter("UntouchedCash", configFile));
+  cashForTesting = getDouble(getParameter("CashForTesting", configFile));
+  maxExposure = getDouble(getParameter("MaxExposure", configFile));
+
+  bitfinexApi = getParameter("BitfinexApiKey", configFile);
+  bitfinexSecret = getParameter("BitfinexSecretKey", configFile);
+  bitfinexFees = getDouble(getParameter("BitfinexFees", configFile));
+  bitfinexCanShort = getBool(getParameter("BitfinexCanShort", configFile));
+
+  okcoinApi = getParameter("OkCoinApiKey", configFile);
+  okcoinSecret = getParameter("OkCoinSecretKey", configFile);
+  okcoinFees = getDouble(getParameter("OkCoinFees", configFile));
+  okcoinCanShort = getBool(getParameter("OkCoinCanShort", configFile));
+
+  bitstampClientId = getParameter("BitstampClientId", configFile);
+  bitstampApi = getParameter("BitstampApiKey", configFile);
+  bitstampSecret = getParameter("BitstampSecretKey", configFile);
+  bitstampFees = getDouble(getParameter("BitstampFees", configFile));
+  bitstampCanShort = getBool(getParameter("BitstampCanShort", configFile));
+
+  geminiApi = getParameter("GeminiApiKey", configFile);
+  geminiSecret = getParameter("GeminiSecretKey", configFile);
+  geminiFees = getDouble(getParameter("GeminiFees", configFile));
+  geminiCanShort = getBool(getParameter("GeminiCanShort", configFile));
+
+  krakenApi = getParameter("KrakenApiKey", configFile);
+  krakenSecret = getParameter("KrakenSecretKey", configFile);
+  krakenFees = getDouble(getParameter("BitfinexFees", configFile));
+  krakenCanShort = getBool(getParameter("BitfinexCanShort", configFile));
+
+  itbitApi = getParameter("ItBitApiKey", configFile);
+  itbitSecret = getParameter("ItBitSecretKey", configFile);
+  itbitFees = getDouble(getParameter("ItBitFees", configFile));
+  itbitCanShort = getBool(getParameter("ItBitCanShort", configFile));
+
+  btceApi = getParameter("BTCeApiKey", configFile);
+  btceSecret = getParameter("BTCeSecretKey", configFile);
+  btceFees = getDouble(getParameter("BTCeFees", configFile));
+  btceCanShort = getBool(getParameter("BTCeCanShortxxxx", configFile));
+
+  sevennintysixApi = getParameter("SevenNintySixApiKey", configFile);
+  sevennintysixSecret = getParameter("SevenNintySixSecretKey", configFile);
+  sevennintysixFees = getDouble(getParameter("SevenNintySixFees", configFile));
+  sevennintysixCanShort = getBool(getParameter("SevenNintySixCanShort", configFile));
+
+  sendEmail = getBool(getParameter("SendEmail", configFile));
+  senderAddress = getParameter("SenderAddress", configFile);
+  senderUsername = getParameter("SenderUsername", configFile);
+  senderPassword = getParameter("SenderPassword", configFile);
+  smtpServerAddress = getParameter("SmtpServerAddress", configFile);
+  receiverAddress = getParameter("ReceiverAddress", configFile);
+
+  configFile.close();
 }
 
 
-// add an exchange
 void Parameters::addExchange(std::string n, double f, bool h, bool m) {
   exchName.push_back(n);
   fees.push_back(f);
-  hasShort.push_back(h);
+  canShort.push_back(h);
   isImplemented.push_back(m);
 }
 
@@ -55,3 +86,46 @@ int Parameters::nbExch() const {
   return exchName.size();
 }
 
+
+std::string getParameter(std::string parameter, std::ifstream& configFile) {
+
+  std::string line;
+  configFile.clear();
+  configFile.seekg(0);
+  if (configFile.is_open()) {
+    while (getline(configFile, line)) {
+      if (line.length() > 0 && line.at(0) != '#') {
+        std::string key = line.substr(0, line.find('='));
+        std::string value = line.substr(line.find('=') + 1, line.length());
+        if (key == parameter) {
+          return value;
+        }
+      }
+    }
+    std::cout << "ERROR: parameter " << parameter << " not found" << std::endl;
+    return "error";
+  } else {
+    std::cout << "ERROR: file cannot be open" << std::endl;
+    return "error";
+  }
+}
+
+
+
+bool getBool(std::string value) {
+  if (value == "true") {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+double getDouble(std::string value) {
+  return atof(value.c_str());
+}
+
+
+unsigned getUnsigned(std::string value) {
+  return atoi(value.c_str());
+}

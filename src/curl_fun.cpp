@@ -1,6 +1,7 @@
 #include "curl_fun.h"
 #include <unistd.h>
 #include <iostream>
+#include <fstream>
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
   ((std::string*)userp)->append((char*)contents, size * nmemb);
@@ -46,5 +47,3 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   }
   return root;
 }
-
-

@@ -36,42 +36,22 @@ int main(int argc, char** argv) {
   std::cout << "Blackbird Bitcoin Arbitrage" << std::endl;
   std::cout << "DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK\n" << std::endl;
 
-  // read the config file (config.json)
-  json_error_t error;
-  json_t* root = json_load_file("config.json", 0, &error);
-  if (!root) {
-    std::cout << "ERROR: config.json incorrect (" << error.text << ")\n" << std::endl;
-    return -1;
-  }
-
-  if (!json_object_get(root, "SpreadTarget")) {
-    std::cout << "ERROR: config.json is too old. Please update your file with the latest version\n" << std::endl;
-    return -1;
-  }
-
-  int gapSec = json_integer_value(json_object_get(root, "GapSec"));
-  unsigned debugMaxIteration = json_integer_value(json_object_get(root, "DebugMaxIteration"));
-  bool useFullCash = json_boolean_value(json_object_get(root, "UseFullCash"));
-  double untouchedCash = json_real_value(json_object_get(root, "UntouchedCash"));
-  double cashForTesting = json_real_value(json_object_get(root, "CashForTesting"));
-  double maxExposure = json_real_value(json_object_get(root, "MaxExposure"));
-  bool infoOnly = json_boolean_value(json_object_get(root, "InfoOnly"));
-
   std::locale mylocale("");
 
-  if (!infoOnly) {
-    if (!useFullCash) {
-      if (cashForTesting < 10.0) {
+  Parameters params("blackbird.conf");
+
+  if (!params.demoMode) {
+    if (!params.useFullCash) {
+      if (params.cashForTesting < 10.0) {
         std::cout << "WARNING: Minimum test cash recommended: $10.00\n" << std::endl;
       }
-      if (cashForTesting > maxExposure) {
-        std::cout << "ERROR: Test cash ($" << cashForTesting << ") is above max exposure ($" << maxExposure << ")\n" << std::endl;
+      if (params.cashForTesting > params.maxExposure) {
+        std::cout << "ERROR: Test cash ($" << params.cashForTesting << ") is above max exposure ($" << params.maxExposure << ")\n" << std::endl;
         return -1;
       }
     }
   }
 
-  // function arrays
   getQuoteType getQuote[10];
   getAvailType getAvail[10];
   sendOrderType sendOrder[10];
@@ -79,14 +59,10 @@ int main(int argc, char** argv) {
   getActivePosType getActivePos[10];
   getLimitPriceType getLimitPrice[10];
 
- // create a parameters structure
-  Parameters params(root);
   int index = 0;
-  std::string tmp;
-
-  tmp = json_string_value(json_object_get(root, "BitfinexApiHead"));
-  if (tmp.empty() == false || infoOnly == true) {
-    params.addExchange("Bitfinex", json_real_value(json_object_get(root, "BitfinexFees")), json_boolean_value(json_object_get(root, "BitfinexCanShort")), true);
+  
+  if (params.bitfinexApi.empty() == false || params.demoMode == true) {
+    params.addExchange("Bitfinex", params.bitfinexFees, params.bitfinexCanShort, true);
     getQuote[index] = Bitfinex::getQuote;
     getAvail[index] = Bitfinex::getAvail;
     sendOrder[index] = Bitfinex::sendOrder;
@@ -95,9 +71,8 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = Bitfinex::getLimitPrice;
     index++;
   }
-  tmp = json_string_value(json_object_get(root, "OkCoinApiKey"));
-  if (tmp.empty() == false || infoOnly == true) {
-    params.addExchange("OKCoin", json_real_value(json_object_get(root, "OkCoinFees")), json_boolean_value(json_object_get(root, "OkCoinCanShort")), true);
+  if (params.okcoinApi.empty() == false || params.demoMode == true) {
+    params.addExchange("OKCoin", params.okcoinFees, params.okcoinCanShort, true);
     getQuote[index] = OkCoin::getQuote;
     getAvail[index] = OkCoin::getAvail;
     sendOrder[index] = OkCoin::sendOrder;
@@ -106,9 +81,8 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = OkCoin::getLimitPrice;
     index++;
   }
-  tmp = json_string_value(json_object_get(root, "BitstampClientId"));
-  if (tmp.empty() == false || infoOnly == true) {
-    params.addExchange("Bitstamp", json_real_value(json_object_get(root, "BitstampFees")), json_boolean_value(json_object_get(root, "BitstampCanShort")), true);
+  if (params.bitstampClientId.empty() == false || params.demoMode == true) {
+    params.addExchange("Bitstamp", params.bitstampFees, params.bitstampCanShort, true);
     getQuote[index] = Bitstamp::getQuote;
     getAvail[index] = Bitstamp::getAvail;
     sendOrder[index] = Bitstamp::sendOrder;
@@ -117,9 +91,8 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = Bitstamp::getLimitPrice;
     index++;
   }
-  tmp = json_string_value(json_object_get(root, "GeminiApiKey"));
-  if (tmp.empty() == false || infoOnly == true) {
-    params.addExchange("Gemini", json_real_value(json_object_get(root, "GeminiFees")), json_boolean_value(json_object_get(root, "GeminiCanShort")), true);
+  if (params.geminiApi.empty() == false || params.demoMode == true) {
+    params.addExchange("Gemini", params.geminiFees, params.geminiCanShort, true);
     getQuote[index] = Gemini::getQuote;
     getAvail[index] = Gemini::getAvail;
     sendOrder[index] = Gemini::sendOrder;
@@ -128,9 +101,8 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = Gemini::getLimitPrice;
     index++;
   }
-  tmp = json_string_value(json_object_get(root, "KrakenApiKey"));
-  if (tmp.empty() == false || infoOnly == true) {
-    params.addExchange("Kraken", json_real_value(json_object_get(root, "KrakenFees")), json_boolean_value(json_object_get(root, "KrakenCanShort")), true);
+  if (params.krakenApi.empty() == false || params.demoMode == true) {
+    params.addExchange("Kraken", params.krakenFees, params.krakenCanShort, true);
     getQuote[index] = Kraken::getQuote;
     getAvail[index] = Kraken::getAvail;
     sendOrder[index] = Kraken::sendOrder;
@@ -139,9 +111,8 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = Kraken::getLimitPrice;
     index++;
   }
-  tmp = json_string_value(json_object_get(root, "ItBitApiKey"));
-  if (tmp.empty() == false || infoOnly == true) {
-    params.addExchange("ItBit", json_real_value(json_object_get(root, "ItBitFees")), json_boolean_value(json_object_get(root, "ItBitCanShort")), false);
+  if (params.itbitApi.empty() == false || params.demoMode == true) {
+    params.addExchange("ItBit", params.itbitFees, params.itbitCanShort, false);
     getQuote[index] = ItBit::getQuote;
     getAvail[index] = ItBit::getAvail;
     // sendOrder[index] = ItBit::sendOrder;
@@ -150,9 +121,8 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = ItBit::getLimitPrice;
     index++;
   }
-  tmp = json_string_value(json_object_get(root, "BTCeApiKey"));
-  if (tmp.empty() == false || infoOnly == true) {
-    params.addExchange("BTCe", json_real_value(json_object_get(root, "BTCeFees")), json_boolean_value(json_object_get(root, "BTCeCanShort")), false);
+  if (params.btceApi.empty() == false || params.demoMode == true) {
+    params.addExchange("BTCe", params.btceFees, params.btceCanShort, false);
     getQuote[index] = BTCe::getQuote;
     getAvail[index] = BTCe::getAvail;
     // sendOrder[index] = BTCe::sendOrder;
@@ -161,10 +131,8 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = BTCe::getLimitPrice;
     index++;
   }
-  //This will help you while trading with 796.com
-  tmp = json_string_value(json_object_get(root, "SevenNintySixApiKey"));
-  if (tmp.empty() == false || infoOnly == true) {
-    params.addExchange("796.com", json_real_value(json_object_get(root, "SevenNintySixFees")), json_boolean_value(json_object_get(root, "SevenNintySixCanShort")), true);
+  if (params.sevennintysixApi.empty() == false || params.demoMode == true) {
+    params.addExchange("796.com", params.sevennintysixFees, params.sevennintysixCanShort, true);
     getQuote[index] = SevenNintySix::getQuote;
     getAvail[index] = SevenNintySix::getAvail;
     sendOrder[index] = SevenNintySix::sendOrder;
@@ -199,7 +167,7 @@ int main(int argc, char** argv) {
   logFile << "--------------------------------------------\n" << std::endl;
   logFile << "Blackbird started on " << printDateTime() << "\n" << std::endl;
 
-  if (infoOnly) {
+  if (params.demoMode) {
     logFile << "Demo mode: trades won't be generated\n" << std::endl;
   }
 
@@ -210,7 +178,7 @@ int main(int argc, char** argv) {
   int num_exchange = params.nbExch();
   // create Bitcoin objects
   for (int i = 0; i < num_exchange; ++i) {
-    btcVec.push_back(new Bitcoin(i, params.exchName[i], params.fees[i], params.hasShort[i], params.isImplemented[i]));
+    btcVec.push_back(new Bitcoin(i, params.exchName[i], params.fees[i], params.canShort[i], params.isImplemented[i]));
   }
   curl_global_init(CURL_GLOBAL_ALL);
   params.curl = curl_easy_init();
@@ -230,7 +198,7 @@ int main(int argc, char** argv) {
   double* balanceUsd = (double*)malloc(sizeof(double) * num_exchange);
   double* balanceBtc = (double*)malloc(sizeof(double) * num_exchange);
   for (int i = 0; i < num_exchange; ++i) {
-    if (infoOnly) {
+    if (params.demoMode) {
       balanceUsd[i] = 0.0;
       balanceBtc[i] = 0.0;
     } else {
@@ -254,13 +222,13 @@ int main(int argc, char** argv) {
   }
   logFile << std::endl;
   logFile << "[ Cash exposure ]" << std::endl;
-  if (infoOnly) {
+  if (params.demoMode) {
     logFile << "   No cash - Demo mode" << std::endl;
   } else {
-    if (useFullCash) {
+    if (params.useFullCash) {
       logFile << "   FULL cash used!" << std::endl;
     } else {
-      logFile << "   TEST cash used\n   Value: $" << cashForTesting << std::endl;
+      logFile << "   TEST cash used\n   Value: $" << params.cashForTesting << std::endl;
     }
   }
   logFile << std::endl;
@@ -272,7 +240,7 @@ int main(int argc, char** argv) {
   // wait the next gapSec seconds before starting
   time(&rawtime);
   timeinfo = localtime(&rawtime);
-  while ((int)timeinfo->tm_sec % gapSec != 0) {
+  while ((int)timeinfo->tm_sec % params.gapSec != 0) {
     sleep(0.01);
     time(&rawtime);
     timeinfo = localtime(&rawtime);
@@ -299,9 +267,9 @@ int main(int argc, char** argv) {
       logFile << "WARNING: " << diffTime << " second(s) too late at " << printDateTime(currTime) << std::endl;
       // unsigned skip = (unsigned)ceil(diffTime / gapSec);
       // go to next iteration
-      timeinfo->tm_sec = timeinfo->tm_sec + (ceil(diffTime / gapSec) + 1) * gapSec;
+      timeinfo->tm_sec = timeinfo->tm_sec + (ceil(diffTime / params.gapSec) + 1) * params.gapSec;
       currTime = mktime(timeinfo);
-      sleep(gapSec - (diffTime % gapSec));
+      sleep(params.gapSec - (diffTime % params.gapSec));
       logFile << std::endl;
     }
     else if (diffTime < 0) {
@@ -341,7 +309,7 @@ int main(int argc, char** argv) {
             if (checkEntry(btcVec[i], btcVec[j], res, params)) {
               // entry opportunity found
               res.exposure = std::min(balanceUsd[res.idExchLong], balanceUsd[res.idExchShort]);
-              if (infoOnly) {
+              if (params.demoMode) {
                 logFile << "INFO: Opportunity found but no trade will be generated (Demo mode)" << std::endl;
                 break;
               }
@@ -349,19 +317,19 @@ int main(int argc, char** argv) {
                 logFile << "WARNING: Opportunity found but no cash available. Trade canceled" << std::endl;
                 break;
               }
-              if (useFullCash == false && res.exposure <= cashForTesting) {
-                logFile << "WARNING: Opportunity found but no enough cash. Need more than TEST cash (min. $" << cashForTesting << "). Trade canceled" << std::endl;
+              if (params.useFullCash == false && res.exposure <= params.cashForTesting) {
+                logFile << "WARNING: Opportunity found but no enough cash. Need more than TEST cash (min. $" << params.cashForTesting << "). Trade canceled" << std::endl;
                 break;
               }
-              if (useFullCash) {
-                res.exposure -= untouchedCash * res.exposure;  // leave untouchedCash
-                if (res.exposure > maxExposure) {
+              if (params.useFullCash) {
+                res.exposure -= params.untouchedCash * res.exposure;  // leave untouchedCash
+                if (res.exposure > params.maxExposure) {
                   logFile << "WARNING: Opportunity found but exposure ($" << res.exposure << ") above the limit" << std::endl;
-                  logFile << "         Max exposure will be used instead ($" << maxExposure << ")" << std::endl;
-                  res.exposure = maxExposure;
+                  logFile << "         Max exposure will be used instead ($" << params.maxExposure << ")" << std::endl;
+                  res.exposure = params.maxExposure;
                 }
               } else {
-                res.exposure = cashForTesting;  // use test money
+                res.exposure = params.cashForTesting;  // use test money
               }
               double volumeLong = res.exposure / btcVec[res.idExchLong]->getAsk();
               double volumeShort = res.exposure / btcVec[res.idExchShort]->getBid();
@@ -490,17 +458,16 @@ int main(int argc, char** argv) {
         logFile << std::endl;
       }
     }
-    timeinfo->tm_sec = timeinfo->tm_sec + gapSec;
+    timeinfo->tm_sec = timeinfo->tm_sec + params.gapSec;
     currIteration++;
-    if (currIteration >= debugMaxIteration) {
-      logFile << "Max iteration reached (" << debugMaxIteration << ")" <<std::endl;
+    if (currIteration >= params.debugMaxIteration) {
+      logFile << "Max iteration reached (" << params.debugMaxIteration << ")" <<std::endl;
       stillRunning = false;
     }
   }
   for (int i = 0; i < num_exchange; ++i) {
     delete(btcVec[i]);
   }
-  json_decref(root);
   curl_easy_cleanup(params.curl);
   curl_global_cleanup();
   csvFile.close();

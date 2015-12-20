@@ -42,7 +42,7 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
       if (res.trailing[longId][shortId] != -1.0) {
         *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]);
       }
-      if ((btcLong->getIsImplemented() == false || btcShort->getIsImplemented() == false) && params.infoOnly == false) {
+      if ((btcLong->getIsImplemented() == false || btcShort->getIsImplemented() == false) && params.demoMode == false) {
         *params.logFile << "   info only"  << std::endl;
       } else {
         *params.logFile << std::endl;

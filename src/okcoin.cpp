@@ -32,11 +32,11 @@ double getQuote(Parameters& params, bool isBid) {
 
 double getAvail(Parameters& params, std::string currency) {
   std::ostringstream oss;
-  oss << "api_key=" << params.okCoinApi << "&secret_key=" << params.okCoinSecret;
+  oss << "api_key=" << params.okcoinApi << "&secret_key=" << params.okcoinSecret;
   std::string signature(oss.str());
   oss.clear();
   oss.str("");
-  oss << "api_key=" << params.okCoinApi;
+  oss << "api_key=" << params.okcoinApi;
   std::string content(oss.str());
 
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/userinfo.do", signature, content);
@@ -66,12 +66,12 @@ int sendOrder(Parameters& params, std::string direction, double quantity, double
 
   // signature
   std::ostringstream oss;
-  oss << "amount=" << quantity << "&api_key=" << params.okCoinApi << "&price=" << limPrice << "&symbol=btc_usd&type=" << direction << "&secret_key=" << params.okCoinSecret;
+  oss << "amount=" << quantity << "&api_key=" << params.okcoinApi << "&price=" << limPrice << "&symbol=btc_usd&type=" << direction << "&secret_key=" << params.okcoinSecret;
   std::string signature = oss.str();
   oss.clear();
   oss.str("");
   // content
-  oss << "amount=" << quantity << "&api_key=" << params.okCoinApi << "&price=" << limPrice << "&symbol=btc_usd&type=" << direction;
+  oss << "amount=" << quantity << "&api_key=" << params.okcoinApi << "&price=" << limPrice << "&symbol=btc_usd&type=" << direction;
   std::string content = oss.str();
 
   *params.logFile << "<OKCoin> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << limPrice << "..." << std::endl;
@@ -91,12 +91,12 @@ bool isOrderComplete(Parameters& params, int orderId) {
 
   // signature
   std::ostringstream oss;
-  oss << "api_key=" << params.okCoinApi << "&order_id=" << orderId << "&symbol=btc_usd" << "&secret_key=" << params.okCoinSecret;
+  oss << "api_key=" << params.okcoinApi << "&order_id=" << orderId << "&symbol=btc_usd" << "&secret_key=" << params.okcoinSecret;
   std::string signature = oss.str();
   oss.clear();
   oss.str("");
   // content
-  oss << "api_key=" << params.okCoinApi << "&order_id=" << orderId << "&symbol=btc_usd";
+  oss << "api_key=" << params.okcoinApi << "&order_id=" << orderId << "&symbol=btc_usd";
   std::string content = oss.str();
 
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/order_info.do", signature, content);
@@ -128,7 +128,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
     double p;
     double v;
     size_t i = 0;
-    while (tmpVol < volume * 2.0) {
+    while (tmpVol < volume * params.orderBookFactor) {
       p = json_real_value(json_array_get(json_array_get(root, i), 0));
       v = json_real_value(json_array_get(json_array_get(root, i), 1));
       *params.logFile << "<OKCoin> order book: " << v << "@$" << p << std::endl;
@@ -151,7 +151,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
     double p;
     double v;
     size_t i = json_array_size(root) - 1;
-    while (tmpVol < volume * 2.0) {
+    while (tmpVol < volume * params.orderBookFactor) {
       p = json_real_value(json_array_get(json_array_get(root, i), 0));
       v = json_real_value(json_array_get(json_array_get(root, i), 1));
       *params.logFile << "<OKCoin> order book: " << v << "@$" << p << std::endl;
