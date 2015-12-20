@@ -117,7 +117,7 @@ __Note:__ you need Jansson version 2.7 minimum otherwise you will get the follow
 For instance, on Ubuntu you need to install the following libraries:
 
 ```
-ibssl-dev
+libssl-dev
 libjansson-dev
 libcurl4-openssl-dev
 sendemail
