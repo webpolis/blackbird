@@ -347,6 +347,8 @@ int main(int argc, char** argv) {
               // update result
               res.id = resultId;
               res.entryTime = currTime;
+              res.priceLongIn = limPriceLong;
+              res.priceShortIn = limPriceShort; 
               res.printEntry(*params.logFile);
               res.maxSpread[res.idExchLong][res.idExchShort] = -1.0;
               res.minSpread[res.idExchLong][res.idExchShort] = 1.0;
@@ -398,6 +400,8 @@ int main(int argc, char** argv) {
           res.trailing[res.idExchLong][res.idExchShort] = 1.0;
         } else {
           res.exitTime = currTime;
+          res.priceLongOut = limPriceLong;
+          res.priceShortOut = limPriceShort;
           res.printExit(*params.logFile);
           int longOrderId = 0;
           int shortOrderId = 0;

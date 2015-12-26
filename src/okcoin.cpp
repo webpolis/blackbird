@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <unistd.h>
+#include <math.h>
 #include "base64.h"
 #include <openssl/evp.h>
 #include <openssl/md5.h>
@@ -123,12 +124,12 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   if (isBid) {
     root = json_object_get(getJsonFromUrl(params, "https://www.okcoin.com/api/v1/depth.do", ""), "bids");
     // loop on volume
-    *params.logFile << "<OKCoin> Looking for a limit price to fill " << volume << " BTC..." << std::endl;
+    *params.logFile << "<OKCoin> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
     double tmpVol = 0.0;
     double p;
     double v;
     size_t i = 0;
-    while (tmpVol < volume * params.orderBookFactor) {
+    while (tmpVol < fabs(volume) * params.orderBookFactor) {
       p = json_real_value(json_array_get(json_array_get(root, i), 0));
       v = json_real_value(json_array_get(json_array_get(root, i), 1));
       *params.logFile << "<OKCoin> order book: " << v << "@$" << p << std::endl;
@@ -146,12 +147,12 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   } else {
     root = json_object_get(getJsonFromUrl(params, "https://www.okcoin.com/api/v1/depth.do", ""), "asks");
     // loop on volume
-    *params.logFile << "<OKCoin> Looking for a limit price to fill " << volume << " BTC..." << std::endl;
+    *params.logFile << "<OKCoin> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
     double tmpVol = 0.0;
     double p;
     double v;
     size_t i = json_array_size(root) - 1;
-    while (tmpVol < volume * params.orderBookFactor) {
+    while (tmpVol < fabs(volume) * params.orderBookFactor) {
       p = json_real_value(json_array_get(json_array_get(root, i), 0));
       v = json_real_value(json_array_get(json_array_get(root, i), 1));
       *params.logFile << "<OKCoin> order book: " << v << "@$" << p << std::endl;

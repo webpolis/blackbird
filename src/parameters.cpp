@@ -10,7 +10,7 @@ Parameters::Parameters(std::string fileName) {
   spreadTarget = getDouble(getParameter("SpreadTarget", configFile));
   maxLength = getUnsigned(getParameter("MaxLength", configFile));
   priceDeltaLim = getDouble(getParameter("PriceDeltaLimit", configFile));
-  aggressiveVolume = getDouble(getParameter("AggressiveVolume", configFile));
+  aggressiveVolume = getBool(getParameter("AggressiveVolume", configFile));
   trailingLim = getDouble(getParameter("TrailingSpreadLim", configFile));
   orderBookFactor = getDouble(getParameter("OrderBookFactor", configFile));
   demoMode = getBool(getParameter("DemoMode", configFile));

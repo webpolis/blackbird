@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <vector>
+#include <math.h>
 #include <sstream>
 #include <sys/time.h>
 #include "base64.h"
@@ -116,12 +117,12 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   }
 
   // loop on volume
-  *params.logFile << "<Bitstamp> Looking for a limit price to fill " << volume << " BTC..." << std::endl;
+  *params.logFile << "<Bitstamp> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
   double tmpVol = 0.0;
   double p;
   double v;
   int i = 0;
-  while (tmpVol < volume * params.orderBookFactor) {
+  while (tmpVol < fabs(volume) * params.orderBookFactor) {
     p = atof(json_string_value(json_array_get(json_array_get(root, i), 0)));
     v = atof(json_string_value(json_array_get(json_array_get(root, i), 1)));
     *params.logFile << "<Bitstamp> order book: " << v << "@$" << p << std::endl;

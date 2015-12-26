@@ -65,19 +65,19 @@ As of today the exchanges fully implemented are:
 * <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a>
 * <a href="https://gemini.com" target="_blank">Gemini</a>
 * <a href="https://www.kraken.com" target="_blank">Kraken</a>
-* <a href="https://796.com/?lang=en" target="_blank">796.com</a> (Bitcoin futures)
+* <a href="https://796.com/?lang=en" target="_blank">796.com (Bitcoin futures)</a>
 
-For each of your exchange accounts you need to create API authentication keys. This is usually done in the Settings section of your accounts.
+For each of your exchange accounts you need to create API authentication keys. This is usually done in the _Settings_ section of your accounts.
 
 Then, you need to add your API keys in the file _blackbird.conf_. __Never__ share this file as it will contain your personal exchange credentials! If you don't have an account for one of the exchanges just leave it blank. However, you need at least two exchanges and one of them should allow short selling.
 
 ##### Demo mode
 
-It is possible to run Blackbird without any credentials. Just set the parameter `DemoMode=true` and then you won't need to add any credentials to the config file. Blackbird in demo mode will shows you the bid/ask information, the spreads and the arbitrage opportunities but no actual trades will be generated.
+It is possible to run Blackbird without any credentials by setting the parameter `DemoMode=true`. Blackbird in demo mode will shows you the bid/ask information, the spreads and the arbitrage opportunities but no actual trades will be generated.
 
 #### Strategy parameters
 
-Modify the stategy parameters to match your trading style (few trades with high spreads or many trades with low spreads):
+Modify the strategy parameters to match your trading style (few trades with high spreads or many trades with low spreads):
 ```javascript
 SpreadEntry=0.0080
 SpreadTarget=0.0020
@@ -102,11 +102,11 @@ Now if you set `UseFullCash=false` then Blackbird will use $25 per exchange (tot
 `MaxExposure` defines the maximum cash exposure on each exchange ($25,000 per exchange in the example above).
 
 
-### E-mail parameters (optional)
+#### E-mail parameters (optional)
 
 Blackbird can send you an e-mail every time an arbitrage trade is completed, with information such as the names of the traded exchanges and the trade return. If you let  `SendEmail=false` then you don't need to fill the other e-mail parameters.
 
-#### Run the software
+### Run the software
 
 You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a>, <a href="http://curl.haxx.se" target="_blank">cURL</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>.
 
@@ -114,14 +114,6 @@ __Note:__ you need Jansson version 2.7 minimum otherwise you will get the follow
 
 `'json_boolean_value' was not declared in this scope`
 
-For instance, on Ubuntu you need to install the following libraries:
-
-```
-libssl-dev
-libjansson-dev
-libcurl4-openssl-dev
-sendemail
-```
 
 Build Blackbird by typing:
 
@@ -173,7 +165,6 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 * 796.com fully implemented (__to be tested__)
 * BTC-e exchange added (bid/ask info only)
 * Safety measure: Blackbird won't start if one of the BTC accounts is not empty
-* More verbosity when limit prices are calculated
 * Minor fixes and improvements
 
 

@@ -1,6 +1,7 @@
 #include <string.h>
 #include <iostream>
 #include <unistd.h>
+#include <math.h>
 #include <sstream>
 #include <sys/time.h>
 #include <openssl/sha.h>
@@ -112,12 +113,12 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
     root = json_object_get(getJsonFromUrl(params, "https://api.gemini.com/v1/book/btcusd", ""), "asks");
   }
   // loop on volume
-  *params.logFile << "<Gemini> Looking for a limit price to fill " << volume << " BTC..." << std::endl;
+  *params.logFile << "<Gemini> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
   double tmpVol = 0.0;
   double p;
   double v;
   int i = 0;
-  while (tmpVol < volume * params.orderBookFactor) {
+  while (tmpVol < fabs(volume) * params.orderBookFactor) {
     p = atof(json_string_value(json_object_get(json_array_get(root, i), "price")));
     v = atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
     *params.logFile << "<Gemini> order book: " << v << "@$" << p << std::endl;
