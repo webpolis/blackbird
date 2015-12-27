@@ -69,9 +69,7 @@ As of today the exchanges fully implemented are:
 
 For each of your exchange accounts you need to create the API authentication keys. This is usually done in the _Settings_ section of your accounts.
 
-Then, you need to add your API keys into the file _blackbird.conf_. You need at least two exchanges and one of them should allow short selling.
-
-__Never__ share this file as it will contain your personal exchange credentials! 
+Then, you need to add your API keys into the file _blackbird.conf_. You need at least two exchanges and one of them should allow short selling. __Never__ share this file as it will contain your personal exchange credentials! 
 
 #### Demo mode
 
