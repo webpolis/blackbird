@@ -19,9 +19,9 @@ At the first vertical line, the spread between the exchanges is high so Blackbir
 
 ### Disclaimer
 
-__USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS.
+__USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS.__
 
-THE AUTHORS AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.__
+__THE AUTHORS AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.__
 
 
 ### Arbitrage Parameters
@@ -69,7 +69,9 @@ As of today the exchanges fully implemented are:
 
 For each of your exchange accounts you need to create the API authentication keys. This is usually done in the _Settings_ section of your accounts.
 
-Then, you need to add your API keys into the file _blackbird.conf_. __Never__ share this file as it will contain your personal exchange credentials! You need at least two exchanges and one of them should allow short selling.
+Then, you need to add your API keys into the file _blackbird.conf_. You need at least two exchanges and one of them should allow short selling.
+
+__Never__ share this file as it will contain your personal exchange credentials! 
 
 #### Demo mode
 
