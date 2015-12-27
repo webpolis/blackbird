@@ -161,7 +161,7 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
 * Gemini fully implemented
 * No need to have accounts on all the exchanges anymore
-* Bug <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> and <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> fixed
+* Bugs <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> and <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> fixed
 * Minor fixes and improvements
 
 ##### November 2015
