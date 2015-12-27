@@ -10,7 +10,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 all: EXEC
 
 EXEC: $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(EXEC) -lcrypto -ljansson -lcurl -g
+	$(CC) $(OBJECTS) -o $(EXEC) -lcrypto -ljansson -lcurl -lmysqlclient -g
 
 %.o: %.cpp
 	$(CC) $(CFLAGS) $< -o $@

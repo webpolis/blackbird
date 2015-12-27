@@ -7,6 +7,7 @@
 #include <vector>
 #include <jansson.h>
 #include <curl/curl.h>
+#include <mysql/mysql.h>
 
 struct Parameters {
 
@@ -74,6 +75,13 @@ struct Parameters {
   std::string senderPassword;
   std::string smtpServerAddress;
   std::string receiverAddress;
+
+  bool useDatabase;
+  std::string dbHost;
+  std::string dbName;
+  std::string dbUser;
+  std::string dbPassword;
+  MYSQL* dbConn;
 
   Parameters(std::string fileName);
 

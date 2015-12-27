@@ -53,7 +53,7 @@ double getAvail(Parameters& params, std::string currency) {
     root = authRequest(params, "https://api.kraken.com", "/0/private/Balance");
     result = json_object_get(root, "result");
   }
-  
+
   double available = 0.0;
   if (currency.compare("usd") == 0) {
     const char * avail_str = json_string_value(json_object_get(result, "ZUSD"));

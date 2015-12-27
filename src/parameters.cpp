@@ -70,6 +70,12 @@ Parameters::Parameters(std::string fileName) {
   smtpServerAddress = getParameter("SmtpServerAddress", configFile);
   receiverAddress = getParameter("ReceiverAddress", configFile);
 
+  useDatabase = getBool(getParameter("UseDatabase", configFile));
+  dbHost = getParameter("DBHost", configFile);
+  dbName = getParameter("DBName", configFile);
+  dbUser = getParameter("DBUser", configFile);
+  dbPassword = getParameter("DBPassword", configFile);
+
   configFile.close();
 }
 

@@ -19,7 +19,9 @@ At the first vertical line, the spread between the exchanges is high so Blackbir
 
 ### Disclaimer
 
-__USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS. THE AUTHORS AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.__
+__USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS.
+
+THE AUTHORS AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.__
 
 
 ### Arbitrage Parameters
@@ -42,12 +44,12 @@ It is possible to automatically stop Blackbird after the next trade has closed b
 
 By setting `SendEmail=true`, Blackbird will send you an e-mail every time an arbitrage trade is completed, with information such as the names of the exchanges and the trade return.
 
-Blackbird uses the base64 functions written by <a href="http://www.adp-gmbh.ch/cpp/common/base64.html" target="_target">René Nyffenegger</a> to encode and decode base64.
+By setting `UseDatabase=true`, Blackbird will store the bid/ask information of your exchanges to a MySQL database (one table per exchange).
+
+Blackbird uses functions written by <a href="http://www.adp-gmbh.ch/cpp/common/base64.html" target="_target">René Nyffenegger</a> to encode and decode base64.
 
 
 ### How To Test Blackbird
-
-#### Note
 
 Please make sure that you understand the disclaimer above if you want to test Blackbird with real money, and start with a small amount of money.
 
@@ -69,7 +71,7 @@ For each of your exchange accounts you need to create the API authentication key
 
 Then, you need to add your API keys into the file _blackbird.conf_. __Never__ share this file as it will contain your personal exchange credentials! You need at least two exchanges and one of them should allow short selling.
 
-##### Demo mode
+#### Demo mode
 
 It is possible to run Blackbird without any credentials by setting the parameter `DemoMode=true`. Blackbird in demo mode will show you the bid/ask information, the spreads and the arbitrage opportunities but won't generate any trades.
 
@@ -103,7 +105,7 @@ Conversely, if you set `UseFullCash=false` Blackbird will use $25 per exchange (
 
 ### Run the software
 
-You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a>, <a href="http://curl.haxx.se" target="_blank">cURL</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>.
+You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a>, <a href="http://curl.haxx.se" target="_blank">cURL</a>, <a href="http://dev.mysql.com/doc" target="_blank">MySQL Client</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>.
 
 __Note:__ you need Jansson version 2.7 minimum otherwise you will get the following compilation error:
 
@@ -122,51 +124,6 @@ Then start it by typing:
 
 Please check the <a href="https://github.com/butor/blackbird/issues" target="_blank">issues page</a> for the current tasks and issues. If you face any problems with Blackbird please open a new issue on that page.
 
-### Changelog
-
-##### May 2015
-
-* First release
-
-##### July 2015
-
-* Bitstamp exchange added
-* Kraken exchange added (bid/ask info only)
-* Improved JSON and cURL exceptions management
-* Added the milliseconds to the nonce used for exchange authentification
-* Minor fixes and improvements
-
-##### September 2015
-
-* General performance and stability improvements (merge from _julianmi:performance_improvements_)
-* ItBit exchange added (bid/ask info only)
-* Minor fixes and improvements
-
-##### October 2015
-
-* Gemini exchange added and fully implemented
-* No need to have accounts on all the exchanges anymore
-* Bug <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> fixed
-* Bug <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> fixed
-* Minor fixes and improvements
-
-##### November 2015
-
-* Trailing spread implemented
-* Replaced `SpreadExit` by `SpreadTarget`
-* _Demo mode_ implemented
-* Blackbird output is now sent to a log file
-* Kraken fully implemented (__to be tested__)
-* 796.com fully implemented (__to be tested__)
-* BTC-e exchange added (bid/ask info only)
-* Safety measure: Blackbird won't start if one of the BTC accounts is not empty
-* Minor fixes and improvements
-
-
-##### December 2015
-
-* More user-friendly config file (_blackbird.conf_)
-
 ### Links
 
 * <a href="https://bitcointalk.org/index.php?topic=985660.0" target="_blank">Discussion about Blackbird on BitcoinTalk</a>
@@ -180,6 +137,49 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 * If you found a bug, please open a new <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _bug_
 * If you have a general question or have troubles running Blackbird, you can open a new  <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _question_ or _help wanted_
 * For anything else you can directly contact me: julien.hamilton@gmail.com
+
+
+### Changelog
+
+##### May 2015
+
+* First release
+
+##### July 2015
+
+* Bitstamp fully implemented
+* Improved JSON and cURL exceptions management
+* Added the milliseconds to the nonce used for exchange authentification
+* Minor fixes and improvements
+
+##### September 2015
+
+* General performance and stability improvements (merge from _julianmi:performance_improvements_)
+* Minor fixes and improvements
+
+##### October 2015
+
+* Gemini fully implemented
+* No need to have accounts on all the exchanges anymore
+* Bug <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> and <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> fixed
+* Minor fixes and improvements
+
+##### November 2015
+
+* Trailing spread implemented
+* Replaced `SpreadExit` by `SpreadTarget`
+* _Demo mode_ implemented
+* Blackbird output is now sent to a log file
+* Kraken and 796.com fully implemented (__to be tested__)
+* Safety measure: Blackbird won't start if one of the BTC accounts is not empty
+* Minor fixes and improvements
+
+##### December 2015
+
+* More user-friendly config file (_blackbird.conf_)
+* Bid/ask information can be stored in a MySQL database
+* Minor fixes and improvements
+
 
 ### Log Output Example
 

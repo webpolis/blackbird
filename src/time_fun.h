@@ -15,6 +15,9 @@ std::string printDateTime();
 // return "yyyy-mm-dd_hh:nn:ss"
 std::string printDateTimeCsv(time_t t);
 
+// return "yyyy-mm-dd hh:nn:ss"
+std::string printDateTimeDb(time_t t);
+
 // return "yyymmdd_hhnnss"
 std::string printDateTimeFileName();
 

@@ -7,12 +7,14 @@
 #include <jansson.h>
 #include <curl/curl.h>
 #include <string.h>
+#include <mysql/mysql.h>
 
 #include "base64.h"
 #include "bitcoin.h"
 #include "result.h"
 #include "time_fun.h"
 #include "curl_fun.h"
+#include "db_fun.h"
 #include "parameters.h"
 #include "check_entry_exit.h"
 #include "bitfinex.h"
@@ -52,15 +54,22 @@ int main(int argc, char** argv) {
     }
   }
 
+  if (params.useDatabase) {
+    if (createDbConnection(params) != 0) {
+      std::cout << "ERROR: cannot connect to the database \'" << params.dbName << "\'\n" << std::endl;
+      return -1;
+    }
+  }
+
   getQuoteType getQuote[10];
   getAvailType getAvail[10];
   sendOrderType sendOrder[10];
   isOrderCompleteType isOrderComplete[10];
   getActivePosType getActivePos[10];
   getLimitPriceType getLimitPrice[10];
-
+  std::string dbTableName[10];
   int index = 0;
-  
+
   if (params.bitfinexApi.empty() == false || params.demoMode == true) {
     params.addExchange("Bitfinex", params.bitfinexFees, params.bitfinexCanShort, true);
     getQuote[index] = Bitfinex::getQuote;
@@ -69,6 +78,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = Bitfinex::isOrderComplete;
     getActivePos[index] = Bitfinex::getActivePos;
     getLimitPrice[index] = Bitfinex::getLimitPrice;
+    if (params.useDatabase) {
+      dbTableName[index] = "bitfinex";
+      createTable(dbTableName[index], params);
+    }
     index++;
   }
   if (params.okcoinApi.empty() == false || params.demoMode == true) {
@@ -79,6 +92,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = OkCoin::isOrderComplete;
     getActivePos[index] = OkCoin::getActivePos;
     getLimitPrice[index] = OkCoin::getLimitPrice;
+    if (params.useDatabase) {
+      dbTableName[index] = "okcoin";
+      createTable(dbTableName[index], params);
+    }
     index++;
   }
   if (params.bitstampClientId.empty() == false || params.demoMode == true) {
@@ -89,6 +106,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = Bitstamp::isOrderComplete;
     getActivePos[index] = Bitstamp::getActivePos;
     getLimitPrice[index] = Bitstamp::getLimitPrice;
+    if (params.useDatabase) {
+      dbTableName[index] = "bitstamp";
+      createTable(dbTableName[index], params);
+    }
     index++;
   }
   if (params.geminiApi.empty() == false || params.demoMode == true) {
@@ -99,6 +120,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = Gemini::isOrderComplete;
     getActivePos[index] = Gemini::getActivePos;
     getLimitPrice[index] = Gemini::getLimitPrice;
+    if (params.useDatabase) {
+      dbTableName[index] = "gemini";
+      createTable(dbTableName[index], params);
+    }
     index++;
   }
   if (params.krakenApi.empty() == false || params.demoMode == true) {
@@ -109,6 +134,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = Kraken::isOrderComplete;
     getActivePos[index] = Kraken::getActivePos;
     getLimitPrice[index] = Kraken::getLimitPrice;
+    if (params.useDatabase) {
+      dbTableName[index] = "kraken";
+      createTable(dbTableName[index], params);
+    }
     index++;
   }
   if (params.itbitApi.empty() == false || params.demoMode == true) {
@@ -119,6 +148,10 @@ int main(int argc, char** argv) {
     // isOrderComplete[index] = ItBit::isOrderComplete;
     getActivePos[index] = ItBit::getActivePos;
     getLimitPrice[index] = ItBit::getLimitPrice;
+    if (params.useDatabase) {
+      dbTableName[index] = "itbit";
+      createTable(dbTableName[index], params);
+    }
     index++;
   }
   if (params.btceApi.empty() == false || params.demoMode == true) {
@@ -129,6 +162,10 @@ int main(int argc, char** argv) {
     // isOrderComplete[index] = BTCe::isOrderComplete;
     getActivePos[index] = BTCe::getActivePos;
     getLimitPrice[index] = BTCe::getLimitPrice;
+    if (params.useDatabase) {
+      dbTableName[index] = "btce";
+      createTable(dbTableName[index], params);
+    }
     index++;
   }
   if (params.sevennintysixApi.empty() == false || params.demoMode == true) {
@@ -139,6 +176,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = SevenNintySix::isOrderComplete;
     getActivePos[index] = SevenNintySix::getActivePos;
     getLimitPrice[index] = SevenNintySix::getLimitPrice;
+    if (params.useDatabase) {
+      dbTableName[index] = "796_com";
+      createTable(dbTableName[index], params);
+    }
     index++;
   }
 
@@ -167,16 +208,20 @@ int main(int argc, char** argv) {
   logFile << "--------------------------------------------\n" << std::endl;
   logFile << "Blackbird started on " << printDateTime() << "\n" << std::endl;
 
+
+  if (params.useDatabase) {
+    logFile << "Connected to database \'" << params.dbName << "\'\n" << std::endl;
+  }
+
   if (params.demoMode) {
     logFile << "Demo mode: trades won't be generated\n" << std::endl;
   }
 
   std::cout << "Log file generated: " << logFileName << "\nBlackbird is running... (pid " << getpid() << ")\n" << std::endl;
 
-  // Vector of Bitcoin objects
   std::vector<Bitcoin*> btcVec;
   int num_exchange = params.nbExch();
-  // create Bitcoin objects
+
   for (int i = 0; i < num_exchange; ++i) {
     btcVec.push_back(new Bitcoin(i, params.exchName[i], params.fees[i], params.canShort[i], params.isImplemented[i]));
   }
@@ -265,8 +310,6 @@ int main(int argc, char** argv) {
     // check if we are already too late
     if (diffTime > 0) {
       logFile << "WARNING: " << diffTime << " second(s) too late at " << printDateTime(currTime) << std::endl;
-      // unsigned skip = (unsigned)ceil(diffTime / gapSec);
-      // go to next iteration
       timeinfo->tm_sec = timeinfo->tm_sec + (ceil(diffTime / params.gapSec) + 1) * params.gapSec;
       currTime = mktime(timeinfo);
       sleep(params.gapSec - (diffTime % params.gapSec));
@@ -285,6 +328,9 @@ int main(int argc, char** argv) {
     for (int e = 0; e < num_exchange; ++e) {
       double bid = getQuote[e](params, true);
       double ask = getQuote[e](params, false);
+      if (params.useDatabase) {
+        addBidAskToDb(dbTableName[e], printDateTimeDb(currTime), bid, ask, params);
+      }
       if (bid == 0.0) {
         logFile << "   WARNING: " << params.exchName[e] << " bid is null, use previous one" << std::endl;
       }
@@ -348,7 +394,7 @@ int main(int argc, char** argv) {
               res.id = resultId;
               res.entryTime = currTime;
               res.priceLongIn = limPriceLong;
-              res.priceShortIn = limPriceShort; 
+              res.priceShortIn = limPriceShort;
               res.printEntry(*params.logFile);
               res.maxSpread[res.idExchLong][res.idExchShort] = -1.0;
               res.minSpread[res.idExchLong][res.idExchShort] = 1.0;
@@ -474,6 +520,9 @@ int main(int argc, char** argv) {
   }
   curl_easy_cleanup(params.curl);
   curl_global_cleanup();
+  if (params.useDatabase) {
+    mysql_close(params.dbConn);
+  }
   csvFile.close();
   logFile.close();
 

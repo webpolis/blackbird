@@ -42,6 +42,14 @@ std::string printDateTimeCsv(time_t t) {
   return str;
 }
 
+std::string printDateTimeDb(time_t t) {
+  struct tm timeinfo;
+  char buff[20];
+  strftime(buff, 20, "%Y-%m-%d %H:%M:%S", localtime_r(&t, &timeinfo));
+  std::string str(buff);
+  return str;
+}
+
 
 std::string printDateTimeFileName() {
   time_t now = time(NULL);
