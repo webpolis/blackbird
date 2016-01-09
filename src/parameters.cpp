@@ -45,8 +45,8 @@ Parameters::Parameters(std::string fileName) {
 
   krakenApi = getParameter("KrakenApiKey", configFile);
   krakenSecret = getParameter("KrakenSecretKey", configFile);
-  krakenFees = getDouble(getParameter("BitfinexFees", configFile));
-  krakenCanShort = getBool(getParameter("BitfinexCanShort", configFile));
+  krakenFees = getDouble(getParameter("KrakenFees", configFile));
+  krakenCanShort = getBool(getParameter("KrakenCanShort", configFile));
 
   itbitApi = getParameter("ItBitApiKey", configFile);
   itbitSecret = getParameter("ItBitSecretKey", configFile);

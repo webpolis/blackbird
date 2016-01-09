@@ -59,11 +59,15 @@ It is never entirely safe to just tell Blackbird to use, say, $25 per exchange (
 
 #### Credentials
 
-As of today the exchanges fully implemented are:
+As of today the exchanges fully implemented and tested are:
 * <a href="https://www.bitfinex.com" target="_blank">Bitfinex</a>
 * <a href="https://www.okcoin.com" target="_blank">OKCoin</a>
 * <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a>
 * <a href="https://gemini.com" target="_blank">Gemini</a>
+
+
+The following exchanges are fully implemented but haven't been tested:
+
 * <a href="https://www.kraken.com" target="_blank">Kraken</a>
 * <a href="https://796.com/?lang=en" target="_blank">796.com (Bitcoin futures)</a>
 
