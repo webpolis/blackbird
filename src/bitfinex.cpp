@@ -131,14 +131,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
     i++;
   }
   double limPrice = 0.0;
-  if (params.aggressiveVolume) {
-    limPrice = atof(json_string_value(json_object_get(json_array_get(root, i-1), "price")));
-  } else {
-    p = atof(json_string_value(json_object_get(json_array_get(root, i), "price")));
-    v = atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
-    *params.logFile << "<Bitfinex> order book: " << v << "@$" << p << " (non-aggressive)" << std::endl;
-    limPrice = p;
-  }
+  limPrice = atof(json_string_value(json_object_get(json_array_get(root, i-1), "price")));
+    
   json_decref(root);
   return limPrice;
 }

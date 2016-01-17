@@ -65,11 +65,14 @@ As of today the exchanges fully implemented and tested are:
 * <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a>
 * <a href="https://gemini.com" target="_blank">Gemini</a>
 
-
 The following exchanges are fully implemented but haven't been tested:
 
 * <a href="https://www.kraken.com" target="_blank">Kraken</a>
 * <a href="https://796.com/?lang=en" target="_blank">796.com (Bitcoin futures)</a>
+
+The following exchange should be implemented soon:
+
+* <a href="https://btc-e.com" target="_blank">BTC-e</a>
 
 For each of your exchange accounts you need to create the API authentication keys. This is usually done in the _Settings_ section of your accounts.
 
@@ -140,7 +143,7 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
 * If you found a bug, please open a new <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _bug_
 * If you have a general question or have troubles running Blackbird, you can open a new  <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _question_ or _help wanted_
-* For anything else you can directly contact me: julien.hamilton@gmail.com
+* For anything else you can contact me at julien.hamilton@gmail.com or on <a href="https://www.linkedin.com/in/julienhamilton" target="_blank">LinkedIn</a>.
 
 
 ### Changelog
@@ -182,6 +185,11 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
 * More user-friendly config file (_blackbird.conf_)
 * Bid/ask information can be stored in a MySQL database
+* Minor fixes and improvements
+
+##### January 2016
+
+* Removed `AggressiveVolume` parameter as it is covered by `OrderBookFactor`
 * Minor fixes and improvements
 
 

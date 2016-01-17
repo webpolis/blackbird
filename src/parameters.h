@@ -22,7 +22,6 @@ struct Parameters {
   double spreadTarget;
   unsigned maxLength;
   double priceDeltaLim;
-  bool aggressiveVolume;
   double trailingLim;
   double orderBookFactor;
   bool demoMode;

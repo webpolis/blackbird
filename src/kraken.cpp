@@ -162,16 +162,10 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
     tmpVol += atof(json_string_value(json_array_get(json_array_get(root, i), 1)));
     i++;
   }
-
-  // return the next offer
   double limPrice = 0.0;
-  if (params.aggressiveVolume) {
-    limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
-  } else {
-    limPrice = atof(json_string_value(json_array_get(json_array_get(root, i), 0)));
-  }
-  json_decref(root);
+  limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
 
+  json_decref(root);
   return limPrice;
 }
 

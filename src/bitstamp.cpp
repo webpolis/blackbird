@@ -39,7 +39,7 @@ double getAvail(Parameters& params, std::string currency) {
   json_t* root = authRequest(params, "https://www.bitstamp.net/api/balance/", "");
   while (json_object_get(root, "message") != NULL) {
     sleep(1.0);
-    *params.logFile << "<Bitstamp> Error with JSON in getAvail: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
+    *params.logFile << "<Bitstamp> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
     root = authRequest(params, "https://www.bitstamp.net/api/balance/", "");
   }
 
@@ -130,14 +130,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
     i++;
   }
   double limPrice = 0.0;
-  if (params.aggressiveVolume) {
-    limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
-  } else {
-    p = atof(json_string_value(json_array_get(json_array_get(root, i), 0)));
-    v = atof(json_string_value(json_array_get(json_array_get(root, i), 1)));
-    *params.logFile << "<Bitstamp> order book: " << v << "@$" << p << " (non-aggressive)" << std::endl;
-    limPrice = p;
-  }
+  limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
+    
   json_decref(root);
   return limPrice;
 }
@@ -190,7 +184,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string options) {
     root = json_loads(readBuffer.c_str(), 0, &error);
 
     while (!root) {
-      *params.logFile << "<Bitstamp> Error with JSON in authRequest:\n" << "Error: : " << error.text << ".  Retrying..." << std::endl;
+      *params.logFile << "<Bitstamp> Error with JSON:\n" << "Error: : " << error.text << ".  Retrying..." << std::endl;
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
       while (resCurl != CURLE_OK) {

@@ -136,14 +136,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
       tmpVol += v;
       i++;
     }
-    if (params.aggressiveVolume) {
-      limPrice = json_real_value(json_array_get(json_array_get(root, i-1), 0));
-    } else {
-      p = json_real_value(json_array_get(json_array_get(root, i), 0));
-      v = json_real_value(json_array_get(json_array_get(root, i), 1));
-      *params.logFile << "<OKCoin> order book: " << v << "@$" << p << " (non-aggressive)" << std::endl;
-      limPrice = p;
-    }
+    limPrice = json_real_value(json_array_get(json_array_get(root, i-1), 0));
+
   } else {
     root = json_object_get(getJsonFromUrl(params, "https://www.okcoin.com/api/v1/depth.do", ""), "asks");
     // loop on volume
@@ -159,14 +153,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
       tmpVol += v;
       i--;
     }
-    if (params.aggressiveVolume) {
-      limPrice = json_real_value(json_array_get(json_array_get(root, i+1), 0));
-    } else {
-      p = json_real_value(json_array_get(json_array_get(root, i), 0));
-      v = json_real_value(json_array_get(json_array_get(root, i), 1));
-      *params.logFile << "<OKCoin> order book: " << v << "@$" << p << " (non-aggressive)" << std::endl;
-      limPrice = p;
-    }
+    limPrice = json_real_value(json_array_get(json_array_get(root, i+1), 0));
   }
   json_decref(root);
   return limPrice;
