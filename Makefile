@@ -1,7 +1,7 @@
 # Blackbird Bitcoin Arbitrage Makefile
 
 CC = g++
-CFLAGS = -c -g -Wall -O2 
+CFLAGS = -c -g -Wall -O2
 
 EXEC = blackbird
 SOURCES = $(wildcard src/*.cpp)

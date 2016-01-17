@@ -127,7 +127,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   }
   double limPrice = 0.0;
   limPrice = atof(json_string_value(json_object_get(json_array_get(root, i-1), "price")));
-  
+
   json_decref(root);
   return limPrice;
 }
@@ -207,7 +207,10 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
     root = json_loads(readBuffer.c_str(), 0, &error);
 
     while (!root) {
-      *params.logFile << "<Gemini> Error with JSON:\n" << error.text << ". Retrying..." << std::endl;
+      *params.logFile << "<Gemini> Error with JSON:\n" << error.text << std::endl;
+      *params.logFile << "<Gemini> Buffer:\n" << readBuffer.c_str() << std::endl;
+      *params.logFile << "<Gemini> Retrying..." << std::endl;
+      sleep(2.0);
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
       while (resCurl != CURLE_OK) {

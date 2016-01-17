@@ -40,7 +40,7 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
       *params.logFile << " [target " << percToStr(params.spreadEntry) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
 
       if (res.trailing[longId][shortId] != -1.0) {
-        *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWait[longId][shortId] << "/2";
+        *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWait[longId][shortId] << "/" << params.trailingCount;
       }
       if ((btcLong->getIsImplemented() == false || btcShort->getIsImplemented() == false) && params.demoMode == false) {
         *params.logFile << "   info only"  << std::endl;
@@ -66,7 +66,7 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
                   res.trailingWait[longId][shortId] = 0;
                 }
                 if (res.spreadIn < res.trailing[longId][shortId]) {
-                  if (res.trailingWait[longId][shortId] < 2) {
+                  if (res.trailingWait[longId][shortId] < params.trailingCount) {
                     res.trailingWait[longId][shortId]++;
                   } else {
                     res.idExchLong = longId;
@@ -120,7 +120,7 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
     *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadOut);
     *params.logFile << " [target " << percToStr(res.exitTarget) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
     if (res.trailing[longId][shortId] != 1.0) {
-      *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWait[longId][shortId] << "/2";
+      *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWait[longId][shortId] << "/" << params.trailingCount;
     }
   }
   *params.logFile << std::endl;
@@ -145,7 +145,7 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
             res.trailingWait[longId][shortId] = 0;
           }
           if (res.spreadOut > res.trailing[longId][shortId]) {
-            if (res.trailingWait[longId][shortId] < 2) {
+            if (res.trailingWait[longId][shortId] < params.trailingCount) {
               res.trailingWait[longId][shortId]++;
             } else {
               res.priceLongOut  = priceLong;

@@ -230,7 +230,10 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
     root = json_loads(readBuffer.c_str(), 0, &error);
 
     while (!root) {
-      *params.logFile << "<Kraken> Error with JSON:\n" << error.text << ". Retrying..." << std::endl;
+      *params.logFile << "<Kraken> Error with JSON:\n" << error.text << std::endl;
+      *params.logFile << "<Kraken> Buffer:\n" << readBuffer.c_str() << std::endl;
+      *params.logFile << "<Kraken> Retrying..." << std::endl;
+      sleep(2.0);
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
       while (resCurl != CURLE_OK) {

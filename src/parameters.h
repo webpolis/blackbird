@@ -23,6 +23,7 @@ struct Parameters {
   unsigned maxLength;
   double priceDeltaLim;
   double trailingLim;
+  unsigned trailingCount;
   double orderBookFactor;
   bool demoMode;
   bool verbose;

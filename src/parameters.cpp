@@ -1,7 +1,7 @@
 #include <iostream>
+#include <stdlib.h>
 #include "parameters.h"
 #include "time_fun.h"
-
 
 Parameters::Parameters(std::string fileName) {
 
@@ -11,6 +11,7 @@ Parameters::Parameters(std::string fileName) {
   maxLength = getUnsigned(getParameter("MaxLength", configFile));
   priceDeltaLim = getDouble(getParameter("PriceDeltaLimit", configFile));
   trailingLim = getDouble(getParameter("TrailingSpreadLim", configFile));
+  trailingCount = getUnsigned(getParameter("TrailingSpreadCount", configFile));
   orderBookFactor = getDouble(getParameter("OrderBookFactor", configFile));
   demoMode = getBool(getParameter("DemoMode", configFile));
   verbose = getBool(getParameter("Verbose", configFile));
@@ -107,11 +108,11 @@ std::string getParameter(std::string parameter, std::ifstream& configFile) {
         }
       }
     }
-    std::cout << "ERROR: parameter " << parameter << " not found" << std::endl;
-    return "error";
+    std::cout << "ERROR: parameter '" << parameter << "' not found. Your configuration file might be too old.\n" << std::endl;
+    exit(EXIT_FAILURE);
   } else {
-    std::cout << "ERROR: file cannot be open" << std::endl;
-    return "error";
+    std::cout << "ERROR: file cannot be open.\n" << std::endl;
+    exit(EXIT_FAILURE);
   }
 }
 
