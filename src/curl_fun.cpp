@@ -34,7 +34,10 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   root = json_loads(readBuffer.c_str(), 0, &error);
 
   while (!root) {
-    *params.logFile << "Error with JSON:\n" << error.text << ". Retrying..." << std::endl;
+    *params.logFile << "Error with JSON:\n" << error.text << std::endl;
+    *params.logFile << "Buffer:\n" << readBuffer.c_str() << std::endl;
+    *params.logFile << "Retrying..." << std::endl;
+    sleep(2.0);
     readBuffer = "";
     resCurl = curl_easy_perform(params.curl);
     while (resCurl != CURLE_OK) {
