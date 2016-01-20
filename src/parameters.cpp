@@ -25,43 +25,35 @@ Parameters::Parameters(std::string fileName) {
   bitfinexApi = getParameter("BitfinexApiKey", configFile);
   bitfinexSecret = getParameter("BitfinexSecretKey", configFile);
   bitfinexFees = getDouble(getParameter("BitfinexFees", configFile));
-  bitfinexCanShort = getBool(getParameter("BitfinexCanShort", configFile));
 
   okcoinApi = getParameter("OkCoinApiKey", configFile);
   okcoinSecret = getParameter("OkCoinSecretKey", configFile);
   okcoinFees = getDouble(getParameter("OkCoinFees", configFile));
-  okcoinCanShort = getBool(getParameter("OkCoinCanShort", configFile));
 
   bitstampClientId = getParameter("BitstampClientId", configFile);
   bitstampApi = getParameter("BitstampApiKey", configFile);
   bitstampSecret = getParameter("BitstampSecretKey", configFile);
   bitstampFees = getDouble(getParameter("BitstampFees", configFile));
-  bitstampCanShort = getBool(getParameter("BitstampCanShort", configFile));
 
   geminiApi = getParameter("GeminiApiKey", configFile);
   geminiSecret = getParameter("GeminiSecretKey", configFile);
   geminiFees = getDouble(getParameter("GeminiFees", configFile));
-  geminiCanShort = getBool(getParameter("GeminiCanShort", configFile));
 
   krakenApi = getParameter("KrakenApiKey", configFile);
   krakenSecret = getParameter("KrakenSecretKey", configFile);
   krakenFees = getDouble(getParameter("KrakenFees", configFile));
-  krakenCanShort = getBool(getParameter("KrakenCanShort", configFile));
 
   itbitApi = getParameter("ItBitApiKey", configFile);
   itbitSecret = getParameter("ItBitSecretKey", configFile);
   itbitFees = getDouble(getParameter("ItBitFees", configFile));
-  itbitCanShort = getBool(getParameter("ItBitCanShort", configFile));
 
   btceApi = getParameter("BTCeApiKey", configFile);
   btceSecret = getParameter("BTCeSecretKey", configFile);
   btceFees = getDouble(getParameter("BTCeFees", configFile));
-  btceCanShort = getBool(getParameter("BTCeCanShort", configFile));
 
   sevennintysixApi = getParameter("SevenNintySixApiKey", configFile);
   sevennintysixSecret = getParameter("SevenNintySixSecretKey", configFile);
   sevennintysixFees = getDouble(getParameter("SevenNintySixFees", configFile));
-  sevennintysixCanShort = getBool(getParameter("SevenNintySixCanShort", configFile));
 
   sendEmail = getBool(getParameter("SendEmail", configFile));
   senderAddress = getParameter("SenderAddress", configFile);

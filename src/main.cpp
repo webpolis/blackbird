@@ -71,7 +71,7 @@ int main(int argc, char** argv) {
   int index = 0;
 
   if (params.bitfinexApi.empty() == false || params.demoMode == true) {
-    params.addExchange("Bitfinex", params.bitfinexFees, params.bitfinexCanShort, true);
+    params.addExchange("Bitfinex", params.bitfinexFees, true, true);
     getQuote[index] = Bitfinex::getQuote;
     getAvail[index] = Bitfinex::getAvail;
     sendOrder[index] = Bitfinex::sendOrder;
@@ -85,7 +85,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.okcoinApi.empty() == false || params.demoMode == true) {
-    params.addExchange("OKCoin", params.okcoinFees, params.okcoinCanShort, true);
+    params.addExchange("OKCoin", params.okcoinFees, false, true);
     getQuote[index] = OkCoin::getQuote;
     getAvail[index] = OkCoin::getAvail;
     sendOrder[index] = OkCoin::sendOrder;
@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.bitstampClientId.empty() == false || params.demoMode == true) {
-    params.addExchange("Bitstamp", params.bitstampFees, params.bitstampCanShort, true);
+    params.addExchange("Bitstamp", params.bitstampFees, false, true);
     getQuote[index] = Bitstamp::getQuote;
     getAvail[index] = Bitstamp::getAvail;
     sendOrder[index] = Bitstamp::sendOrder;
@@ -113,7 +113,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.geminiApi.empty() == false || params.demoMode == true) {
-    params.addExchange("Gemini", params.geminiFees, params.geminiCanShort, true);
+    params.addExchange("Gemini", params.geminiFees, false, true);
     getQuote[index] = Gemini::getQuote;
     getAvail[index] = Gemini::getAvail;
     sendOrder[index] = Gemini::sendOrder;
@@ -127,7 +127,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.krakenApi.empty() == false || params.demoMode == true) {
-    params.addExchange("Kraken", params.krakenFees, params.krakenCanShort, true);
+    params.addExchange("Kraken", params.krakenFees, false, true);
     getQuote[index] = Kraken::getQuote;
     getAvail[index] = Kraken::getAvail;
     sendOrder[index] = Kraken::sendOrder;
@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.itbitApi.empty() == false || params.demoMode == true) {
-    params.addExchange("ItBit", params.itbitFees, params.itbitCanShort, false);
+    params.addExchange("ItBit", params.itbitFees, false, false);
     getQuote[index] = ItBit::getQuote;
     getAvail[index] = ItBit::getAvail;
     // sendOrder[index] = ItBit::sendOrder;
@@ -155,7 +155,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.btceApi.empty() == false || params.demoMode == true) {
-    params.addExchange("BTC-e", params.btceFees, params.btceCanShort, false);
+    params.addExchange("BTC-e", params.btceFees, false, false);
     getQuote[index] = BTCe::getQuote;
     getAvail[index] = BTCe::getAvail;
     // sendOrder[index] = BTCe::sendOrder;
@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.sevennintysixApi.empty() == false || params.demoMode == true) {
-    params.addExchange("796.com", params.sevennintysixFees, params.sevennintysixCanShort, true);
+    params.addExchange("796.com", params.sevennintysixFees, false, true);
     getQuote[index] = SevenNintySix::getQuote;
     getAvail[index] = SevenNintySix::getAvail;
     sendOrder[index] = SevenNintySix::sendOrder;
