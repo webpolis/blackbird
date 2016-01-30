@@ -259,7 +259,13 @@ int main(int argc, char** argv) {
 
   for (int i = 0; i < num_exchange; ++i) {
     logFile << "   " << params.exchName[i] << ":\t";
-    logFile << balanceUsd[i] << " USD\t" << std::setprecision(6) << balanceBtc[i]  << std::setprecision(2) << " BTC" << std::endl;
+    if (params.demoMode) {
+      logFile << "n/a (demo mode)" << std::endl;
+    } else if (!params.isImplemented[i]) {
+      logFile << "n/a (API not implemented)" << std::endl;
+    } else { 
+      logFile << balanceUsd[i] << " USD\t" << std::setprecision(6) << balanceBtc[i]  << std::setprecision(2) << " BTC" << std::endl;
+    }
     if (balanceBtc[i] > 0.0300) {
       logFile << "ERROR: All BTC accounts must be empty before starting Blackbird" << std::endl;
       return -1;

@@ -112,7 +112,15 @@ Conversely, if you set `UseFullCash=false` Blackbird will use $25 per exchange (
 
 ### Run the software
 
-You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a>, <a href="http://curl.haxx.se" target="_blank">cURL</a>, <a href="http://dev.mysql.com/doc" target="_blank">MySQL Client</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>.
+You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a>, <a href="http://curl.haxx.se" target="_blank">cURL</a>, <a href="http://dev.mysql.com/doc" target="_blank">MySQL Client</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>. Usually this is what you need to install:
+
+```
+libssl-dev
+libjansson-dev
+libcurl4-openssl-dev
+libmysqlclient-dev
+sendemail
+```
 
 __Note:__ you need Jansson version 2.7 minimum otherwise you will get the following compilation error:
 
