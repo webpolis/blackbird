@@ -182,8 +182,6 @@ int main(int argc, char** argv) {
     }
     index++;
   }
-
-
   if (index < 2) {
     std::cout << "ERROR: Blackbird needs at least two Bitcoin exchanges. Please edit the config.json file to add new exchanges\n" << std::endl;
     return -1;
@@ -208,7 +206,6 @@ int main(int argc, char** argv) {
   logFile << "--------------------------------------------\n" << std::endl;
   logFile << "Blackbird started on " << printDateTime() << "\n" << std::endl;
 
-
   if (params.useDatabase) {
     logFile << "Connected to database \'" << params.dbName << "\'\n" << std::endl;
   }
@@ -216,7 +213,6 @@ int main(int argc, char** argv) {
   if (params.demoMode) {
     logFile << "Demo mode: trades won't be generated\n" << std::endl;
   }
-
   std::cout << "Log file generated: " << logFileName << "\nBlackbird is running... (pid " << getpid() << ")\n" << std::endl;
 
   std::vector<Bitcoin*> btcVec;
@@ -338,15 +334,15 @@ int main(int argc, char** argv) {
         addBidAskToDb(dbTableName[e], printDateTimeDb(currTime), bid, ask, params);
       }
       if (bid == 0.0) {
-        logFile << "   WARNING: " << params.exchName[e] << " bid is null, use previous one" << std::endl;
+        logFile << "   WARNING: " << params.exchName[e] << " bid is null" << std::endl;
       }
       if (ask == 0.0) {
-        logFile << "   WARNING: " << params.exchName[e] << " ask is null, use previous one" << std::endl;
+        logFile << "   WARNING: " << params.exchName[e] << " ask is null" << std::endl;
       }
       if (params.verbose) {
         logFile << "   " << params.exchName[e] << ": \t" << bid << " / " << ask << std::endl;
       }
-      btcVec[e]->updateData(bid, ask, 0.0);
+      btcVec[e]->updateData(bid, ask);
       curl_easy_reset(params.curl);
     }
     if (params.verbose) {

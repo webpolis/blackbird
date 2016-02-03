@@ -23,7 +23,9 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   CURLcode resCurl = curl_easy_perform(params.curl);
 
   while (resCurl != CURLE_OK) {
-    *params.logFile << "Error with cURL. Retry in 2 sec..." << std::endl;
+    *params.logFile << "Error with cURL: " << curl_easy_strerror(resCurl) << std::endl;
+    *params.logFile << "  URL: " << url << std::endl;
+    *params.logFile << "  Retry in 2 sec..." << std::endl;
     sleep(2.0);
     readBuffer = "";
     curl_easy_setopt(params.curl, CURLOPT_DNS_CACHE_TIMEOUT, 0);
@@ -41,7 +43,9 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
     readBuffer = "";
     resCurl = curl_easy_perform(params.curl);
     while (resCurl != CURLE_OK) {
-      *params.logFile << "Error with cURL. Retry in 2 sec...\n" << std::endl;
+      *params.logFile << "Error with cURL: " << curl_easy_strerror(resCurl) << std::endl;
+      *params.logFile << "  URL: " << url << std::endl;
+      *params.logFile << "  Retry in 2 sec..." << std::endl;
       sleep(2.0);
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);

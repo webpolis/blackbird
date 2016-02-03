@@ -9,13 +9,11 @@ Bitcoin::Bitcoin(unsigned i, std::string n, double f, bool h, bool m) {
   isImplemented = m;
   bid = 0.0;
   ask = 0.0;
-  volume = 0;
 }
 
-void Bitcoin::updateData(double b, double a, double v) {
+void Bitcoin::updateData(double b, double a) {
   bid = b;
   ask = a;
-  volume = v;
 }
 
 unsigned Bitcoin::getId() const {
@@ -28,10 +26,6 @@ double Bitcoin::getBid() const {
 
 double Bitcoin::getAsk() const {
   return ask;
-}
-
-double Bitcoin::getVolume() const {
-  return volume;
 }
 
 std::string Bitcoin::getExchName() const {

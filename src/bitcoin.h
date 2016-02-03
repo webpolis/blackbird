@@ -18,16 +18,14 @@ class Bitcoin {
     bool isImplemented;
     double bid;
     double ask;
-    double volume;
 
   public:
     Bitcoin(unsigned id, std::string n, double f, bool h, bool m);
-    void updateData(double b, double a, double v);
+    void updateData(double b, double a);
 
     unsigned getId() const;
     double getAsk() const;
     double getBid() const;
-    double getVolume() const;
     std::string getExchName() const;
     double getFees() const;
     bool getHasShort() const;

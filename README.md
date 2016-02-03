@@ -198,6 +198,7 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 ##### January 2016
 
 * Removed `AggressiveVolume` parameter as it is covered by `OrderBookFactor`
+* More details are written to the log file when an error with cURL or Jansson occurs
 * Minor fixes and improvements
 
 
