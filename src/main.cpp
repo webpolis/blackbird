@@ -461,9 +461,19 @@ int main(int argc, char** argv) {
           shortOrderId = sendOrder[res.idExchShort](params, "buy", fabs(btcUsed[res.idExchShort]), btcVec[res.idExchShort]->getAsk());
           // wait for the orders to be filled
           logFile << "Waiting for the two orders to be filled..." << std::endl;
-          sleep(3.0);
-          while (!isOrderComplete[res.idExchLong](params, longOrderId) || !isOrderComplete[res.idExchShort](params, shortOrderId)) {
+          sleep(5.0);
+          bool isLongOrderComplete = isOrderComplete[res.idExchLong](params, longOrderId);
+          bool isShortOrderComplete = isOrderComplete[res.idExchShort](params, shortOrderId);
+          while (!isLongOrderComplete || !isShortOrderComplete) {
             sleep(3.0);
+            if (!isLongOrderComplete) {
+              logFile << "Long order on " << params.exchName[res.idExchLong] << " still open..." << std::endl;  
+              isLongOrderComplete = isOrderComplete[res.idExchLong](params, longOrderId);
+            }
+            if (!isShortOrderComplete) {
+              logFile << "Short order on " << params.exchName[res.idExchShort] << " still open..." << std::endl; 
+              isShortOrderComplete = isOrderComplete[res.idExchShort](params, shortOrderId);  
+            }
           }
           logFile << "Done\n" << std::endl;
           longOrderId = 0;
