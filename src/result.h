@@ -4,7 +4,7 @@
 #include <fstream>
 #include <time.h>
 #include <string>
-#include <vector>
+#include <list>
 
 // structure that represents the result of a complete long/short trade (i.e. 2 trades IN, 2 trades OUT)
 // some information is filled after the first two trades IN
@@ -28,10 +28,11 @@ struct Result {
   double spreadOut;
   double exitTarget;
 
-  double minSpread[10][10];      // FIXME size
-  double maxSpread[10][10];      // FIXME size
-  double trailing[10][10];       // FIXME size
-  unsigned trailingWait[10][10]; // FIXME size
+  double minSpread[10][10];              // FIXME size
+  double maxSpread[10][10];              // FIXME size
+  double trailing[10][10];               // FIXME size
+  unsigned trailingWait[10][10];         // FIXME size
+  std::list<double> volatility[10][10];  // FIXME size
 
   double befBalUsd;
   double aftBalUsd;

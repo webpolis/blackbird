@@ -21,6 +21,8 @@ Parameters::Parameters(std::string fileName) {
   untouchedCash = getDouble(getParameter("UntouchedCash", configFile));
   cashForTesting = getDouble(getParameter("CashForTesting", configFile));
   maxExposure = getDouble(getParameter("MaxExposure", configFile));
+  useVolatility = getBool(getParameter("UseVolatility", configFile));
+  volatilityPeriod = getUnsigned(getParameter("VolatilityPeriod", configFile));
 
   bitfinexApi = getParameter("BitfinexApiKey", configFile);
   bitfinexSecret = getParameter("BitfinexSecretKey", configFile);

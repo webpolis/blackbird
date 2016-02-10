@@ -34,6 +34,8 @@ struct Parameters {
   double untouchedCash;
   double cashForTesting;
   double maxExposure;
+  bool useVolatility;
+  unsigned volatilityPeriod;
 
   std::string bitfinexApi;
   std::string bitfinexSecret;

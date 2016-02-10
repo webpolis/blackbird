@@ -62,7 +62,6 @@ void Result::printExit(std::ofstream& logFile) {
 }
 
 
-
 void Result::clear() {
   id = 0;
   idExchLong = 0;
@@ -92,5 +91,4 @@ void Result::clear() {
       trailingWait[i][j] = 0;
     }
   }
-
 }

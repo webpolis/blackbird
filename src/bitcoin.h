@@ -26,6 +26,7 @@ class Bitcoin {
     unsigned getId() const;
     double getAsk() const;
     double getBid() const;
+    double getMidPrice() const;
     std::string getExchName() const;
     double getFees() const;
     bool getHasShort() const;

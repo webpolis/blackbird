@@ -67,8 +67,8 @@ As of today the exchanges fully implemented and tested are:
 
 The following exchanges are fully implemented but haven't been tested:
 
-* <a href="https://www.kraken.com" target="_blank">Kraken</a>
-* <a href="https://796.com/?lang=en" target="_blank">796.com (Bitcoin futures)</a>
+* <a href="https://www.kraken.com" target="_blank">Kraken</a> (validation in progress)
+* <a href="https://796.com/?lang=en" target="_blank">796.com (Bitcoin futures)</a> (segfault found, troubleshooting in progress)
 
 The following exchange should be implemented soon:
 
@@ -200,6 +200,10 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 * Removed `AggressiveVolume` parameter as it is covered by `OrderBookFactor`
 * More details are written to the log file when an error with cURL or Jansson occurs
 * Minor fixes and improvements
+
+##### February 2016
+
+* Spread volatility can be displayed for each pair
 
 
 ### Log Output Example

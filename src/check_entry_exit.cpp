@@ -1,6 +1,8 @@
 #include <sstream>
 #include <stdlib.h>
 #include <iomanip>
+#include <numeric>
+#include <cmath>
 #include "check_entry_exit.h"
 
 std::string percToStr(double perc) {
@@ -39,6 +41,18 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
       *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadIn);
       *params.logFile << " [target " << percToStr(params.spreadEntry) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
 
+      if (params.useVolatility) {
+        if (res.volatility[longId][shortId].size() >= params.volatilityPeriod) {
+          double sum = std::accumulate(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), 0.0);
+          double mean = sum / res.volatility[longId][shortId].size();
+          double squareSum = std::inner_product(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), res.volatility[longId][shortId].begin(), 0.0);
+          double stdev = std::sqrt(squareSum / res.volatility[longId][shortId].size() - mean * mean);
+          *params.logFile << "  " << params.volatilityPeriod << "-volat. " << stdev * 100.0 << "%";
+        } else {
+          *params.logFile << "  " << params.volatilityPeriod << "-volat. n/a " << res.volatility[longId][shortId].size() << "<" << params.volatilityPeriod << " ";
+        }
+      }
+      
       if (res.trailing[longId][shortId] != -1.0) {
         *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWait[longId][shortId] << "/" << params.trailingCount;
       }
@@ -119,6 +133,19 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
   if (params.verbose) {
     *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadOut);
     *params.logFile << " [target " << percToStr(res.exitTarget) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
+
+    if (params.useVolatility) {
+      if (res.volatility[longId][shortId].size() >= params.volatilityPeriod) {
+        double sum = std::accumulate(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), 0.0);
+        double mean = sum / res.volatility[longId][shortId].size();
+        double squareSum = std::inner_product(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), res.volatility[longId][shortId].begin(), 0.0);
+        double stdev = std::sqrt(squareSum / res.volatility[longId][shortId].size() - mean * mean);
+        *params.logFile << "  " << params.volatilityPeriod << "-volat. " << stdev * 100.0 << "%";
+      } else {
+        *params.logFile << "  " << params.volatilityPeriod << "-volat. n/a " << res.volatility[longId][shortId].size() << "<" << params.volatilityPeriod << " ";
+      }
+    }
+
     if (res.trailing[longId][shortId] != 1.0) {
       *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWait[longId][shortId] << "/" << params.trailingCount;
     }

@@ -348,6 +348,25 @@ int main(int argc, char** argv) {
     if (params.verbose) {
       logFile << "   ----------------------------" << std::endl;
     }
+    
+    if (params.useVolatility) {
+      for (int i = 0; i < num_exchange; ++i) {    // long
+        for (int j = 0; j < num_exchange; ++j) {  // short
+          if (i != j) {
+            if (btcVec[j]->getHasShort()) {
+              double longMidPrice = btcVec[i]->getMidPrice();
+              double shortMidPrice = btcVec[j]->getMidPrice();
+              if (longMidPrice > 0.0 && shortMidPrice > 0.0) {
+                if (res.volatility[i][j].size() >= params.volatilityPeriod) {
+                  res.volatility[i][j].pop_back();
+                }
+                res.volatility[i][j].push_front((longMidPrice - shortMidPrice) / longMidPrice);
+              }
+            }
+          }
+        }
+      }
+    }
 
     // compute entry point
     if (!inMarket) {
@@ -459,7 +478,7 @@ int main(int argc, char** argv) {
           // send orders
           longOrderId = sendOrder[res.idExchLong](params, "sell", fabs(btcUsed[res.idExchLong]), btcVec[res.idExchLong]->getBid());
           shortOrderId = sendOrder[res.idExchShort](params, "buy", fabs(btcUsed[res.idExchShort]), btcVec[res.idExchShort]->getAsk());
-          // wait for the orders to be filled
+
           logFile << "Waiting for the two orders to be filled..." << std::endl;
           sleep(5.0);
           bool isLongOrderComplete = isOrderComplete[res.idExchLong](params, longOrderId);

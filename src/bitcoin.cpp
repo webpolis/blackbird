@@ -28,6 +28,14 @@ double Bitcoin::getAsk() const {
   return ask;
 }
 
+double Bitcoin::getMidPrice() const {
+  if (bid > 0.0 && ask > 0.0) {
+    return (bid + ask) / 2.0;
+  } else {
+    return 0.0;
+  }
+}
+
 std::string Bitcoin::getExchName() const {
   return exchName;
 }

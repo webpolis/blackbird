@@ -47,11 +47,8 @@ double getAvail(Parameters& params, std::string currency) {
   json_t* root = authRequest(params, "https://api.kraken.com", "/0/private/Balance");
   json_t* result = json_object_get(root, "result");
 
-  while (json_object_size(result) == 0) {
-    sleep(1.0);
-    *params.logFile << "<Kraken> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
-    root = authRequest(params, "https://api.kraken.com", "/0/private/Balance");
-    result = json_object_get(root, "result");
+  if (json_object_size(result) == 0) {
+    return 0.0;
   }
 
   double available = 0.0;
@@ -223,7 +220,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
     json_error_t error;
     while (resCurl != CURLE_OK) {
       *params.logFile << "<Kraken> Error with cURL. Retry in 2 sec...\n" << std::endl;
-      sleep(2.0);
+      sleep(4.0);
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
     }
@@ -233,12 +230,12 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
       *params.logFile << "<Kraken> Error with JSON:\n" << error.text << std::endl;
       *params.logFile << "<Kraken> Buffer:\n" << readBuffer.c_str() << std::endl;
       *params.logFile << "<Kraken> Retrying..." << std::endl;
-      sleep(2.0);
+      sleep(4.0);
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
       while (resCurl != CURLE_OK) {
         *params.logFile << "<Kraken> Error with cURL. Retry in 2 sec...\n" << std::endl;
-        sleep(2.0);
+        sleep(4.0);
         readBuffer = "";
         resCurl = curl_easy_perform(params.curl);
       }
