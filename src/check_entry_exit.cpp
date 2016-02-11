@@ -47,9 +47,9 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
           double mean = sum / res.volatility[longId][shortId].size();
           double squareSum = std::inner_product(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), res.volatility[longId][shortId].begin(), 0.0);
           double stdev = std::sqrt(squareSum / res.volatility[longId][shortId].size() - mean * mean);
-          *params.logFile << "  " << params.volatilityPeriod << "-volat. " << stdev * 100.0 << "%";
+          *params.logFile << "  volat. " << stdev * 100.0 << "%";
         } else {
-          *params.logFile << "  " << params.volatilityPeriod << "-volat. n/a " << res.volatility[longId][shortId].size() << "<" << params.volatilityPeriod << " ";
+          *params.logFile << "  volat. n/a " << res.volatility[longId][shortId].size() << "<" << params.volatilityPeriod << " ";
         }
       }
       
@@ -140,9 +140,9 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
         double mean = sum / res.volatility[longId][shortId].size();
         double squareSum = std::inner_product(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), res.volatility[longId][shortId].begin(), 0.0);
         double stdev = std::sqrt(squareSum / res.volatility[longId][shortId].size() - mean * mean);
-        *params.logFile << "  " << params.volatilityPeriod << "-volat. " << stdev * 100.0 << "%";
+        *params.logFile << "  volat. " << stdev * 100.0 << "%";
       } else {
-        *params.logFile << "  " << params.volatilityPeriod << "-volat. n/a " << res.volatility[longId][shortId].size() << "<" << params.volatilityPeriod << " ";
+        *params.logFile << "  volat. n/a " << res.volatility[longId][shortId].size() << "<" << params.volatilityPeriod << " ";
       }
     }
 
