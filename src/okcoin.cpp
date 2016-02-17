@@ -56,26 +56,18 @@ double getAvail(Parameters& params, std::string currency) {
 
 
 int sendOrder(Parameters& params, std::string direction, double quantity, double price) {
-  // define limit price to be sure to be executed
-  double limPrice;
-  if (direction.compare("buy") == 0) {
-    limPrice = getLimitPrice(params, quantity, false);
-  }
-  else if (direction.compare("sell") == 0) {
-    limPrice = getLimitPrice(params, quantity, true);
-  }
 
   // signature
   std::ostringstream oss;
-  oss << "amount=" << quantity << "&api_key=" << params.okcoinApi << "&price=" << limPrice << "&symbol=btc_usd&type=" << direction << "&secret_key=" << params.okcoinSecret;
+  oss << "amount=" << quantity << "&api_key=" << params.okcoinApi << "&price=" << price << "&symbol=btc_usd&type=" << direction << "&secret_key=" << params.okcoinSecret;
   std::string signature = oss.str();
   oss.clear();
   oss.str("");
   // content
-  oss << "amount=" << quantity << "&api_key=" << params.okcoinApi << "&price=" << limPrice << "&symbol=btc_usd&type=" << direction;
+  oss << "amount=" << quantity << "&api_key=" << params.okcoinApi << "&price=" << price << "&symbol=btc_usd&type=" << direction;
   std::string content = oss.str();
 
-  *params.logFile << "<OKCoin> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << limPrice << "..." << std::endl;
+  *params.logFile << "<OKCoin> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
   json_t *root = authRequest(params, "https://www.okcoin.com/api/v1/trade.do", signature, content);
   int orderId = json_integer_value(json_object_get(root, "order_id"));
   *params.logFile << "<OKCoin> Done (order ID: " << orderId << ")\n" << std::endl;

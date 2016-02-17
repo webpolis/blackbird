@@ -216,9 +216,9 @@ int main(int argc, char** argv) {
   std::cout << "Log file generated: " << logFileName << "\nBlackbird is running... (pid " << getpid() << ")\n" << std::endl;
 
   std::vector<Bitcoin*> btcVec;
-  int num_exchange = params.nbExch();
+  int numExch = params.nbExch();
 
-  for (int i = 0; i < num_exchange; ++i) {
+  for (int i = 0; i < numExch; ++i) {
     btcVec.push_back(new Bitcoin(i, params.exchName[i], params.fees[i], params.canShort[i], params.isImplemented[i]));
   }
   curl_global_init(CURL_GLOBAL_ALL);
@@ -236,9 +236,9 @@ int main(int argc, char** argv) {
   logFile << std::endl;
   // store current balances
   logFile << "[ Current balances ]" << std::endl;
-  double* balanceUsd = (double*)malloc(sizeof(double) * num_exchange);
-  double* balanceBtc = (double*)malloc(sizeof(double) * num_exchange);
-  for (int i = 0; i < num_exchange; ++i) {
+  double* balanceUsd = (double*)malloc(sizeof(double) * numExch);
+  double* balanceBtc = (double*)malloc(sizeof(double) * numExch);
+  for (int i = 0; i < numExch; ++i) {
     if (params.demoMode) {
       balanceUsd[i] = 0.0;
       balanceBtc[i] = 0.0;
@@ -248,12 +248,12 @@ int main(int argc, char** argv) {
     }
   }
   // contains balances after a completed trade
-  double* newBalUsd = (double*)malloc(sizeof(double) * num_exchange);
-  double* newBalBtc = (double*)malloc(sizeof(double) * num_exchange);
-  memset(newBalUsd, 0.0, sizeof(double) * num_exchange);
-  memset(newBalBtc, 0.0, sizeof(double) * num_exchange);
+  double* newBalUsd = (double*)malloc(sizeof(double) * numExch);
+  double* newBalBtc = (double*)malloc(sizeof(double) * numExch);
+  memset(newBalUsd, 0.0, sizeof(double) * numExch);
+  memset(newBalBtc, 0.0, sizeof(double) * numExch);
 
-  for (int i = 0; i < num_exchange; ++i) {
+  for (int i = 0; i < numExch; ++i) {
     logFile << "   " << params.exchName[i] << ":\t";
     if (params.demoMode) {
       logFile << "n/a (demo mode)" << std::endl;
@@ -327,7 +327,7 @@ int main(int argc, char** argv) {
         logFile << "[ " << printDateTime(currTime) << " IN MARKET: Long " << res.exchNameLong << " / Short " << res.exchNameShort << " ]" << std::endl;
       }
     }
-    for (int e = 0; e < num_exchange; ++e) {
+    for (int e = 0; e < numExch; ++e) {
       double bid = getQuote[e](params, true);
       double ask = getQuote[e](params, false);
       if (params.useDatabase) {
@@ -350,8 +350,8 @@ int main(int argc, char** argv) {
     }
     
     if (params.useVolatility) {
-      for (int i = 0; i < num_exchange; ++i) {    // long
-        for (int j = 0; j < num_exchange; ++j) {  // short
+      for (int i = 0; i < numExch; ++i) {    // long
+        for (int j = 0; j < numExch; ++j) {  // short
           if (i != j) {
             if (btcVec[j]->getHasShort()) {
               double longMidPrice = btcVec[i]->getMidPrice();
@@ -370,8 +370,8 @@ int main(int argc, char** argv) {
 
     // compute entry point
     if (!inMarket) {
-      for (int i = 0; i < num_exchange; ++i) {
-        for (int j = 0; j < num_exchange; ++j) {
+      for (int i = 0; i < numExch; ++i) {
+        for (int j = 0; j < numExch; ++j) {
           if (i != j) {
             if (checkEntry(btcVec[i], btcVec[j], res, params)) {
               // entry opportunity found
@@ -423,13 +423,23 @@ int main(int argc, char** argv) {
               int longOrderId = 0;
               int shortOrderId = 0;
               // send orders
-              longOrderId = sendOrder[res.idExchLong](params, "buy", volumeLong, btcVec[res.idExchLong]->getAsk());
-              shortOrderId = sendOrder[res.idExchShort](params, "sell", volumeShort, btcVec[res.idExchShort]->getBid());
+              longOrderId = sendOrder[res.idExchLong](params, "buy", volumeLong, limPriceLong);
+              shortOrderId = sendOrder[res.idExchShort](params, "sell", volumeShort, limPriceShort);
               // wait for the orders to be filled
               logFile << "Waiting for the two orders to be filled..." << std::endl;
-              sleep(3.0);
-              while (!isOrderComplete[res.idExchLong](params, longOrderId) || !isOrderComplete[res.idExchShort](params, shortOrderId)) {
+              sleep(5.0);
+              bool isLongOrderComplete = isOrderComplete[res.idExchLong](params, longOrderId);
+              bool isShortOrderComplete = isOrderComplete[res.idExchShort](params, shortOrderId);
+              while (!isLongOrderComplete || !isShortOrderComplete) {
                 sleep(3.0);
+                if (!isLongOrderComplete) {
+                  logFile << "Long order on " << params.exchName[res.idExchLong] << " still open..." << std::endl;
+                  isLongOrderComplete = isOrderComplete[res.idExchLong](params, longOrderId);
+                }
+                if (!isShortOrderComplete) {
+                  logFile << "Short order on " << params.exchName[res.idExchShort] << " still open..." << std::endl;
+                  isShortOrderComplete = isOrderComplete[res.idExchShort](params, shortOrderId);
+                }
               }
               logFile << "Done" << std::endl;
               longOrderId = 0;
@@ -451,8 +461,8 @@ int main(int argc, char** argv) {
       if (checkExit(btcVec[res.idExchLong], btcVec[res.idExchShort], res, params, currTime)) {
         // exit opportunity found
         // check current exposure
-        double* btcUsed = (double*)malloc(sizeof(double) * num_exchange);
-        for (int i = 0; i < num_exchange; ++i) {
+        double* btcUsed = (double*)malloc(sizeof(double) * numExch);
+        for (int i = 0; i < numExch; ++i) {
           btcUsed[i] = getActivePos[i](params);
         }
         double volumeLong = btcUsed[res.idExchLong];
@@ -476,8 +486,8 @@ int main(int argc, char** argv) {
           logFile << std::setprecision(6) << "BTC exposure on " << params.exchName[res.idExchShort] << ": " << volumeShort << std::setprecision(2) << std::endl;
           logFile << std::endl;
           // send orders
-          longOrderId = sendOrder[res.idExchLong](params, "sell", fabs(btcUsed[res.idExchLong]), btcVec[res.idExchLong]->getBid());
-          shortOrderId = sendOrder[res.idExchShort](params, "buy", fabs(btcUsed[res.idExchShort]), btcVec[res.idExchShort]->getAsk());
+          longOrderId = sendOrder[res.idExchLong](params, "sell", fabs(btcUsed[res.idExchLong]), limPriceLong);
+          shortOrderId = sendOrder[res.idExchShort](params, "buy", fabs(btcUsed[res.idExchShort]), limPriceShort);
 
           logFile << "Waiting for the two orders to be filled..." << std::endl;
           sleep(5.0);
@@ -499,23 +509,23 @@ int main(int argc, char** argv) {
           shortOrderId = 0;
           inMarket = false;
           // new balances
-          for (int i = 0; i < num_exchange; ++i) {
+          for (int i = 0; i < numExch; ++i) {
             newBalUsd[i] = getAvail[i](params, "usd");
             newBalBtc[i] = getAvail[i](params, "btc");
           }
-          for (int i = 0; i < num_exchange; ++i) {
+          for (int i = 0; i < numExch; ++i) {
             logFile << "New balance on " << params.exchName[i] << ":  \t";
             logFile << newBalUsd[i] << " USD (perf $" << newBalUsd[i] - balanceUsd[i] << "), ";
             logFile << std::setprecision(6) << newBalBtc[i]  << std::setprecision(2) << " BTC" << std::endl;
           }
           logFile << std::endl;
           // update res with total balance
-          for (int i = 0; i < num_exchange; ++i) {
+          for (int i = 0; i < numExch; ++i) {
             res.befBalUsd += balanceUsd[i];
             res.aftBalUsd += newBalUsd[i];
           }
           // update current balances with new values
-          for (int i = 0; i < num_exchange; ++i) {
+          for (int i = 0; i < numExch; ++i) {
             balanceUsd[i] = newBalUsd[i];
             balanceBtc[i] = newBalBtc[i];
           }
@@ -546,7 +556,7 @@ int main(int argc, char** argv) {
       stillRunning = false;
     }
   }
-  for (int i = 0; i < num_exchange; ++i) {
+  for (int i = 0; i < numExch; ++i) {
     delete(btcVec[i]);
   }
   curl_easy_cleanup(params.curl);

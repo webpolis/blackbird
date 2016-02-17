@@ -73,19 +73,12 @@ int sendOrder(Parameters& params, std::string direction, double quantity, double
     return 0;
   }
 
-  double limPrice;  // define limit price to be sure to be executed
-  if (direction.compare("buy") == 0) {
-    limPrice = getLimitPrice(params, quantity, false);
-  } else {
-    limPrice = getLimitPrice(params, quantity, true);
-  }
-
-  *params.logFile << "<Kraken> Trying to send a \"" << direction << "\" limit order: " << quantity << " @ $" << limPrice << "..." << std::endl;
+  *params.logFile << "<Kraken> Trying to send a \"" << direction << "\" limit order: " << quantity << " @ $" << price << "..." << std::endl;
 
   std::string pair = "XXBTZUSD";
   std::string type = direction;
   std::string ordertype = "limit";
-  std::string pricelimit = patch::to_string(limPrice);
+  std::string pricelimit = patch::to_string(price);
   std::string volume = patch::to_string(quantity);
   std::string options = "pair=" + pair + "&type=" + type + "&ordertype=" + ordertype + "&price=" + pricelimit + "&volume=" + volume;
 

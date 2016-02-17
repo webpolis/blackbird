@@ -62,17 +62,10 @@ double getAvail(Parameters& params, std::string currency) {
 
 
 int sendOrder(Parameters& params, std::string direction, double quantity, double price) {
-  double limPrice;  // define limit price to be sure to be executed
-  if (direction.compare("buy") == 0) {
-    limPrice = getLimitPrice(params, quantity, false);
-  }
-  else if (direction.compare("sell") == 0) {
-    limPrice = getLimitPrice(params, quantity, true);
-  }
 
-  *params.logFile << "<Gemini> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << limPrice << "..." << std::endl;
+  *params.logFile << "<Gemini> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
   std::ostringstream oss;
-  oss << "\"symbol\":\"BTCUSD\", \"amount\":\"" << quantity << "\", \"price\":\"" << limPrice << "\", \"side\":\"" << direction << "\", \"type\":\"exchange limit\"";
+  oss << "\"symbol\":\"BTCUSD\", \"amount\":\"" << quantity << "\", \"price\":\"" << price << "\", \"side\":\"" << direction << "\", \"type\":\"exchange limit\"";
   std::string options = oss.str();
 
   json_t* root = authRequest(params, "https://api.gemini.com/v1/order/new", "order/new", options);

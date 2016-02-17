@@ -6,7 +6,7 @@
 Blackbird Bitcoin Arbitrage is a C++ trading system that does automatic long/short arbitrage between Bitcoin exchanges.
 
 ### How It Works
-Bitcoin is still a new and inefficient market. Several Bitcoin exchanges exist around the world and the bid/ask prices they propose can be briefly different from an exchange to another. The purpose of Blackbird is to automatically profit from these temporary price differences.
+Bitcoin is still a new and inefficient market. Several Bitcoin exchanges exist around the world and the bid/ask prices they propose can be briefly different from an exchange to another. The purpose of Blackbird is to automatically profit from these temporary price differences while being market-neutral.
 
 Here is a real example where an arbitrage opportunity exists between Bitstamp (long) and Bitfinex (short):
 
@@ -15,6 +15,13 @@ Here is a real example where an arbitrage opportunity exists between Bitstamp (l
 </p>
 
 At the first vertical line, the spread between the exchanges is high so Blackbird buys Bitstamp and short sells Bitfinex. Then, when the spread closes (second vertical line), Blackbird exits the market by selling Bitstamp and buying Bitfinex back.
+
+##### Note:
+Unlike other Bitcoin arbitrage systems, Blackbird doesn't sell but actually _short sells_ Bitcoin on the short exchange. This feature offers two important advantages:
+
+1. The strategy is always market-neutral: the Bitcoin market's moves (up or down) don't impact the strategy returns. This removes a huge risk from the strategy. The Bitcoin market could suddenly lose twice its value that this won't make any difference in the strategy returns.
+
+2. The strategy doesn't need to transfer funds (USD or BTC) between Bitcoin exchanges. The buy/sell and sell/buy trading activities are done in parallel on two different exchanges, independently. Advantage: no need to deal with transfer latency issues.
 
 
 ### Disclaimer
@@ -60,10 +67,10 @@ It is never entirely safe to just tell Blackbird to use, say, $25 per exchange (
 #### Credentials
 
 As of today the exchanges fully implemented and tested are:
-* <a href="https://www.bitfinex.com" target="_blank">Bitfinex</a>
-* <a href="https://www.okcoin.com" target="_blank">OKCoin</a>
-* <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a>
-* <a href="https://gemini.com" target="_blank">Gemini</a>
+* <a href="https://www.bitfinex.com" target="_blank">Bitfinex</a>: can go both long and short
+* <a href="https://www.okcoin.com" target="_blank">OKCoin</a>: can only go long (__update:__ their API now offers short sellling, <a href="https://www.okcoin.com/about/rest_api.do" target="_blank">link here</a>)
+* <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a>: can only go long
+* <a href="https://gemini.com" target="_blank">Gemini</a>: can only go long
 
 The following exchanges are fully implemented but haven't been tested:
 
@@ -73,6 +80,7 @@ The following exchanges are fully implemented but haven't been tested:
 The following exchange should be implemented soon:
 
 * <a href="https://btc-e.com" target="_blank">BTC-e</a>
+* <a href="https://www.itbit.com" target="_blank">itBit</a>
 
 For each of your exchange accounts you need to create the API authentication keys. This is usually done in the _Settings_ section of your accounts.
 
@@ -153,58 +161,9 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 * If you have a general question or have troubles running Blackbird, you can open a new  <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _question_ or _help wanted_
 * For anything else you can contact me at julien.hamilton@gmail.com or on <a href="https://www.linkedin.com/in/julienhamilton" target="_blank">LinkedIn</a>.
 
-
 ### Changelog
 
-##### May 2015
-
-* First release
-
-##### July 2015
-
-* Bitstamp fully implemented
-* Improved JSON and cURL exceptions management
-* Added the milliseconds to the nonce used for exchange authentification
-* Minor fixes and improvements
-
-##### September 2015
-
-* General performance and stability improvements (merge from _julianmi:performance_improvements_)
-* Minor fixes and improvements
-
-##### October 2015
-
-* Gemini fully implemented
-* No need to have accounts on all the exchanges anymore
-* Bugs <a href="https://github.com/butor/blackbird/issues/16" target="_blank">#16</a> and <a href="https://github.com/butor/blackbird/issues/19" target="_blank">#19</a> fixed
-* Minor fixes and improvements
-
-##### November 2015
-
-* Trailing spread implemented
-* Replaced `SpreadExit` by `SpreadTarget`
-* _Demo mode_ implemented
-* Blackbird output is now sent to a log file
-* Kraken and 796.com fully implemented (__to be tested__)
-* Safety measure: Blackbird won't start if one of the BTC accounts is not empty
-* Minor fixes and improvements
-
-##### December 2015
-
-* More user-friendly config file (_blackbird.conf_)
-* Bid/ask information can be stored in a MySQL database
-* Minor fixes and improvements
-
-##### January 2016
-
-* Removed `AggressiveVolume` parameter as it is covered by `OrderBookFactor`
-* More details are written to the log file when an error with cURL or Jansson occurs
-* Minor fixes and improvements
-
-##### February 2016
-
-* Spread volatility can be displayed for each pair
-
+* Here is the <a href="https://github.com/butor/blackbird/blob/master/README.md" target="_blank">changelog</a>
 
 ### Log Output Example
 

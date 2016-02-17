@@ -56,22 +56,15 @@ double getAvail(Parameters& params, std::string currency) {
 
 
 int sendOrder(Parameters& params, std::string direction, double quantity, double price) {
-  double limPrice;  // define limit price to be sure to be executed
-  if (direction.compare("buy") == 0) {
-    limPrice = getLimitPrice(params, quantity, false);
-  }
-  else if (direction.compare("sell") == 0) {
-    limPrice = getLimitPrice(params, quantity, true);
-  }
 
-  *params.logFile << "<Bitstamp> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << limPrice << "..." << std::endl;
+  *params.logFile << "<Bitstamp> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
   std::ostringstream oss;
   oss << "https://www.bitstamp.net/api/" << direction << "/";
   std::string url = oss.str();
   oss.clear();
   oss.str("");
 
-  oss << "amount=" << quantity << "&price=" << std::fixed << std::setprecision(2) << limPrice;
+  oss << "amount=" << quantity << "&price=" << std::fixed << std::setprecision(2) << price;
   std::string options = oss.str();
   json_t* root = authRequest(params, url, options);
 
