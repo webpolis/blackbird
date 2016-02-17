@@ -16,7 +16,7 @@ Here is a real example where an arbitrage opportunity exists between Bitstamp (l
 
 At the first vertical line, the spread between the exchanges is high so Blackbird buys Bitstamp and short sells Bitfinex. Then, when the spread closes (second vertical line), Blackbird exits the market by selling Bitstamp and buying Bitfinex back.
 
-##### Note:
+#### Advantages
 Unlike other Bitcoin arbitrage systems, Blackbird doesn't sell but actually _short sells_ Bitcoin on the short exchange. This feature offers two important advantages:
 
 1. The strategy is always market-neutral: the Bitcoin market's moves (up or down) don't impact the strategy returns. This removes a huge risk from the strategy. The Bitcoin market could suddenly lose twice its value that this won't make any difference in the strategy returns.
@@ -67,20 +67,20 @@ It is never entirely safe to just tell Blackbird to use, say, $25 per exchange (
 #### Credentials
 
 As of today the exchanges fully implemented and tested are:
-* <a href="https://www.bitfinex.com" target="_blank">Bitfinex</a>: can go both long and short
-* <a href="https://www.okcoin.com" target="_blank">OKCoin</a>: can only go long (__update:__ their API now offers short sellling, <a href="https://www.okcoin.com/about/rest_api.do" target="_blank">link here</a>)
-* <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a>: can only go long
-* <a href="https://gemini.com" target="_blank">Gemini</a>: can only go long
+* <a href="https://www.bitfinex.com" target="_blank">__Bitfinex__</a>: can go both _long_ and _short_
+* <a href="https://www.okcoin.com" target="_blank">__OKCoin__</a>: can only go _long_ (__update:__ their API now offers short sellling, <a href="https://www.okcoin.com/about/rest_api.do" target="_blank">link here</a>)
+* <a href="https://www.bitstamp.net" target="_blank">__Bitstamp__</a>: can only go _long_
+* <a href="https://gemini.com" target="_blank">__Gemini__</a>: can only go _long_
 
 The following exchanges are fully implemented but haven't been tested:
 
-* <a href="https://www.kraken.com" target="_blank">Kraken</a> (validation in progress)
-* <a href="https://796.com/?lang=en" target="_blank">796.com (Bitcoin futures)</a> (segfault found, troubleshooting in progress)
+* <a href="https://www.kraken.com" target="_blank">__Kraken__</a> (validation in progress)
+* <a href="https://796.com/?lang=en" target="_blank">__796.com__ (Bitcoin futures)</a> (segfault found, troubleshooting in progress)
 
 The following exchange should be implemented soon:
 
-* <a href="https://btc-e.com" target="_blank">BTC-e</a>
-* <a href="https://www.itbit.com" target="_blank">itBit</a>
+* <a href="https://btc-e.com" target="_blank">__BTC-e__</a>
+* <a href="https://www.itbit.com" target="_blank">__itBit__</a>
 
 For each of your exchange accounts you need to create the API authentication keys. This is usually done in the _Settings_ section of your accounts.
 
@@ -163,7 +163,7 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
 ### Changelog
 
-* Here is the <a href="https://github.com/butor/blackbird/blob/master/README.md" target="_blank">changelog</a>
+* Here is the <a href="https://github.com/butor/blackbird/blob/master/CHANGELOG.md" target="_blank">changelog</a>
 
 ### Log Output Example
 
