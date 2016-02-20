@@ -396,7 +396,7 @@ int main(int argc, char** argv) {
                 break;
               }
               if (params.useFullCash) {
-                // remove 10% of the cash
+                // remove 1% of the cash
                 res.exposure -= 0.01 * res.exposure;
                 if (res.exposure > params.maxExposure) {
                   logFile << "WARNING: Opportunity found but exposure ($" << res.exposure << ") above the limit" << std::endl;

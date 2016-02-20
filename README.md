@@ -103,12 +103,11 @@ Small values will generate more trades but with lower return each.
 
 #### Risk parameters
 
-If you set `UseFullCash=true` Blackbird will use the minimum cash on the two accounts of your trades, minus a small percentage defined by `UntouchedCash`.
+If you set `UseFullCash=true` Blackbird will use the minimum cash on the two accounts of your trades, minus 1.00% as a small margin.
 For example, if you have:
 
 ```javascript
 UseFullCash=true
-UntouchedCash=0.01
 CashForTesting=25.00
 MaxExposure=25000.00
 ```
