@@ -6,7 +6,6 @@
 #include "check_entry_exit.h"
 
 std::string percToStr(double perc) {
-
   std::ostringstream s;
   if (perc < 0.0) {
     s << std::fixed << std::setprecision(2) << perc * 100.0 << "%";
@@ -16,12 +15,8 @@ std::string percToStr(double perc) {
   return s.str();
 }
 
-
 bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params) {
-
   if (btcShort->getHasShort()) {
-    // btcLong:  "buy" looking to match ask
-    // btcShort: "sell" looking to match bid
     double priceLong = btcLong->getAsk();
     double priceShort = btcShort->getBid();
     if (priceLong > 0.0 && priceShort > 0.0) {
@@ -40,7 +35,6 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
     if (params.verbose) {
       *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadIn);
       *params.logFile << " [target " << percToStr(params.spreadEntry) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
-
       if (params.useVolatility) {
         if (res.volatility[longId][shortId].size() >= params.volatilityPeriod) {
           double sum = std::accumulate(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), 0.0);
@@ -52,9 +46,8 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
           *params.logFile << "  volat. n/a " << res.volatility[longId][shortId].size() << "<" << params.volatilityPeriod << " ";
         }
       }
-      
       if (res.trailing[longId][shortId] != -1.0) {
-        *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWait[longId][shortId] << "/" << params.trailingCount;
+        *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWaitCount[longId][shortId] << "/" << params.trailingCount;
       }
       if ((btcLong->getIsImplemented() == false || btcShort->getIsImplemented() == false) && params.demoMode == false) {
         *params.logFile << "   info only"  << std::endl;
@@ -77,11 +70,11 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
               } else {
                 if (newTrailValue >= res.trailing[longId][shortId]) {
                   res.trailing[longId][shortId] = newTrailValue;
-                  res.trailingWait[longId][shortId] = 0;
+                  res.trailingWaitCount[longId][shortId] = 0;
                 }
                 if (res.spreadIn < res.trailing[longId][shortId]) {
-                  if (res.trailingWait[longId][shortId] < params.trailingCount) {
-                    res.trailingWait[longId][shortId]++;
+                  if (res.trailingWaitCount[longId][shortId] < params.trailingCount) {
+                    res.trailingWaitCount[longId][shortId]++;
                   } else {
                     res.idExchLong = longId;
                     res.idExchShort = shortId;
@@ -92,16 +85,16 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
                     res.priceLongIn = priceLong;
                     res.priceShortIn = priceShort;
                     res.exitTarget = res.spreadIn - params.spreadTarget - (2.0 * btcLong->getFees() + 2.0 * btcShort->getFees());
-                    res.trailingWait[longId][shortId] = 0;
+                    res.trailingWaitCount[longId][shortId] = 0;
                     return true;
                   }
                 } else {
-                  res.trailingWait[longId][shortId] = 0;
+                  res.trailingWaitCount[longId][shortId] = 0;
                 }
               }
             } else {
               res.trailing[longId][shortId] = -1.0;
-              res.trailingWait[longId][shortId] = 0;
+              res.trailingWaitCount[longId][shortId] = 0;
             }
           }
         }
@@ -111,10 +104,7 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
   return false;
 }
 
-
 bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params, time_t period) {
-  // close btcLong:  "sell" looking to match bid
-  // close btcShort: "buy" looking to match ask
   double priceLong  = btcLong->getBid();
   double priceShort = btcShort->getAsk();
   if (priceLong > 0.0 && priceShort > 0.0) {
@@ -133,7 +123,6 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
   if (params.verbose) {
     *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadOut);
     *params.logFile << " [target " << percToStr(res.exitTarget) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
-
     if (params.useVolatility) {
       if (res.volatility[longId][shortId].size() >= params.volatilityPeriod) {
         double sum = std::accumulate(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), 0.0);
@@ -145,9 +134,8 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
         *params.logFile << "  volat. n/a " << res.volatility[longId][shortId].size() << "<" << params.volatilityPeriod << " ";
       }
     }
-
     if (res.trailing[longId][shortId] != 1.0) {
-      *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWait[longId][shortId] << "/" << params.trailingCount;
+      *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWaitCount[longId][shortId] << "/" << params.trailingCount;
     }
   }
   *params.logFile << std::endl;
@@ -169,26 +157,27 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
         } else {
           if (newTrailValue <= res.trailing[longId][shortId]) {
             res.trailing[longId][shortId] = newTrailValue;
-            res.trailingWait[longId][shortId] = 0;
+            res.trailingWaitCount[longId][shortId] = 0;
           }
           if (res.spreadOut > res.trailing[longId][shortId]) {
-            if (res.trailingWait[longId][shortId] < params.trailingCount) {
-              res.trailingWait[longId][shortId]++;
+            if (res.trailingWaitCount[longId][shortId] < params.trailingCount) {
+              res.trailingWaitCount[longId][shortId]++;
             } else {
               res.priceLongOut  = priceLong;
               res.priceShortOut = priceShort;
-              res.trailingWait[longId][shortId] = 0;
+              res.trailingWaitCount[longId][shortId] = 0;
               return true;
             }
           } else {
-            res.trailingWait[longId][shortId] = 0;
+            res.trailingWaitCount[longId][shortId] = 0;
           }
         }
       } else {
         res.trailing[longId][shortId] = 1.0;
-        res.trailingWait[longId][shortId] = 0;
+        res.trailingWaitCount[longId][shortId] = 0;
       }
     }
   }
   return false;
 }
+

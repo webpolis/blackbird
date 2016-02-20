@@ -10,10 +10,9 @@ time_t getTime_t(int y, int m, int d, int h, int n, int s) {
   ttm.tm_hour = h;
   ttm.tm_min = n;
   ttm.tm_sec = s;
-  ttm.tm_isdst = -1;  // FIXME is -1 OK? Doesn't seem to work if we use something else
+  ttm.tm_isdst = -1;
   return mktime(&ttm);
 }
-
 
 std::string printDateTime(time_t t) {
   struct tm timeinfo;
@@ -22,7 +21,6 @@ std::string printDateTime(time_t t) {
   std::string str(buff);
   return str;
 }
-
 
 std::string printDateTime() {
   time_t now = time(NULL);
@@ -33,7 +31,6 @@ std::string printDateTime() {
   return str;
 }
 
-
 std::string printDateTimeCsv(time_t t) {
   struct tm timeinfo;
   char buff[20];
@@ -41,7 +38,6 @@ std::string printDateTimeCsv(time_t t) {
   std::string str(buff);
   return str;
 }
-
 
 std::string printDateTimeDb(time_t t) {
   struct tm timeinfo;
@@ -51,7 +47,6 @@ std::string printDateTimeDb(time_t t) {
   return str;
 }
 
-
 std::string printDateTimeFileName() {
   time_t now = time(NULL);
   struct tm timeinfo;
@@ -60,3 +55,4 @@ std::string printDateTimeFileName() {
   std::string str(buff);
   return str;
 }
+

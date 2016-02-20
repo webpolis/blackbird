@@ -1,29 +1,26 @@
 #include <string.h>
 #include <iostream>
-#include <stdio.h>
 #include <unistd.h>
-#include <vector>
-#include <math.h>
 #include <sstream>
+#include <math.h>
 #include <sys/time.h>
-#include "base64.h"
-#include <iomanip>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
+#include "base64.h"
 #include <jansson.h>
-#include "bitstamp.h"
+#include "poloniex.h"
 #include "curl_fun.h"
 
-namespace Bitstamp {
+namespace Poloniex {
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "https://www.bitstamp.net/api/ticker/", "");
+  json_t* root = getJsonFromUrl(params, "https://poloniex.com/public?command=returnTicker", "");
   const char* quote;
   double quoteValue;
   if (isBid) {
-    quote = json_string_value(json_object_get(root, "bid"));
+    quote = json_string_value(json_object_get(json_object_get(root, "USDT_BTC"), "highestBid"));
   } else {
-    quote = json_string_value(json_object_get(root, "ask"));
+    quote = json_string_value(json_object_get(json_object_get(root, "USDT_BTC"), "lowestAsk"));
   }
   if (quote != NULL) {
     quoteValue = atof(quote);
@@ -35,37 +32,33 @@ double getQuote(Parameters& params, bool isBid) {
 }
 
 double getAvail(Parameters& params, std::string currency) {
-  json_t* root = authRequest(params, "https://www.bitstamp.net/api/balance/", "");
-  while (json_object_get(root, "message") != NULL) {
-    sleep(1.0);
-    *params.logFile << "<Bitstamp> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
-    root = authRequest(params, "https://www.bitstamp.net/api/balance/", "");
-  }
+  json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "returnBalances", "");
   double availability = 0.0;
-  if (currency.compare("btc") == 0) {
-    availability = atof(json_string_value(json_object_get(root, "btc_balance")));
-  } else if (currency.compare("usd") == 0) {
-    availability = atof(json_string_value(json_object_get(root, "usd_balance")));
-  }
+  // TODO
   json_decref(root);
   return availability;
 }
 
 int sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
-  *params.logFile << "<Bitstamp> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
+  *params.logFile << "<Poloniex> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
   std::ostringstream oss;
-  oss << "https://www.bitstamp.net/api/" << direction << "/";
-  std::string url = oss.str();
-  oss.clear();
-  oss.str("");
-  oss << "amount=" << quantity << "&price=" << std::fixed << std::setprecision(2) << price;
+  // TODO
   std::string options = oss.str();
-  json_t* root = authRequest(params, url, options);
-  int orderId = json_integer_value(json_object_get(root, "id"));
-  if (orderId == 0) {
-    *params.logFile << "<Bitstamp> Order ID = 0. Message: " << json_dumps(root, 0) << std::endl;
-  }
-  *params.logFile << "<Bitstamp> Done (order ID: " << orderId << ")\n" << std::endl;
+  json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "marginBuy", options);
+  int orderId = json_integer_value(json_object_get(root, "order_id"));
+  *params.logFile << "<Poloniex> Done (order ID: " << orderId << ")\n" << std::endl;
+  json_decref(root);
+  return orderId;
+}
+
+int sendShortOrder(Parameters& params, std::string direction, double quantity, double price) {
+  *params.logFile << "<Poloniex> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
+  std::ostringstream oss;
+  // TODO
+  std::string options = oss.str();
+  json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "marginSell", options);
+  int orderId = json_integer_value(json_object_get(root, "order_id"));
+  *params.logFile << "<Poloniex> Done (order ID: " << orderId << ")\n" << std::endl;
   json_decref(root);
   return orderId;
 }
@@ -75,49 +68,56 @@ bool isOrderComplete(Parameters& params, int orderId) {
     return true;
   }
   std::ostringstream oss;
-  oss << "id=" << orderId;
+  oss << "\"order_id\":" << orderId;
   std::string options = oss.str();
-  json_t* root = authRequest(params, "https://www.bitstamp.net/api/order_status/", options);
-  std::string status = json_string_value(json_object_get(root, "status"));
+  json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "order/status", options);
+  bool isComplete = !json_boolean_value(json_object_get(root, "is_live"));
   json_decref(root);
-  if (status.compare("Finished") == 0) {
-    return true;
-  } else {
-    return false;
-  }
+  return isComplete;
 }
 
 double getActivePos(Parameters& params) {
-  return getAvail(params, "btc");
+  json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "positions", "");
+  double position;
+  if (json_array_size(root) == 0) {
+    *params.logFile << "<Poloniex> WARNING: BTC position not available, return 0.0" << std::endl;
+    position = 0.0;
+  } else {
+    position = atof(json_string_value(json_object_get(json_array_get(root, 0), "amount")));
+  }
+  json_decref(root);
+  return position;
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
   json_t* root;
+  // TODO
   if (isBid) {
-    root = json_object_get(getJsonFromUrl(params, "https://www.bitstamp.net/api/order_book/", ""), "bids");
+    root = json_object_get(getJsonFromUrl(params, "", ""), "bids");
   } else {
-    root = json_object_get(getJsonFromUrl(params, "https://www.bitstamp.net/api/order_book/", ""), "asks");
+    root = json_object_get(getJsonFromUrl(params, "", ""), "asks");
   }
-  // loop on volume
-  *params.logFile << "<Bitstamp> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
+  *params.logFile << "<Poloniex> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
   double tmpVol = 0.0;
   double p;
   double v;
   int i = 0;
+    // loop on volume
   while (tmpVol < fabs(volume) * params.orderBookFactor) {
-    p = atof(json_string_value(json_array_get(json_array_get(root, i), 0)));
-    v = atof(json_string_value(json_array_get(json_array_get(root, i), 1)));
-    *params.logFile << "<Bitstamp> order book: " << v << "@$" << p << std::endl;
+    p = atof("");
+    v = atof("");
+    *params.logFile << "<Poloniex> order book: " << v << "@$" << p << std::endl;
     tmpVol += v;
     i++;
   }
   double limPrice = 0.0;
-  limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
+  limPrice = atof(json_string_value(json_object_get(json_array_get(root, i-1), "price")));
   json_decref(root);
   return limPrice;
 }
 
-json_t* authRequest(Parameters& params, std::string url, std::string options) {
+json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options) {
+  // TODO
   struct timeval tv;
   gettimeofday(&tv, NULL);
   unsigned long long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
@@ -147,21 +147,21 @@ json_t* authRequest(Parameters& params, std::string url, std::string options) {
     json_t* root;
     json_error_t error;
     while (resCurl != CURLE_OK) {
-      *params.logFile << "<Bitstamp> Error with cURL. Retry in 2 sec..." << std::endl;
+      *params.logFile << "<Poloniex> Error with cURL. Retry in 2 sec..." << std::endl;
       sleep(2.0);
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
     }
     root = json_loads(readBuffer.c_str(), 0, &error);
     while (!root) {
-      *params.logFile << "<Bitstamp> Error with JSON:\n" << error.text << std::endl;
-      *params.logFile << "<Bitstamp> Buffer:\n" << readBuffer.c_str() << std::endl;
-      *params.logFile << "<Bitstamp> Retrying..." << std::endl;
+      *params.logFile << "<Poloniex> Error with JSON:\n" << error.text << std::endl;
+      *params.logFile << "<Poloniex> Buffer:\n" << readBuffer.c_str() << std::endl;
+      *params.logFile << "<Poloniex> Retrying..." << std::endl;
       sleep(2.0);
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
       while (resCurl != CURLE_OK) {
-        *params.logFile << "<Bitstamp> Error with cURL. Retry in 2 sec..." << std::endl;
+        *params.logFile << "<Poloniex> Error with cURL. Retry in 2 sec..." << std::endl;
         sleep(2.0);
         readBuffer = "";
         resCurl = curl_easy_perform(params.curl);
@@ -171,7 +171,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string options) {
     curl_easy_reset(params.curl);
     return root;
   } else {
-    *params.logFile << "<Bitstamp> Error with cURL init." << std::endl;
+    *params.logFile << "<Poloniex> Error with cURL init." << std::endl;
     return NULL;
   }
 }

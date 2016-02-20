@@ -7,3 +7,4 @@
 void sendEmail(Result& res, Parameters& params);
 
 #endif
+

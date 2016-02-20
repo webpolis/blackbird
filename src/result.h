@@ -6,10 +6,8 @@
 #include <string>
 #include <list>
 
-// structure that represents the result of a complete long/short trade (i.e. 2 trades IN, 2 trades OUT)
-// some information is filled after the first two trades IN
+// stores the information of a complete long/short trade (2 entry trades, 2 exit trades)
 struct Result {
-
   unsigned id;
   unsigned idExchLong;
   unsigned idExchShort;
@@ -27,31 +25,22 @@ struct Result {
   double spreadIn;
   double spreadOut;
   double exitTarget;
-
-  double minSpread[10][10];              // FIXME size
-  double maxSpread[10][10];              // FIXME size
-  double trailing[10][10];               // FIXME size
-  unsigned trailingWait[10][10];         // FIXME size
-  std::list<double> volatility[10][10];  // FIXME size
-
-  double befBalUsd;
-  double aftBalUsd;
-
-  // return the *target* performance
-  // including exchange fees
-  double perfLong();
-  double perfShort();
-
-  double totPerf();
-
-  // get the length of the trade in minutes
-  double getLength();
-
-  void printEntry(std::ofstream& logFile);
-  void printExit(std::ofstream& logFile);
-
-  void clear();
-
+  // FIXME: the arrays should have a dynamic size
+  double minSpread[10][10];
+  double maxSpread[10][10];
+  double trailing[10][10];
+  unsigned trailingWaitCount[10][10];
+  std::list<double> volatility[10][10];
+  double usdTotBalanceBefore;
+  double usdTotBalanceAfter;
+  double targetPerfLong();
+  double targetPerfShort();
+  double actualPerf();
+  double getTradeLengthInMinute();
+  void printEntryInfo(std::ofstream& logFile);
+  void printExitInfo(std::ofstream& logFile);
+  void reset();
 };
 
 #endif
+

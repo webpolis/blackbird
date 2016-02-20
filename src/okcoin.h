@@ -5,29 +5,31 @@
 #include <string>
 #include "parameters.h"
 
-namespace OkCoin {
+namespace OKCoin {
 
-// get quote
 double getQuote(Parameters& params, bool isBid);
 
-// get the current availability for usd or btc
 double getAvail(Parameters& params, std::string currency);
 
-// send order to the exchange and return order ID
-int sendOrder(Parameters& params, std::string direction, double quantity, double price);
+int sendLongOrder(Parameters& params, std::string direction, double quantity, double price);
 
-// check the status of the order
+int sendShortOrder(Parameters& params, std::string direction, double quantity, double price);
+
 bool isOrderComplete(Parameters& params, int orderId);
 
-// get the bitcoin exposition
 double getActivePos(Parameters& params);
 
-// get the limit price according to the requested volume
 double getLimitPrice(Parameters& params, double volume, bool isBid);
 
-// send a request to the exchange and return a json object
 json_t* authRequest(Parameters& params, std::string url, std::string signature, std::string content);
+
+void getBorrowInfo(Parameters& params);
+
+int borrowBtc(Parameters& params, double amount);
+
+void repayBtc(Parameters& params, int borrowId);
 
 }
 
 #endif
+

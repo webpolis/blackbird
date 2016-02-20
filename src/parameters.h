@@ -31,7 +31,6 @@ struct Parameters {
   unsigned gapSec;
   unsigned debugMaxIteration;
   bool useFullCash;
-  double untouchedCash;
   double cashForTesting;
   double maxExposure;
   bool useVolatility;
@@ -62,6 +61,9 @@ struct Parameters {
   std::string sevennintysixApi;
   std::string sevennintysixSecret;
   double sevennintysixFees;
+  std::string poloniexApi;
+  std::string poloniexSecret;
+  double poloniexFees;
 
   bool sendEmail;
   std::string senderAddress;
@@ -69,7 +71,6 @@ struct Parameters {
   std::string senderPassword;
   std::string smtpServerAddress;
   std::string receiverAddress;
-
   bool useDatabase;
   std::string dbHost;
   std::string dbName;
@@ -82,7 +83,6 @@ struct Parameters {
   void addExchange(std::string n, double f, bool h, bool m);
 
   int nbExch() const;
-
 };
 
 std::string getParameter(std::string parameter, std::ifstream& configFile);
@@ -94,3 +94,4 @@ double getDouble(std::string value);
 unsigned getUnsigned(std::string value);
 
 #endif
+

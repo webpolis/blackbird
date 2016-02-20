@@ -5,9 +5,7 @@
 #include <string>
 #include <vector>
 
-
-// This class contains all the information
-// (fees, bid, ask, etc) for a given exchange
+// contains all the information for a given exchange
 class Bitcoin {
 
   private:
@@ -22,7 +20,6 @@ class Bitcoin {
   public:
     Bitcoin(unsigned id, std::string n, double f, bool h, bool m);
     void updateData(double b, double a);
-
     unsigned getId() const;
     double getAsk() const;
     double getBid() const;
@@ -34,3 +31,4 @@ class Bitcoin {
  };
 
 #endif
+

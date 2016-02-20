@@ -3,37 +3,31 @@
 #include "result.h"
 #include "time_fun.h"
 
-double Result::perfLong() {
+double Result::targetPerfLong() {
   return (priceLongOut - priceLongIn) / priceLongIn - 2.0 * feesLong;
 }
 
-
-double Result::perfShort() {
+double Result::targetPerfShort() {
   return (priceShortIn - priceShortOut) / priceShortIn - 2.0 * feesShort;
 }
 
-
-double Result::totPerf() {
+double Result::actualPerf() {
   if (exposure == 0.0) {
     return 0.0;
-  }
-  else {
-    return (aftBalUsd - befBalUsd) / (exposure * 2.0);
+  } else {
+    return (usdTotBalanceAfter - usdTotBalanceBefore) / (exposure * 2.0);
   }
 }
 
-
-double Result::getLength() {
+double Result::getTradeLengthInMinute() {
   if (entryTime > 0 && exitTime > 0) {
     return ((double)(exitTime - entryTime)) / 60.0;
-  }
-  else {
+  } else {
     return 0;
   }
 }
 
-
-void Result::printEntry(std::ofstream& logFile) {
+void Result::printEntryInfo(std::ofstream& logFile) {
   logFile << "\n[ ENTRY FOUND ]" << std::endl;
   logFile << "   Date & Time:       "  << printDateTime(entryTime) << std::endl;
   logFile << "   Exchange Long:     "  << exchNameLong <<  " (id " << idExchLong  << ")" << std::endl;
@@ -47,22 +41,20 @@ void Result::printEntry(std::ofstream& logFile) {
   logFile << std::endl;
 }
 
-
-void Result::printExit(std::ofstream& logFile) {
+void Result::printExitInfo(std::ofstream& logFile) {
   logFile << "\n[ EXIT FOUND ]" << std::endl;
   logFile << "   Date & Time:       "  << printDateTime(exitTime) << std::endl;
-  logFile << "   Duration:          "  << getLength() << " minutes" << std::endl;
+  logFile << "   Duration:          "  << getTradeLengthInMinute() << " minutes" << std::endl;
   logFile << "   Price Long:        $" << priceLongOut << " (target)" << std::endl;
   logFile << "   Price Short:       $" << priceShortOut << " (target)" << std::endl;
   logFile << "   Spread:            "  << spreadOut * 100.0 << "%" << std::endl;
   logFile << "   ---------------------------"  << std::endl;
-  logFile << "   Target Perf Long:  "  << perfLong()  * 100.0 << "% (fees incl.)" << std::endl;
-  logFile << "   Target Perf Short: "  << perfShort() * 100.0 << "% (fees incl.)" << std::endl;
+  logFile << "   Target Perf Long:  "  << targetPerfLong()  * 100.0 << "% (fees incl.)" << std::endl;
+  logFile << "   Target Perf Short: "  << targetPerfShort() * 100.0 << "% (fees incl.)" << std::endl;
   logFile << "   ---------------------------\n"  << std::endl;
 }
 
-
-void Result::clear() {
+void Result::reset() {
   id = 0;
   idExchLong = 0;
   idExchShort = 0;
@@ -80,15 +72,15 @@ void Result::clear() {
   spreadIn = 0.0;
   spreadOut = 0.0;
   exitTarget = 0.0;
-  befBalUsd = 0.0;
-  aftBalUsd = 0.0;
-
+  usdTotBalanceBefore = 0.0;
+  usdTotBalanceAfter = 0.0;
   for (int i = 0; i < 10; i++) {
     for (int j = 0; j < 10; j++) {
       minSpread[i][j] = 1.0;
       maxSpread[i][j] = -1.0;
       trailing[i][j] = -1.0;
-      trailingWait[i][j] = 0;
+      trailingWaitCount[i][j] = 0;
     }
   }
 }
+

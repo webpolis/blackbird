@@ -26,12 +26,10 @@ double getQuote(Parameters& params, bool isBid) {
   return quoteValue;
 }
 
-
 double getAvail(Parameters& params, std::string currency) {
   // TODO
   return 0.0;
 }
-
 
 double getActivePos(Parameters& params) {
   // TODO
@@ -44,3 +42,4 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
 }
 
 }
+

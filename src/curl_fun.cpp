@@ -8,7 +8,6 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
   return size * nmemb;
 }
 
-
 json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFields) {
   curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
   curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
@@ -21,7 +20,6 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   curl_easy_setopt(params.curl, CURLOPT_WRITEDATA, &readBuffer);
   curl_easy_setopt(params.curl, CURLOPT_DNS_CACHE_TIMEOUT, 3600);
   CURLcode resCurl = curl_easy_perform(params.curl);
-
   while (resCurl != CURLE_OK) {
     *params.logFile << "Error with cURL: " << curl_easy_strerror(resCurl) << std::endl;
     *params.logFile << "  URL: " << url << std::endl;
@@ -34,7 +32,6 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   json_t* root;
   json_error_t error;
   root = json_loads(readBuffer.c_str(), 0, &error);
-
   while (!root) {
     *params.logFile << "Error with JSON:\n" << error.text << std::endl;
     *params.logFile << "Buffer:\n" << readBuffer.c_str() << std::endl;
@@ -54,3 +51,4 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   }
   return root;
 }
+

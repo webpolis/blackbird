@@ -67,10 +67,10 @@ It is never entirely safe to just tell Blackbird to use, say, $25 per exchange (
 #### Credentials
 
 As of today the exchanges fully implemented and tested are:
-* <a href="https://www.bitfinex.com" target="_blank">__Bitfinex__</a>: can go both _long_ and _short_
-* <a href="https://www.okcoin.com" target="_blank">__OKCoin__</a>: can only go _long_ (__update:__ their API now offers short sellling, <a href="https://www.okcoin.com/about/rest_api.do" target="_blank">link here</a>)
-* <a href="https://www.bitstamp.net" target="_blank">__Bitstamp__</a>: can only go _long_
-* <a href="https://gemini.com" target="_blank">__Gemini__</a>: can only go _long_
+* <a href="https://www.bitfinex.com" target="_blank">__Bitfinex__</a>: _long_ and _short_
+* <a href="https://www.okcoin.com" target="_blank">__OKCoin__</a>: _long_ only (__update:__ their API now offers short sellling, <a href="https://www.okcoin.com/about/rest_api.do" target="_blank">link here</a>)
+* <a href="https://www.bitstamp.net" target="_blank">__Bitstamp__</a>: _long_ only
+* <a href="https://gemini.com" target="_blank">__Gemini__</a>: _long_ only
 
 The following exchanges are fully implemented but haven't been tested:
 
@@ -79,8 +79,9 @@ The following exchanges are fully implemented but haven't been tested:
 
 The following exchange should be implemented soon:
 
-* <a href="https://btc-e.com" target="_blank">__BTC-e__</a>
-* <a href="https://www.itbit.com" target="_blank">__itBit__</a>
+* <a href="https://poloniex.com" target="_blank">__Poloniex__</a>: _long_ and _short_
+* <a href="https://btc-e.com" target="_blank">__BTC-e__</a>: _long_ only
+* <a href="https://www.itbit.com" target="_blank">__itBit__</a>: _long_ only
 
 For each of your exchange accounts you need to create the API authentication keys. This is usually done in the _Settings_ section of your accounts.
 

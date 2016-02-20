@@ -10,8 +10,7 @@
 #include "kraken.h"
 #include "curl_fun.h"
 
-
-// FIXME workaround for std::to_string when not using c++11
+// INFO workaround for std::to_string when not using c++11
 namespace patch {
   template < typename T > std::string to_string(const T& n) {
     std::ostringstream stm;
@@ -43,14 +42,11 @@ double getQuote(Parameters& params, bool isBid) {
 }
 
 double getAvail(Parameters& params, std::string currency) {
-
   json_t* root = authRequest(params, "https://api.kraken.com", "/0/private/Balance");
   json_t* result = json_object_get(root, "result");
-
   if (json_object_size(result) == 0) {
     return 0.0;
   }
-
   double available = 0.0;
   if (currency.compare("usd") == 0) {
     const char * avail_str = json_string_value(json_object_get(result, "ZUSD"));
@@ -64,24 +60,18 @@ double getAvail(Parameters& params, std::string currency) {
   return available;
 }
 
-
-
-int sendOrder(Parameters& params, std::string direction, double quantity, double price) {
-
+int sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
   if (direction.compare("buy") != 0 && direction.compare("sell") != 0) {
     *params.logFile  << "Error: Neither \"buy\" nor \"sell\" selected" << std::endl;
     return 0;
   }
-
   *params.logFile << "<Kraken> Trying to send a \"" << direction << "\" limit order: " << quantity << " @ $" << price << "..." << std::endl;
-
   std::string pair = "XXBTZUSD";
   std::string type = direction;
   std::string ordertype = "limit";
   std::string pricelimit = patch::to_string(price);
   std::string volume = patch::to_string(quantity);
   std::string options = "pair=" + pair + "&type=" + type + "&ordertype=" + ordertype + "&price=" + pricelimit + "&volume=" + volume;
-
   json_t* res = authRequest(params, "https://api.kraken.com", "/0/private/AddOrder", options);
   json_t* root = json_object_get(res, "result");
   if (json_is_object(root) == 0) {
@@ -89,30 +79,22 @@ int sendOrder(Parameters& params, std::string direction, double quantity, double
     exit(0);
   }
   std::string txid = json_string_value(json_array_get(json_object_get(root, "txid"), 0));
-
   int max_id = id_to_transaction->size();
   (*id_to_transaction)[max_id] = txid;
-
   *params.logFile << "<Kraken> Done (transaction ID: " << txid << ")\n" << std::endl;
-
   json_decref(root);
   return max_id;
 }
 
-
 bool isOrderComplete(Parameters& params, int orderId) {
-
   json_t* root = authRequest(params, "https://api.kraken.com", "/0/private/OpenOrders");
-
   // no open order: return true
   root = json_object_get(json_object_get(root, "result"), "open");
   if (json_object_size(root) == 0) {
     *params.logFile << "No order exists" << std::endl;
     return true;
   }
-
   *params.logFile << json_dumps(root, 0) << std::endl;
-
   std::string transaction_id = (*id_to_transaction)[orderId];
   root = json_object_get(root, transaction_id.c_str());
   // open orders exist but specific order not found: return true
@@ -126,26 +108,20 @@ bool isOrderComplete(Parameters& params, int orderId) {
   }
 }
 
-
-
 double getActivePos(Parameters& params) {
-   return getAvail(params, "btc");
+  return getAvail(params, "btc");
 }
 
-
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
-
   json_t* root = json_object_get(json_object_get(getJsonFromUrl(params, "https://api.kraken.com/0/public/Depth", "pair=XXBTZUSD"), "result"), "XXBTZUSD");
   if (isBid) {
     root = json_object_get(root, "bids");
   } else {
     root = json_object_get(root, "asks");
   }
-
   // loop on volume
   double tmpVol = 0.0;
   int i = 0;
-
   // [[<price>, <volume>, <timestamp>], [<price>, <volume>, <timestamp>], ...]
   while (tmpVol < volume) {
     // volumes are added up until the requested volume is reached
@@ -154,27 +130,21 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   }
   double limPrice = 0.0;
   limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
-
   json_decref(root);
   return limPrice;
 }
 
-
 json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options) {
-
   // create nonce and POST data
   struct timeval tv;
   gettimeofday(&tv, NULL);
   unsigned long long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
-
   std::string post_data = "";
   if (options.empty()) {
     post_data = "nonce=" + patch::to_string(nonce);
-  }
-  else {
+  } else {
     post_data = "nonce=" + patch::to_string(nonce) + "&" + options;
   }
-
   // Message signature using HMAC-SHA512 of (URI path + SHA256(nonce + POST data))
   // and base64 decoded secret API key
   std::string payload_for_signature = patch::to_string(nonce) + post_data;
@@ -188,14 +158,12 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   unsigned char* hmac_digest;
   hmac_digest = HMAC(EVP_sha512(), decoded_key.c_str(), decoded_key.length(), (unsigned char*)&signature_data, signature_data_length, NULL, NULL);
   std::string api_sign_header = base64_encode(reinterpret_cast<const unsigned char*>(hmac_digest), SHA512_DIGEST_LENGTH);
-
   // cURL header
   struct curl_slist* headers = NULL;
   std::string api = "API-KEY:" + std::string(params.krakenApi);
   std::string api_sig = "API-Sign:" + api_sign_header;
   headers = curl_slist_append(headers, api.c_str());
   headers = curl_slist_append(headers, api_sig.c_str());
-
   // cURL request
   CURLcode resCurl;
   if (params.curl) {
@@ -213,22 +181,21 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
     json_error_t error;
     while (resCurl != CURLE_OK) {
       *params.logFile << "<Kraken> Error with cURL. Retry in 2 sec...\n" << std::endl;
-      sleep(4.0);
+      sleep(2.0);
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
     }
     root = json_loads(readBuffer.c_str(), 0, &error);
-
     while (!root) {
       *params.logFile << "<Kraken> Error with JSON:\n" << error.text << std::endl;
       *params.logFile << "<Kraken> Buffer:\n" << readBuffer.c_str() << std::endl;
       *params.logFile << "<Kraken> Retrying..." << std::endl;
-      sleep(4.0);
+      sleep(2.0);
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
       while (resCurl != CURLE_OK) {
         *params.logFile << "<Kraken> Error with cURL. Retry in 2 sec...\n" << std::endl;
-        sleep(4.0);
+        sleep(2.0);
         readBuffer = "";
         resCurl = curl_easy_perform(params.curl);
       }
@@ -237,13 +204,12 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
     curl_slist_free_all(headers);
     curl_easy_reset(params.curl);
     return root;
-  }
-  else {
+  } else {
     *params.logFile << "<Kraken> Error with cURL init." << std::endl;
     return NULL;
   }
-
   return NULL;
 }
 
 }
+
