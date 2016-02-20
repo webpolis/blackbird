@@ -64,24 +64,21 @@ __IMPORTANT: all your BTC accounts must be empty before starting Blackbird. Make
 
 It is never entirely safe to just tell Blackbird to use, say, $25 per exchange (`CashForTesting=25.00`). You also need to only have $25 available on each of your trading accounts as well as 0 BTC. In this case you are sure that even with a bug with `CashForTesting` your maximum loss on an exchange won't be greater than $25 no matter what.
 
+#### Covered Exchanges
+
+| Exchange | Long | Short | Implemented | Tested  | Note |
+| -------- |:----:|:-----:|:-----------:|:-------:| ---- |
+| <a href="https://www.bitfinex.com" target="_blank">Bitfinex</a> | ✓ | ✓ | ✓ | ✓ | |
+| <a href="https://www.okcoin.com" target="_blank">OKCoin</a> | ✓ |  | ✓ | ✓ |their API now offers short selling: <a href="https://www.okcoin.com/about/rest_api.do" target="_blank">link here</a> |
+| <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a> | ✓ |  | ✓ | ✓ | |
+| <a href="https://gemini.com" target="_blank">Gemini</a> | ✓ |  | ✓ | ✓ | |
+| <a href="https://www.kraken.com" target="_blank">Kraken</a> | ✓ |  | ✓ |  | Validation in progress |
+| <a href="https://796.com/?lang=en" target="_blank">796.com</a> | ✓ |  | ✓ |  | Bitcoin futures. Troubleshooting in progress |
+| <a href="https://poloniex.com" target="_blank">Poloniex</a> | ✓ | ✓ |  |  | |
+| <a href="https://btc-e.com" target="_blank">BTC-e</a> | ✓ |  |  |  | |
+| <a href="https://www.itbit.com" target="_blank">itBit</a> | ✓ |  |  |  | |
+
 #### Credentials
-
-As of today the exchanges fully implemented and tested are:
-* <a href="https://www.bitfinex.com" target="_blank">__Bitfinex__</a>: _long_ and _short_
-* <a href="https://www.okcoin.com" target="_blank">__OKCoin__</a>: _long_ only (__update:__ their API now offers short sellling, <a href="https://www.okcoin.com/about/rest_api.do" target="_blank">link here</a>)
-* <a href="https://www.bitstamp.net" target="_blank">__Bitstamp__</a>: _long_ only
-* <a href="https://gemini.com" target="_blank">__Gemini__</a>: _long_ only
-
-The following exchanges are fully implemented but haven't been tested:
-
-* <a href="https://www.kraken.com" target="_blank">__Kraken__</a> (validation in progress)
-* <a href="https://796.com/?lang=en" target="_blank">__796.com__ (Bitcoin futures)</a> (segfault found, troubleshooting in progress)
-
-The following exchange should be implemented soon:
-
-* <a href="https://poloniex.com" target="_blank">__Poloniex__</a>: _long_ and _short_
-* <a href="https://btc-e.com" target="_blank">__BTC-e__</a>: _long_ only
-* <a href="https://www.itbit.com" target="_blank">__itBit__</a>: _long_ only
 
 For each of your exchange accounts you need to create the API authentication keys. This is usually done in the _Settings_ section of your accounts.
 
