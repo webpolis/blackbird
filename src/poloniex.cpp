@@ -32,17 +32,23 @@ double getQuote(Parameters& params, bool isBid) {
 }
 
 double getAvail(Parameters& params, std::string currency) {
+  // TODO
+  // This function needs to be implemented
+  // The code below is given as a general guideline but needs to be rewritten
+  // to match the Poloniex API
   json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "returnBalances", "");
   double availability = 0.0;
-  // TODO
   json_decref(root);
   return availability;
 }
 
 int sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
+  // TODO
+  // This function needs to be implemented
+  // The code below is given as a general guideline but needs to be rewritten
+  // to match the Poloniex API
   *params.logFile << "<Poloniex> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
   std::ostringstream oss;
-  // TODO
   std::string options = oss.str();
   json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "marginBuy", options);
   int orderId = json_integer_value(json_object_get(root, "order_id"));
@@ -52,9 +58,12 @@ int sendLongOrder(Parameters& params, std::string direction, double quantity, do
 }
 
 int sendShortOrder(Parameters& params, std::string direction, double quantity, double price) {
+  // TODO
+  // This function needs to be implemented
+  // The code below is given as a general guideline but needs to be rewritten
+  // to match the Poloniex API
   *params.logFile << "<Poloniex> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
   std::ostringstream oss;
-  // TODO
   std::string options = oss.str();
   json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "marginSell", options);
   int orderId = json_integer_value(json_object_get(root, "order_id"));
@@ -64,6 +73,10 @@ int sendShortOrder(Parameters& params, std::string direction, double quantity, d
 }
 
 bool isOrderComplete(Parameters& params, int orderId) {
+  // TODO
+  // This function needs to be implemented
+  // The code below is given as a general guideline but needs to be rewritten
+  // to match the Poloniex API
   if (orderId == 0) {
     return true;
   }
@@ -77,6 +90,10 @@ bool isOrderComplete(Parameters& params, int orderId) {
 }
 
 double getActivePos(Parameters& params) {
+  // TODO
+  // This function needs to be implemented
+  // The code below is given as a general guideline but needs to be rewritten
+  // to match the Poloniex API
   json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "positions", "");
   double position;
   if (json_array_size(root) == 0) {
@@ -90,8 +107,11 @@ double getActivePos(Parameters& params) {
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
-  json_t* root;
   // TODO
+  // This function needs to be implemented
+  // The code below is given as a general guideline but needs to be rewritten
+  // to match the Poloniex API
+  json_t* root;
   if (isBid) {
     root = json_object_get(getJsonFromUrl(params, "", ""), "bids");
   } else {
@@ -118,6 +138,9 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
 
 json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options) {
   // TODO
+  // This function needs to be implemented
+  // The code below is given as a general guideline but needs to be rewritten
+  // to match the Poloniex API
   struct timeval tv;
   gettimeofday(&tv, NULL);
   unsigned long long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;

@@ -70,11 +70,17 @@ int sendLongOrder(Parameters& params, std::string direction, double quantity, do
 }
 
 int sendShortOrder(Parameters& params, std::string direction, double quantity, double price) {
-  // TODO:
-  // ask to borrow:      borrowBtc() FIXME bug 10007: Signature does not match
-  // sell on the market: sendShortOrder("sell")
-  // buy on the market:  sendShortOrder("buy")
-  // repay:              repayBtc()
+  // TODO
+  // Unlike Bitfinex and Poloniex, on OKCoin the borrowing phase has to be done
+  // as a separated step before being able to short sell.
+  // Here are the steps:
+  // Step                                     | Function
+  // -----------------------------------------|----------------------
+  //  1. ask to borrow bitcoins               | borrowBtc(amount) FIXME bug "10007: Signature does not match"
+  //  2. sell the bitcoins on the market      | sendShortOrder("sell")
+  //  3. <wait for the spread to close>       |
+  //  4. buy back the bitcoins on the market  | sendShortOrder("buy")
+  //  5. repay the bitcoins to the lender     | repayBtc(borrowId)
   return 0;
 }
 
