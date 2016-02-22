@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <fstream>
+#include <string.h>
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
   ((std::string*)userp)->append((char*)contents, size * nmemb);
@@ -19,7 +20,12 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   std::string readBuffer;
   curl_easy_setopt(params.curl, CURLOPT_WRITEDATA, &readBuffer);
   curl_easy_setopt(params.curl, CURLOPT_DNS_CACHE_TIMEOUT, 3600);
+  // WORKAROUND FOR BITFINEX: CHANGE TO GET REQUEST
+  if (strcmp(url.c_str(), "https://api.bitfinex.com/v1/book/btcusd") == 0) {
+    curl_easy_setopt(params.curl, CURLOPT_CUSTOMREQUEST, "GET");
+  }
   CURLcode resCurl = curl_easy_perform(params.curl);
+  *params.logFile << "Request finished" << std::endl;
   while (resCurl != CURLE_OK) {
     *params.logFile << "Error with cURL: " << curl_easy_strerror(resCurl) << std::endl;
     *params.logFile << "  URL: " << url << std::endl;
