@@ -14,7 +14,8 @@
 namespace Gemini {
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "https://api.gemini.com/v1/book/BTCUSD", "");
+  bool GETRequest = false;
+  json_t* root = getJsonFromUrl(params, "https://api.gemini.com/v1/book/BTCUSD", "", GETRequest);
   const char *quote;
   double quoteValue;
   if (isBid) {
@@ -87,11 +88,12 @@ double getActivePos(Parameters& params) {
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
+  bool GETRequest = false;
   json_t* root;
   if (isBid) {
-    root = json_object_get(getJsonFromUrl(params, "https://api.gemini.com/v1/book/btcusd", ""), "bids");
+    root = json_object_get(getJsonFromUrl(params, "https://api.gemini.com/v1/book/btcusd", "", GETRequest), "bids");
   } else {
-    root = json_object_get(getJsonFromUrl(params, "https://api.gemini.com/v1/book/btcusd", ""), "asks");
+    root = json_object_get(getJsonFromUrl(params, "https://api.gemini.com/v1/book/btcusd", "", GETRequest), "asks");
   }
   // loop on volume
   *params.logFile << "<Gemini> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;

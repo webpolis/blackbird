@@ -14,7 +14,8 @@
 namespace Poloniex {
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "https://poloniex.com/public?command=returnTicker", "");
+  bool GETRequest = false;
+  json_t* root = getJsonFromUrl(params, "https://poloniex.com/public?command=returnTicker", "", GETRequest);
   const char* quote;
   double quoteValue;
   if (isBid) {
@@ -111,11 +112,12 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   // This function needs to be implemented
   // The code below is given as a general guideline but needs to be rewritten
   // to match the Poloniex API
+  bool GETRequest = false;
   json_t* root;
   if (isBid) {
-    root = json_object_get(getJsonFromUrl(params, "", ""), "bids");
+    root = json_object_get(getJsonFromUrl(params, "", "", GETRequest), "bids");
   } else {
-    root = json_object_get(getJsonFromUrl(params, "", ""), "asks");
+    root = json_object_get(getJsonFromUrl(params, "", "", GETRequest), "asks");
   }
   *params.logFile << "<Poloniex> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
   double tmpVol = 0.0;

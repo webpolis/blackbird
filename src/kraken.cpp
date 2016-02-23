@@ -24,7 +24,8 @@ namespace Kraken {
 static std::map<int, std::string> *id_to_transaction = new std::map<int, std::string>();
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "https://api.kraken.com/0/public/Ticker", "pair=XXBTZUSD");
+  bool GETRequest = false;
+  json_t* root = getJsonFromUrl(params, "https://api.kraken.com/0/public/Ticker", "pair=XXBTZUSD", GETRequest);
   const char* quote;
   double quoteValue;
   if (isBid) {
@@ -113,7 +114,8 @@ double getActivePos(Parameters& params) {
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
-  json_t* root = json_object_get(json_object_get(getJsonFromUrl(params, "https://api.kraken.com/0/public/Depth", "pair=XXBTZUSD"), "result"), "XXBTZUSD");
+  bool GETRequest = false;
+  json_t* root = json_object_get(json_object_get(getJsonFromUrl(params, "https://api.kraken.com/0/public/Depth", "pair=XXBTZUSD", GETRequest), "result"), "XXBTZUSD");
   if (isBid) {
     root = json_object_get(root, "bids");
   } else {

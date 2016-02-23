@@ -14,7 +14,8 @@
 namespace Bitfinex {
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "https://api.bitfinex.com/v1/ticker/btcusd", "");
+  bool GETRequest = true;
+  json_t* root = getJsonFromUrl(params, "https://api.bitfinex.com/v1/ticker/btcusd", "", GETRequest);
   const char* quote;
   double quoteValue;
   if (isBid) {
@@ -99,10 +100,11 @@ double getActivePos(Parameters& params) {
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
   json_t* root;
+  bool GETRequest = true;
   if (isBid) {
-    root = json_object_get(getJsonFromUrl(params, "https://api.bitfinex.com/v1/book/btcusd", ""), "bids");
+    root = json_object_get(getJsonFromUrl(params, "https://api.bitfinex.com/v1/book/btcusd", "", GETRequest), "bids");
   } else {
-    root = json_object_get(getJsonFromUrl(params, "https://api.bitfinex.com/v1/book/btcusd", ""), "asks");
+    root = json_object_get(getJsonFromUrl(params, "https://api.bitfinex.com/v1/book/btcusd", "", GETRequest), "asks");
   }
   *params.logFile << "<Bitfinex> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
   double tmpVol = 0.0;

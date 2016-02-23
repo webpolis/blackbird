@@ -14,7 +14,8 @@
 namespace SevenNintySix {
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "http://api.796.com/v3/futures/ticker.html?type=weekly", "");
+  bool GETRequest = false;
+  json_t* root = getJsonFromUrl(params, "http://api.796.com/v3/futures/ticker.html?type=weekly", "", GETRequest);
   const char* quote;
   double quoteValue;
   if (isBid) {
@@ -86,11 +87,12 @@ double getActivePos(Parameters& params){
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid){
+  bool GETRequest = false;
   json_t* root;
   if (isBid) {
-    root = json_object_get(getJsonFromUrl(params, "http://api.796.com/v3/futures/depth.html?type=weekly", ""), "bids");
+    root = json_object_get(getJsonFromUrl(params, "http://api.796.com/v3/futures/depth.html?type=weekly", "", GETRequest), "bids");
   } else {
-    root = json_object_get(getJsonFromUrl(params, "http://api.796.com/v3/futures/depth.html?type=weekly", ""), "asks");
+    root = json_object_get(getJsonFromUrl(params, "http://api.796.com/v3/futures/depth.html?type=weekly", "", GETRequest), "asks");
   }
   // loop on volume
   *params.logFile << "<SevenNintySix> Looking for a limit price to fill " << volume << "BTC..." << std::endl;
