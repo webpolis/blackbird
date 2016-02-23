@@ -54,6 +54,10 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
     }
     root = json_loads(readBuffer.c_str(), 0, &error);
   }
+  // WORKAROUND FOR BITFINEX: CHANGE BACK TO POST REQUEST
+  if (strcmp(url.c_str(), "https://api.bitfinex.com/v1/book/btcusd") == 0) {
+    curl_easy_setopt(params.curl, CURLOPT_CUSTOMREQUEST, "POST");
+  }
   return root;
 }
 
