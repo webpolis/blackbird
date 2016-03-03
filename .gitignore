@@ -1,0 +1,5 @@
+*.log
+*.csv
+*.o
+blackbird
+core
