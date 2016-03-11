@@ -13,7 +13,8 @@
 namespace OKCoin {
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "https://www.okcoin.com/api/ticker.do?ok=1", "");
+  bool GETRequest = false;
+  json_t* root = getJsonFromUrl(params, "https://www.okcoin.com/api/ticker.do?ok=1", "", GETRequest);
   const char* quote;
   double quoteValue;
   if (isBid) {
@@ -112,10 +113,11 @@ double getActivePos(Parameters& params) {
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
+  bool GETRequest = false;
   json_t* root;
   double limPrice = 0.0;
   if (isBid) {
-    root = json_object_get(getJsonFromUrl(params, "https://www.okcoin.com/api/v1/depth.do", ""), "bids");
+    root = json_object_get(getJsonFromUrl(params, "https://www.okcoin.com/api/v1/depth.do", "", GETRequest), "bids");
     // loop on volume
     *params.logFile << "<OKCoin> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
     double tmpVol = 0.0;
@@ -131,7 +133,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
     }
     limPrice = json_real_value(json_array_get(json_array_get(root, i-1), 0));
   } else {
-    root = json_object_get(getJsonFromUrl(params, "https://www.okcoin.com/api/v1/depth.do", ""), "asks");
+    root = json_object_get(getJsonFromUrl(params, "https://www.okcoin.com/api/v1/depth.do", "", GETRequest), "asks");
     // loop on volume
     *params.logFile << "<OKCoin> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
     double tmpVol = 0.0;

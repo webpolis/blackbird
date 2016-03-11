@@ -9,7 +9,8 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
   return size * nmemb;
 }
 
-json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFields) {
+json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFields,
+                       bool getRequest) {
   curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
   curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
   curl_easy_setopt(params.curl, CURLOPT_TIMEOUT, 20L);
@@ -20,8 +21,8 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   std::string readBuffer;
   curl_easy_setopt(params.curl, CURLOPT_WRITEDATA, &readBuffer);
   curl_easy_setopt(params.curl, CURLOPT_DNS_CACHE_TIMEOUT, 3600);
-  // WORKAROUND FOR BITFINEX: CHANGE TO GET REQUEST
-  if (strcmp(url.c_str(), "https://api.bitfinex.com/v1/book/btcusd") == 0) {
+  // Some calls must be GET requests
+  if (getRequest) {
     curl_easy_setopt(params.curl, CURLOPT_CUSTOMREQUEST, "GET");
   }
   CURLcode resCurl = curl_easy_perform(params.curl);
@@ -53,6 +54,10 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
       resCurl = curl_easy_perform(params.curl);
     }
     root = json_loads(readBuffer.c_str(), 0, &error);
+  }
+  // Change back to POST request
+  if (getRequest) {
+    curl_easy_setopt(params.curl, CURLOPT_CUSTOMREQUEST, "POST");
   }
   return root;
 }

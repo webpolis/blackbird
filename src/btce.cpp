@@ -9,7 +9,8 @@
 namespace BTCe {
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "https://btc-e.com/api/3/ticker/btc_usd", "");
+  bool GETRequest = false;
+  json_t* root = getJsonFromUrl(params, "https://btc-e.com/api/3/ticker/btc_usd", "", GETRequest);
   double quoteValue;
   if (isBid) {
     quoteValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "buy"));

@@ -24,7 +24,16 @@ namespace Kraken {
 static std::map<int, std::string> *id_to_transaction = new std::map<int, std::string>();
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "https://api.kraken.com/0/public/Ticker", "pair=XXBTZUSD");
+  bool GETRequest = false;
+  json_t* root;
+  if (krakenGotTicker) {
+    root = krakenTicker;
+    krakenGotTicker = false;
+  } else {
+    root = getJsonFromUrl(params, "https://api.kraken.com/0/public/Ticker", "pair=XXBTZUSD", GETRequest);
+    krakenGotTicker = true;
+    krakenTicker = root;
+  }
   const char* quote;
   double quoteValue;
   if (isBid) {
@@ -37,7 +46,9 @@ double getQuote(Parameters& params, bool isBid) {
   } else {
     quoteValue = 0.0;
   }
-  json_decref(root);
+  if (!krakenGotTicker) {
+    json_decref(root);
+  }
   return quoteValue;
 }
 
@@ -113,7 +124,16 @@ double getActivePos(Parameters& params) {
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
-  json_t* root = json_object_get(json_object_get(getJsonFromUrl(params, "https://api.kraken.com/0/public/Depth", "pair=XXBTZUSD"), "result"), "XXBTZUSD");
+  bool GETRequest = false;
+  json_t* root;
+  if (krakenGotLimPrice) {
+    root = krakenLimPrice;
+    krakenGotLimPrice = false;
+  } else {
+    root = json_object_get(json_object_get(getJsonFromUrl(params, "https://api.kraken.com/0/public/Depth", "pair=XXBTZUSD", GETRequest), "result"), "XXBTZUSD");
+    krakenGotLimPrice = true;
+    krakenLimPrice = root;
+  }
   if (isBid) {
     root = json_object_get(root, "bids");
   } else {
@@ -130,7 +150,9 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   }
   double limPrice = 0.0;
   limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
-  json_decref(root);
+  if (!krakenGotLimPrice) {
+    json_decref(root);
+  }
   return limPrice;
 }
 

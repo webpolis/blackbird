@@ -9,7 +9,8 @@
 namespace ItBit {
 
 double getQuote(Parameters& params, bool isBid) {
-  json_t* root = getJsonFromUrl(params, "https://api.itbit.com/v1/markets/XBTUSD/ticker", "");
+  bool GETRequest = false;
+  json_t* root = getJsonFromUrl(params, "https://api.itbit.com/v1/markets/XBTUSD/ticker", "", GETRequest);
   const char* quote;
   double quoteValue;
   if (isBid) {
