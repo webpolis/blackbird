@@ -25,7 +25,6 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   if (getRequest) {
     curl_easy_setopt(params.curl, CURLOPT_CUSTOMREQUEST, "GET");
   }
-  *params.logFile << "URL: " << url << std::endl;
   CURLcode resCurl = curl_easy_perform(params.curl);
   while (resCurl != CURLE_OK) {
     *params.logFile << "Error with cURL: " << curl_easy_strerror(resCurl) << std::endl;

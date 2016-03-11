@@ -21,11 +21,6 @@ namespace patch {
 
 namespace Kraken {
 
-json_t* krakenTicker;
-bool krakenGotTicker = false;
-json_t* krakenLimPrice;
-bool krakenGotLimPrice = false;
-
 static std::map<int, std::string> *id_to_transaction = new std::map<int, std::string>();
 
 double getQuote(Parameters& params, bool isBid) {
@@ -51,7 +46,9 @@ double getQuote(Parameters& params, bool isBid) {
   } else {
     quoteValue = 0.0;
   }
-  json_decref(root);
+  if (!krakenGotTicker) {
+    json_decref(root);
+  }
   return quoteValue;
 }
 
@@ -153,7 +150,9 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   }
   double limPrice = 0.0;
   limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
-  json_decref(root);
+  if (!krakenGotLimPrice) {
+    json_decref(root);
+  }
   return limPrice;
 }
 

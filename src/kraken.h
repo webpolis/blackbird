@@ -5,6 +5,11 @@
 #include <string>
 #include "parameters.h"
 
+json_t* krakenTicker;
+bool krakenGotTicker = false;
+json_t* krakenLimPrice;
+bool krakenGotLimPrice = false;
+
 namespace Kraken {
 
 double getQuote(Parameters& params, bool isBid);
