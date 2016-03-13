@@ -35,6 +35,7 @@ typedef bool (*isOrderCompleteType) (Parameters& params, int orderId);
 typedef double (*getActivePosType) (Parameters& params);
 typedef double (*getLimitPriceType) (Parameters& params, double volume, bool isBid);
 
+
 int main(int argc, char** argv) {
   std::cout << "Blackbird Bitcoin Arbitrage" << std::endl;
   std::cout << "DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK\n" << std::endl;

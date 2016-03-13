@@ -19,6 +19,12 @@ namespace patch {
   }
 }
 
+// Initialise global variables
+json_t *krakenTicker;
+bool krakenGotTicker = false;
+json_t *krakenLimPrice;
+bool krakenGotLimPrice = false;
+
 namespace Kraken {
 
 static std::map<int, std::string> *id_to_transaction = new std::map<int, std::string>();

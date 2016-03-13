@@ -5,10 +5,10 @@
 #include <string>
 #include "parameters.h"
 
-json_t* krakenTicker;
-bool krakenGotTicker = false;
-json_t* krakenLimPrice;
-bool krakenGotLimPrice = false;
+extern json_t* krakenTicker;
+extern bool krakenGotTicker;
+extern json_t* krakenLimPrice;
+extern bool krakenGotLimPrice;
 
 namespace Kraken {
 
