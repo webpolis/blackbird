@@ -24,7 +24,7 @@
 #include "itbit.h"
 #include "btce.h"
 #include "poloniex.h"
-#include "sevennintysix.h"
+#include "sevenninetysix.h"
 #include "send_email.h"
 
 // typedef declarations needed for the function arrays
@@ -45,7 +45,9 @@ int main(int argc, char** argv) {
   if (!params.demoMode) {
     if (!params.useFullCash) {
       if (params.cashForTesting < 10.0) {
-        std::cout << "WARNING: Minimum test cash recommended: $10.00\n" << std::endl;
+        std::cout << "ERROR: Minimum test cash needed: $10.00" << std::endl;
+        std::cout << "       Otherwise some exchanges will reject the orders\n" << std::endl;
+        return -1;
       }
       if (params.cashForTesting > params.maxExposure) {
         std::cout << "ERROR: Test cash ($" << params.cashForTesting << ") is above max exposure ($" << params.maxExposure << ")\n" << std::endl;
@@ -166,14 +168,14 @@ int main(int argc, char** argv) {
     }
     index++;
   }
-  if (params.sevennintysixApi.empty() == false || params.demoMode == true) {
-    params.addExchange("796.com", params.sevennintysixFees, false, true);
-    getQuote[index] = SevenNintySix::getQuote;
-    getAvail[index] = SevenNintySix::getAvail;
-    sendLongOrder[index] = SevenNintySix::sendLongOrder;
-    isOrderComplete[index] = SevenNintySix::isOrderComplete;
-    getActivePos[index] = SevenNintySix::getActivePos;
-    getLimitPrice[index] = SevenNintySix::getLimitPrice;
+  if (params.sevenninetysixApi.empty() == false || params.demoMode == true) {
+    params.addExchange("796.com", params.sevenninetysixFees, false, true);
+    getQuote[index] = SevenNinetySix::getQuote;
+    getAvail[index] = SevenNinetySix::getAvail;
+    sendLongOrder[index] = SevenNinetySix::sendLongOrder;
+    isOrderComplete[index] = SevenNinetySix::isOrderComplete;
+    getActivePos[index] = SevenNinetySix::getActivePos;
+    getLimitPrice[index] = SevenNinetySix::getLimitPrice;
     if (params.useDatabase) {
       dbTableName[index] = "796_com";
       createTable(dbTableName[index], params);

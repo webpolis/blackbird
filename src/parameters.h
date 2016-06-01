@@ -58,9 +58,9 @@ struct Parameters {
   std::string btceApi;
   std::string btceSecret;
   double btceFees;
-  std::string sevennintysixApi;
-  std::string sevennintysixSecret;
-  double sevennintysixFees;
+  std::string sevenninetysixApi;
+  std::string sevenninetysixSecret;
+  double sevenninetysixFees;
   std::string poloniexApi;
   std::string poloniexSecret;
   double poloniexFees;

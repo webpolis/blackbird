@@ -72,14 +72,14 @@ double getAvail(Parameters& params, std::string currency) {
     const char * avail_str = json_string_value(json_object_get(result, "XXBT"));
     available = avail_str ? atof(avail_str) : 0.0;
   } else {
-    *params.logFile << "Currency not supported" << std::endl;
+    *params.logFile << "<Kraken> Currency not supported" << std::endl;
   }
   return available;
 }
 
 int sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
   if (direction.compare("buy") != 0 && direction.compare("sell") != 0) {
-    *params.logFile  << "Error: Neither \"buy\" nor \"sell\" selected" << std::endl;
+    *params.logFile  << "<Kraken> Error: Neither \"buy\" nor \"sell\" selected" << std::endl;
     return 0;
   }
   *params.logFile << "<Kraken> Trying to send a \"" << direction << "\" limit order: " << quantity << " @ $" << price << "..." << std::endl;
@@ -108,7 +108,7 @@ bool isOrderComplete(Parameters& params, int orderId) {
   // no open order: return true
   root = json_object_get(json_object_get(root, "result"), "open");
   if (json_object_size(root) == 0) {
-    *params.logFile << "No order exists" << std::endl;
+    *params.logFile << "<Kraken> No order exists" << std::endl;
     return true;
   }
   *params.logFile << json_dumps(root, 0) << std::endl;
@@ -116,11 +116,11 @@ bool isOrderComplete(Parameters& params, int orderId) {
   root = json_object_get(root, transaction_id.c_str());
   // open orders exist but specific order not found: return true
   if (json_object_size(root) == 0) {
-    *params.logFile << "Order " << transaction_id << " does not exist" << std::endl;
+    *params.logFile << "<Kraken> Order " << transaction_id << " does not exist" << std::endl;
     return true;
   // open orders exist and specific order was found: return false
   } else {
-    *params.logFile << "Order " << transaction_id << " still exists!" << std::endl;
+    *params.logFile << "<Kraken> Order " << transaction_id << " still exists!" << std::endl;
     return false;
   }
 }

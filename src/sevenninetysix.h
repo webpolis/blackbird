@@ -1,11 +1,11 @@
-#ifndef SEVENNINTYSIX_H
-#define SEVENNINTYSIX_H
+#ifndef SEVENNINETYSIX_H
+#define SEVENNINETYSIX_H
 
 #include <curl/curl.h>
 #include <string>
 #include "parameters.h"
 
-namespace SevenNintySix {
+namespace SevenNinetySix {
 
 double getQuote(Parameters& params, bool isBid);
 

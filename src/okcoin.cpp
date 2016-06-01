@@ -40,16 +40,23 @@ double getAvail(Parameters& params, std::string currency) {
   oss << "api_key=" << params.okcoinApi;
   std::string content(oss.str());
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/userinfo.do", signature, content);
-  double available;
+  double availability = 0.0;
+  const char* returnedText;
   if (currency.compare("usd") == 0) {
-    available = atof(json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "usd")));
+    returnedText = json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "usd"));
   } else if (currency.compare("btc") == 0) {
-    available = atof(json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "btc")));
+    returnedText = json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "btc"));
   } else {
-    available = 0.0;
+    returnedText = "0.0";
+  }
+  if (returnedText != NULL) {
+    availability = atof(returnedText);
+  } else {
+    *params.logFile << "<OKCoin> Error with the credentials." << std::endl;
+    availability = 0.0;
   }
   json_decref(root);
-  return available;
+  return availability;
 }
 
 int sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {

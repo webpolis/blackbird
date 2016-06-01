@@ -42,6 +42,7 @@ double getAvail(Parameters& params, std::string currency) {
   // go through the list
   size_t arraySize = json_array_size(root);
   double availability = 0.0;
+  const char* returnedText;
   std::string currencyAllCaps;
   if (currency.compare("btc") == 0) {
     currencyAllCaps = "BTC";
@@ -51,7 +52,13 @@ double getAvail(Parameters& params, std::string currency) {
   for (size_t i = 0; i < arraySize; i++) {
     std::string tmpCurrency = json_string_value(json_object_get(json_array_get(root, i), "currency"));
     if (tmpCurrency.compare(currencyAllCaps.c_str()) == 0) {
-      availability = atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
+      returnedText = json_string_value(json_object_get(json_array_get(root, i), "amount"));
+      if (returnedText != NULL) {
+        availability = atof(returnedText);
+      } else {
+       *params.logFile << "<Gemini> Error with the credentials." << std::endl;
+       availability = 0.0;
+      }
     }
   }
   json_decref(root);

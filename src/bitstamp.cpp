@@ -43,10 +43,17 @@ double getAvail(Parameters& params, std::string currency) {
     root = authRequest(params, "https://www.bitstamp.net/api/balance/", "");
   }
   double availability = 0.0;
+  const char* returnedText;
   if (currency.compare("btc") == 0) {
-    availability = atof(json_string_value(json_object_get(root, "btc_balance")));
+    returnedText = json_string_value(json_object_get(root, "btc_balance"));
   } else if (currency.compare("usd") == 0) {
-    availability = atof(json_string_value(json_object_get(root, "usd_balance")));
+    returnedText = json_string_value(json_object_get(root, "usd_balance"));
+  }
+  if (returnedText != NULL) {
+    availability = atof(returnedText);
+  } else {
+    *params.logFile << "<Bitstamp> Error with the credentials." << std::endl;
+    availability = 0.0;
   }
   json_decref(root);
   return availability;
