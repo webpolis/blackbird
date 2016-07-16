@@ -33,14 +33,22 @@ double getQuote(Parameters& params, bool isBid) {
 }
 
 double getAvail(Parameters& params, std::string currency) {
-  // TODO
-  // This function needs to be implemented
-  // The code below is given as a general guideline but needs to be rewritten
-  // to match the Poloniex API
-  json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "returnBalances", "");
-  double availability = 0.0;
-  json_decref(root);
-  return availability;
+  json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "returnBalances");
+  json_t* result = json_object_get(root, "result");
+  if (json_object_size(result) == 0) {
+    return 0.0;
+  }
+  double available = 0.0;
+  if (currency.compare("usd") == 0) {
+    const char * avail_str = json_string_value(json_object_get(result, "USDT"));
+    available = avail_str ? atof(avail_str) : 0.0;
+  } else if (currency.compare("btc") == 0) {
+    const char * avail_str = json_string_value(json_object_get(result, "BTC"));
+    available = avail_str ? atof(avail_str) : 0.0;
+  } else {
+    *params.logFile << "<Poloniex> Currency not supported" << std::endl;
+  }
+  return available;
 }
 
 int sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
