@@ -33,7 +33,7 @@ double getQuote(Parameters& params, bool isBid) {
 }
 
 double getAvail(Parameters& params, std::string currency) {
-  json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "returnBalances");
+  json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "returnBalances", "");
   json_t* result = json_object_get(root, "result");
   if (json_object_size(result) == 0) {
     return 0.0;
