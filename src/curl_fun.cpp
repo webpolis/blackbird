@@ -15,6 +15,7 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
   curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
   curl_easy_setopt(params.curl, CURLOPT_TIMEOUT, 20L);
+  curl_easy_setopt(params.curl, CURLOPT_ENCODING, "gzip");
   if (!postFields.empty()) {
     curl_easy_setopt(params.curl, CURLOPT_POSTFIELDS, postFields.c_str());
   }
