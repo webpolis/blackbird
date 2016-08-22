@@ -3,6 +3,7 @@
 #include <sstream>
 #include <map>
 #include <unistd.h>
+#include <sys/time.h>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
 #include "base64.h"
