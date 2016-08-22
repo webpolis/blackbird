@@ -1,22 +1,27 @@
 # Blackbird Bitcoin Arbitrage Makefile
 
-CC = g++
-CFLAGS = -c -g -Wall -O2
+CXXFLAGS := -g -Wall -pedantic -std=c++11 -O2 $(INC_DIR)
+LDFLAGS  := -g $(LIB_DIR)
+LDLIBS   := -lcrypto -ljansson -lcurl -lmysqlclient
 
 EXEC = blackbird
 SOURCES = $(wildcard src/*.cpp)
 OBJECTS = $(SOURCES:.cpp=.o)
 
-all: EXEC
+ifndef VERBOSE
+  CC := @$(CC)
+  CXX := @$(CXX)
+endif
 
-EXEC: $(OBJECTS)
-	$(CC) $(OBJECTS) -o $(EXEC) -lcrypto -ljansson -lcurl -lmysqlclient -g
+all: $(EXEC)
+
+$(EXEC): $(OBJECTS)
+	@echo Linking $@:
+	$(CXX) $(LDFLAGS) $^ -o $@ $(LDLIBS)
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) $< -o $@
-
-clearscreen:
-	clear
+	@echo Compiling $@:
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
 	rm -rf core $(OBJECTS)
