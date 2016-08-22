@@ -7,7 +7,7 @@
 #include <jansson.h>
 #include <curl/curl.h>
 #include <string.h>
-#include <mysql/mysql.h>
+#include <mysql.h>
 #include "base64.h"
 #include "bitcoin.h"
 #include "result.h"
