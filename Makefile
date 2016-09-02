@@ -1,5 +1,6 @@
 # Blackbird Bitcoin Arbitrage Makefile
 
+INC_DIR  := -I/usr/include/mysql/
 CXXFLAGS := -g -Wall -pedantic -std=c++11 -O2 $(INC_DIR)
 LDFLAGS  := -g $(LIB_DIR)
 LDLIBS   := -lcrypto -ljansson -lcurl -lmysqlclient
