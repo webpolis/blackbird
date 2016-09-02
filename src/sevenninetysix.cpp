@@ -14,6 +14,7 @@
 namespace SevenNinetySix {
 
 double getQuote(Parameters& params, bool isBid) {
+  /*
   bool GETRequest = false;
   json_t* root = getJsonFromUrl(params, "http://api.796.com/v3/futures/ticker.html?type=weekly", "", GETRequest);
   const char* quote;
@@ -29,7 +30,12 @@ double getQuote(Parameters& params, bool isBid) {
     quoteValue = 0.0;
   }
   json_decref(root);
+  
   return quoteValue;
+  
+  FIXME workaround until we can see what we can do with 796.com's CFDs
+  */
+  return 0.0;
 }
 
 double getAvail(Parameters& params, std::string currency){
