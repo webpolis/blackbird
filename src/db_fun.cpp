@@ -1,6 +1,6 @@
 #include <iostream>
 #include <sstream>
-#include <mysql/mysql.h>
+#include <mysql.h>
 #include "db_fun.h"
 
 int createDbConnection(Parameters& params) {

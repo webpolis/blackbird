@@ -7,7 +7,7 @@
 #include <jansson.h>
 #include <curl/curl.h>
 #include <string.h>
-#include <mysql/mysql.h>
+#include <mysql.h>
 #include "base64.h"
 #include "bitcoin.h"
 #include "result.h"
@@ -289,17 +289,13 @@ int main(int argc, char** argv) {
     }
   }
   logFile << std::endl;
-  time_t rawtime;
-  rawtime = time(NULL);
-  struct tm* timeinfo;
-  timeinfo = localtime(&rawtime);
+  time_t rawtime = time(nullptr);
+  tm timeinfo = *localtime(&rawtime);
   // wait for the next 'gapSec' seconds before starting
-  time(&rawtime);
-  timeinfo = localtime(&rawtime);
-  while ((int)timeinfo->tm_sec % params.gapSec != 0) {
+  while ((int)timeinfo.tm_sec % params.gapSec != 0) {
     sleep(0.01);
     time(&rawtime);
-    timeinfo = localtime(&rawtime);
+    timeinfo = *localtime(&rawtime);
   }
   if (!params.verbose) {
     logFile << "Running..." << std::endl;
@@ -315,15 +311,15 @@ int main(int argc, char** argv) {
 
   // main analysis loop
   while (stillRunning) {
-    currTime = mktime(timeinfo);
+    currTime = mktime(&timeinfo);
     time(&rawtime);
     diffTime = difftime(rawtime, currTime);
     // check if we are already too late
     // if that's the case we wait until the next iteration
     if (diffTime > 0) {
       logFile << "WARNING: " << diffTime << " second(s) too late at " << printDateTime(currTime) << std::endl;
-      timeinfo->tm_sec = timeinfo->tm_sec + (ceil(diffTime / params.gapSec) + 1) * params.gapSec;
-      currTime = mktime(timeinfo);
+      timeinfo.tm_sec += (ceil(diffTime / params.gapSec) + 1) * params.gapSec;
+      currTime = mktime(&timeinfo);
       sleep(params.gapSec - (diffTime % params.gapSec));
       logFile << std::endl;
     } else if (diffTime < 0) {
@@ -567,7 +563,7 @@ int main(int argc, char** argv) {
         logFile << std::endl;
       }
     }
-    timeinfo->tm_sec = timeinfo->tm_sec + params.gapSec;
+    timeinfo.tm_sec += params.gapSec;
     currIteration++;
     if (currIteration >= params.debugMaxIteration) {
       logFile << "Max iteration reached (" << params.debugMaxIteration << ")" <<std::endl;
