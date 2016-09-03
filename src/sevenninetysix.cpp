@@ -46,7 +46,7 @@ double getAvail(Parameters& params, std::string currency){
     root = authRequest(params,"https://796.com/v2/user/get_balance","balances","");
   }
   double availability = 0.0;
-  const char* returnedText;
+  const char* returnedText = NULL;
   if (currency.compare("btc") == 0) {
     returnedText = json_string_value(json_object_get(root, "btc_balance"));
   } else if (currency.compare("mri") == 0) {
