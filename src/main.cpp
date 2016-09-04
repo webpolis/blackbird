@@ -274,6 +274,10 @@ int main(int argc, char** argv) {
     }
     if (btcBalance[i] > 0.0300) {
       logFile << "ERROR: All BTC accounts must be empty before starting Blackbird" << std::endl;
+      free(usdBalance);
+      free(btcBalance);
+      free(usdBalanceAfter);
+      free(btcBalanceAfter);
       return -1;
     }
   }
@@ -558,6 +562,7 @@ int main(int argc, char** argv) {
             stillRunning = false;
           }
         }
+        free(btcUsed);
       }
       if (params.verbose) {
         logFile << std::endl;
@@ -581,6 +586,12 @@ int main(int argc, char** argv) {
   }
   csvFile.close();
   logFile.close();
+
+  free(usdBalance);
+  free(btcBalance);
+  free(usdBalanceAfter);
+  free(btcBalanceAfter);
+
   return 0;
 }
 
