@@ -36,6 +36,12 @@ typedef double (*getActivePosType) (Parameters& params);
 typedef double (*getLimitPriceType) (Parameters& params, double volume, bool isBid);
 
 
+struct Balance
+{
+  double btc, usd;
+  double btcAfter, usdAfter;
+};
+
 int main(int argc, char** argv) {
   std::cout << "Blackbird Bitcoin Arbitrage" << std::endl;
   std::cout << "DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK\n" << std::endl;
@@ -227,11 +233,12 @@ int main(int argc, char** argv) {
     logFile << "Demo mode: trades won't be generated\n" << std::endl;
   }
   std::cout << "Log file generated: " << logFileName << "\nBlackbird is running... (pid " << getpid() << ")\n" << std::endl;
-  std::vector<Bitcoin*> btcVec;
   int numExch = params.nbExch();
+  std::vector<Bitcoin> btcVec;
+  btcVec.reserve(numExch);
   // create a new Bitcoin structure within btcVec for every exchange
   for (int i = 0; i < numExch; ++i) {
-    btcVec.push_back(new Bitcoin(i, params.exchName[i], params.fees[i], params.canShort[i], params.isImplemented[i]));
+    btcVec.push_back(Bitcoin(i, params.exchName[i], params.fees[i], params.canShort[i], params.isImplemented[i]));
   }
   curl_global_init(CURL_GLOBAL_ALL);
   params.curl = curl_easy_init();
@@ -247,21 +254,18 @@ int main(int argc, char** argv) {
   logFile << std::endl;
   logFile << "[ Current balances ]" << std::endl;
   // get the BTC and USD balances for every exchange
-  double* usdBalance = (double*)malloc(sizeof(double) * numExch);
-  double* btcBalance = (double*)malloc(sizeof(double) * numExch);
-  for (int i = 0; i < numExch; ++i) {
-    if (params.demoMode) {
-      usdBalance[i] = 0.0;
-      btcBalance[i] = 0.0;
-    } else {
-      usdBalance[i] = getAvail[i](params, "usd");
-      btcBalance[i] = getAvail[i](params, "btc");
-    }
-  }
-  double* usdBalanceAfter = (double*)malloc(sizeof(double) * numExch);
-  double* btcBalanceAfter = (double*)malloc(sizeof(double) * numExch);
-  memset(usdBalanceAfter, 0.0, sizeof(double) * numExch);
-  memset(btcBalanceAfter, 0.0, sizeof(double) * numExch);
+  std::vector<Balance> balance(numExch);
+  if (!params.demoMode)
+    std::transform(getAvail, getAvail + numExch,
+                   begin(balance),
+                   [&params]( decltype(*getAvail) apply )
+                   {
+                     Balance tmp {};
+                     tmp.btc = apply(params, "btc");
+                     tmp.usd = apply(params, "usd");
+                     return tmp;
+                   } );
+
   // write the balances into the log file
   for (int i = 0; i < numExch; ++i) {
     logFile << "   " << params.exchName[i] << ":\t";
@@ -270,14 +274,10 @@ int main(int argc, char** argv) {
     } else if (!params.isImplemented[i]) {
       logFile << "n/a (API not implemented)" << std::endl;
     } else {
-      logFile << usdBalance[i] << " USD\t" << std::setprecision(6) << btcBalance[i]  << std::setprecision(2) << " BTC" << std::endl;
+      logFile << balance[i].usd << " USD\t" << std::setprecision(6) << balance[i].btc  << std::setprecision(2) << " BTC" << std::endl;
     }
-    if (btcBalance[i] > 0.0300) {
+    if (balance[i].btc > 0.0300) {
       logFile << "ERROR: All BTC accounts must be empty before starting Blackbird" << std::endl;
-      free(usdBalance);
-      free(btcBalance);
-      free(usdBalanceAfter);
-      free(btcBalanceAfter);
       return -1;
     }
   }
@@ -352,7 +352,7 @@ int main(int argc, char** argv) {
       if (params.verbose) {
         logFile << "   " << params.exchName[i] << ": \t" << bid << " / " << ask << std::endl;
       }
-      btcVec[i]->updateData(bid, ask);
+      btcVec[i].updateData(bid, ask);
       curl_easy_reset(params.curl);
     }
     if (params.verbose) {
@@ -364,9 +364,9 @@ int main(int argc, char** argv) {
       for (int i = 0; i < numExch; ++i) {
         for (int j = 0; j < numExch; ++j) {
           if (i != j) {
-            if (btcVec[j]->getHasShort()) {
-              double longMidPrice = btcVec[i]->getMidPrice();
-              double shortMidPrice = btcVec[j]->getMidPrice();
+            if (btcVec[j].getHasShort()) {
+              double longMidPrice = btcVec[i].getMidPrice();
+              double shortMidPrice = btcVec[j].getMidPrice();
               if (longMidPrice > 0.0 && shortMidPrice > 0.0) {
                 if (res.volatility[i][j].size() >= params.volatilityPeriod) {
                   res.volatility[i][j].pop_back();
@@ -383,9 +383,9 @@ int main(int argc, char** argv) {
       for (int i = 0; i < numExch; ++i) {
         for (int j = 0; j < numExch; ++j) {
           if (i != j) {
-            if (checkEntry(btcVec[i], btcVec[j], res, params)) {
+            if (checkEntry(&btcVec[i], &btcVec[j], res, params)) {
               // entry opportunity has been found
-              res.exposure = std::min(usdBalance[res.idExchLong], usdBalance[res.idExchShort]);
+              res.exposure = std::min(balance[res.idExchLong].usd, balance[res.idExchShort].usd);
               if (params.demoMode) {
                 logFile << "INFO: Opportunity found but no trade will be generated (Demo mode)" << std::endl;
                 break;
@@ -410,8 +410,8 @@ int main(int argc, char** argv) {
                 res.exposure = params.cashForTesting;
               }
               // check the volumes and compute the limit prices that will be sent to the exchanges
-              double volumeLong = res.exposure / btcVec[res.idExchLong]->getAsk();
-              double volumeShort = res.exposure / btcVec[res.idExchShort]->getBid();
+              double volumeLong = res.exposure / btcVec[res.idExchLong].getAsk();
+              double volumeShort = res.exposure / btcVec[res.idExchShort].getBid();
               double limPriceLong = getLimitPrice[res.idExchLong](params, volumeLong, false);
               double limPriceShort = getLimitPrice[res.idExchShort](params, volumeShort, true);
               if (limPriceLong == 0.0 || limPriceShort == 0.0) {
@@ -473,10 +473,10 @@ int main(int argc, char** argv) {
       }
     } else if (inMarket) {
       // in market, looking for an exit opportunity
-      if (checkExit(btcVec[res.idExchLong], btcVec[res.idExchShort], res, params, currTime)) {
+      if (checkExit(&btcVec[res.idExchLong], &btcVec[res.idExchShort], res, params, currTime)) {
         // exit opportunity has been found
         // check current BTC exposure
-        double* btcUsed = (double*)malloc(sizeof(double) * numExch);
+        std::vector<double> btcUsed(numExch);
         for (int i = 0; i < numExch; ++i) {
           btcUsed[i] = getActivePos[i](params);
         }
@@ -527,24 +527,24 @@ int main(int argc, char** argv) {
           shortOrderId = 0;
           inMarket = false;
           for (int i = 0; i < numExch; ++i) {
-            usdBalanceAfter[i] = getAvail[i](params, "usd");
-            btcBalanceAfter[i] = getAvail[i](params, "btc");
+            balance[i].usdAfter = getAvail[i](params, "usd");
+            balance[i].btcAfter = getAvail[i](params, "btc");
           }
           for (int i = 0; i < numExch; ++i) {
             logFile << "New balance on " << params.exchName[i] << ":  \t";
-            logFile << usdBalanceAfter[i] << " USD (perf $" << usdBalanceAfter[i] - usdBalance[i] << "), ";
-            logFile << std::setprecision(6) << btcBalanceAfter[i]  << std::setprecision(2) << " BTC" << std::endl;
+            logFile << balance[i].usdAfter << " USD (perf $" << balance[i].usdAfter - balance[i].usd << "), ";
+            logFile << std::setprecision(6) << balance[i].btcAfter  << std::setprecision(2) << " BTC" << std::endl;
           }
           logFile << std::endl;
           // update total USD balance
           for (int i = 0; i < numExch; ++i) {
-            res.usdTotBalanceBefore += usdBalance[i];
-            res.usdTotBalanceAfter += usdBalanceAfter[i];
+            res.usdTotBalanceBefore += balance[i].usd;
+            res.usdTotBalanceAfter += balance[i].usdAfter;
           }
           // update current balances
           for (int i = 0; i < numExch; ++i) {
-            usdBalance[i] = usdBalanceAfter[i];
-            btcBalance[i] = btcBalanceAfter[i];
+            balance[i].usd = balance[i].usdAfter;
+            balance[i].btc = balance[i].btcAfter;
           }
           logFile << "ACTUAL PERFORMANCE: " << "$" << res.usdTotBalanceAfter - res.usdTotBalanceBefore << " (" << res.actualPerf() * 100.0 << "%)\n" << std::endl;
           csvFile << res.id << "," << res.exchNameLong << "," << res.exchNameShort << "," << printDateTimeCsv(res.entryTime) << "," << printDateTimeCsv(res.exitTime);
@@ -562,7 +562,6 @@ int main(int argc, char** argv) {
             stillRunning = false;
           }
         }
-        free(btcUsed);
       }
       if (params.verbose) {
         logFile << std::endl;
@@ -576,9 +575,6 @@ int main(int argc, char** argv) {
     }
   }
   // analysis loop exited, do some cleanup
-  for (int i = 0; i < numExch; ++i) {
-    delete(btcVec[i]);
-  }
   curl_easy_cleanup(params.curl);
   curl_global_cleanup();
   if (params.useDatabase) {
@@ -587,11 +583,5 @@ int main(int argc, char** argv) {
   csvFile.close();
   logFile.close();
 
-  free(usdBalance);
-  free(btcBalance);
-  free(usdBalanceAfter);
-  free(btcBalanceAfter);
-
   return 0;
 }
-
