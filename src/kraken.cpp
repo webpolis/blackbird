@@ -1,6 +1,7 @@
 #include <string.h>
 #include <iostream>
 #include <sstream>
+#include <vector>
 #include <map>
 #include <unistd.h>
 #include <sys/time.h>
@@ -180,12 +181,12 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   unsigned char digest[SHA256_DIGEST_LENGTH];
   SHA256((unsigned char*)payload_for_signature.c_str(), strlen(payload_for_signature.c_str()), (unsigned char*)&digest);
   int signature_data_length = request.length() + SHA256_DIGEST_LENGTH;
-  unsigned char signature_data[signature_data_length];
-  std::copy(request.begin(), request.end(), &signature_data[0]);
-  memcpy(&signature_data[request.length()], &digest, SHA256_DIGEST_LENGTH);
+  std::vector<unsigned char> signature_data(signature_data_length);
+  auto signature_digest = std::copy(begin(request), end(request), begin(signature_data));
+  std::copy(std::begin(digest), std::end(digest), signature_digest);
   std::string decoded_key = base64_decode(params.krakenSecret);
   unsigned char* hmac_digest;
-  hmac_digest = HMAC(EVP_sha512(), decoded_key.c_str(), decoded_key.length(), (unsigned char*)&signature_data, signature_data_length, NULL, NULL);
+  hmac_digest = HMAC(EVP_sha512(), decoded_key.c_str(), decoded_key.length(), signature_data.data(), signature_data.size(), NULL, NULL);
   std::string api_sign_header = base64_encode(reinterpret_cast<const unsigned char*>(hmac_digest), SHA512_DIGEST_LENGTH);
   // cURL header
   struct curl_slist* headers = NULL;

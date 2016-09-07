@@ -139,7 +139,7 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
     }
   }
   *params.logFile << std::endl;
-  if (period - res.entryTime >= params.maxLength) {
+  if (period - res.entryTime >= int(params.maxLength)) {
     res.priceLongOut  = priceLong;
     res.priceShortOut = priceShort;
     return true;
