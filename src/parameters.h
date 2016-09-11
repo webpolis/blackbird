@@ -2,10 +2,8 @@
 #define PARAMETERS_H
 
 #include <fstream>
-#include <time.h>
 #include <string>
 #include <vector>
-#include <jansson.h>
 #include <curl/curl.h>
 #include <mysql.h>
 
@@ -94,4 +92,3 @@ double getDouble(std::string value);
 unsigned getUnsigned(std::string value);
 
 #endif
-

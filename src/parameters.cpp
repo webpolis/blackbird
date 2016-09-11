@@ -1,7 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
 #include "parameters.h"
-#include "time_fun.h"
+
 
 Parameters::Parameters(std::string fileName) {
 
@@ -99,12 +99,9 @@ std::string getParameter(std::string parameter, std::ifstream& configFile) {
   }
 }
 
-bool getBool(std::string value) {
-  if (value == "true") {
-    return true;
-  } else {
-    return false;
-  }
+bool getBool(std::string value)
+{
+  return value == "true";
 }
 
 double getDouble(std::string value) {
@@ -114,4 +111,3 @@ double getDouble(std::string value) {
 unsigned getUnsigned(std::string value) {
   return atoi(value.c_str());
 }
-
