@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>
-#include "base64.h"
+#include "utils/base64.h"
 #include <jansson.h>
 #include "gemini.h"
 #include "curl_fun.h"

@@ -6,7 +6,7 @@
 #include <openssl/sha.h>
 #include <openssl/md5.h>
 #include <openssl/hmac.h>
-#include "base64.h"
+#include "utils/base64.h"
 #include <jansson.h>
 #include "sevenninetysix.h"
 #include "curl_fun.h"
