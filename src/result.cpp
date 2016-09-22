@@ -1,33 +1,34 @@
-#include <iostream>
-#include <numeric>
 #include "result.h"
 #include "time_fun.h"
+#include <type_traits>
 
-double Result::targetPerfLong() {
+
+double Result::targetPerfLong()
+{
   return (priceLongOut - priceLongIn) / priceLongIn - 2.0 * feesLong;
 }
 
-double Result::targetPerfShort() {
+double Result::targetPerfShort()
+{
   return (priceShortIn - priceShortOut) / priceShortIn - 2.0 * feesShort;
 }
 
-double Result::actualPerf() {
-  if (exposure == 0.0) {
-    return 0.0;
-  } else {
-    return (usdTotBalanceAfter - usdTotBalanceBefore) / (exposure * 2.0);
-  }
+double Result::actualPerf()
+{
+  if (exposure == 0.0) return 0.0;
+
+  return (usdTotBalanceAfter - usdTotBalanceBefore) / (exposure * 2.0);
 }
 
-double Result::getTradeLengthInMinute() {
-  if (entryTime > 0 && exitTime > 0) {
-    return ((double)(exitTime - entryTime)) / 60.0;
-  } else {
-    return 0;
-  }
+double Result::getTradeLengthInMinute()
+{
+  if (entryTime > 0 && exitTime > 0) return (exitTime - entryTime) / 60.0;
+
+  return 0;
 }
 
-void Result::printEntryInfo(std::ofstream& logFile) {
+void Result::printEntryInfo(std::ostream &logFile)
+{
   logFile << "\n[ ENTRY FOUND ]" << std::endl;
   logFile << "   Date & Time:       "  << printDateTime(entryTime) << std::endl;
   logFile << "   Exchange Long:     "  << exchNameLong <<  " (id " << idExchLong  << ")" << std::endl;
@@ -41,7 +42,8 @@ void Result::printEntryInfo(std::ofstream& logFile) {
   logFile << std::endl;
 }
 
-void Result::printExitInfo(std::ofstream& logFile) {
+void Result::printExitInfo(std::ostream &logFile)
+{
   logFile << "\n[ EXIT FOUND ]" << std::endl;
   logFile << "   Date & Time:       "  << printDateTime(exitTime) << std::endl;
   logFile << "   Duration:          "  << getTradeLengthInMinute() << " minutes" << std::endl;
@@ -54,33 +56,14 @@ void Result::printExitInfo(std::ofstream& logFile) {
   logFile << "   ---------------------------\n"  << std::endl;
 }
 
-void Result::reset() {
-  id = 0;
-  idExchLong = 0;
-  idExchShort = 0;
-  exposure = 0.0;
-  feesLong = 0.0;
-  feesShort = 0.0;
-  entryTime = 0;
-  exitTime = 0;
-  exchNameLong = "";
-  exchNameShort = "";
-  priceLongIn = 0.0;
-  priceShortIn = 0.0;
-  priceLongOut = 0.0;
-  priceShortOut = 0.0;
-  spreadIn = 0.0;
-  spreadOut = 0.0;
-  exitTarget = 0.0;
-  usdTotBalanceBefore = 0.0;
-  usdTotBalanceAfter = 0.0;
-  for (int i = 0; i < 10; i++) {
-    for (int j = 0; j < 10; j++) {
-      minSpread[i][j] = 1.0;
-      maxSpread[i][j] = -1.0;
-      trailing[i][j] = -1.0;
-      trailingWaitCount[i][j] = 0;
-    }
-  }
+void Result::reset()
+{
+  typedef std::remove_reference< decltype(minSpread[0][0]) >::type arr2d_t;
+  auto arr2d_size = sizeof(minSpread) / sizeof(arr2d_t);
+  
+  Result tmp {};
+  std::swap(tmp, *this);
+  std::fill_n(reinterpret_cast<arr2d_t *>(minSpread), arr2d_size, 1.0);
+  std::fill_n(reinterpret_cast<arr2d_t *>(maxSpread), arr2d_size, -1.0);
+  std::fill_n(reinterpret_cast<arr2d_t *>(trailing), arr2d_size, -1.0);
 }
-

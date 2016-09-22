@@ -8,7 +8,7 @@
 #include <curl/curl.h>
 #include <string.h>
 #include <mysql.h>
-#include "base64.h"
+#include "utils/base64.h"
 #include "bitcoin.h"
 #include "result.h"
 #include "time_fun.h"
@@ -16,16 +16,16 @@
 #include "db_fun.h"
 #include "parameters.h"
 #include "check_entry_exit.h"
-#include "bitfinex.h"
-#include "okcoin.h"
-#include "bitstamp.h"
-#include "gemini.h"
-#include "kraken.h"
-#include "itbit.h"
-#include "btce.h"
-#include "poloniex.h"
-#include "sevenninetysix.h"
-#include "send_email.h"
+#include "exchange/bitfinex.h"
+#include "exchange/okcoin.h"
+#include "exchange/bitstamp.h"
+#include "exchange/gemini.h"
+#include "exchange/kraken.h"
+#include "exchange/itbit.h"
+#include "exchange/btce.h"
+#include "exchange/poloniex.h"
+#include "exchange/sevenninetysix.h"
+#include "utils/send_email.h"
 
 // typedef declarations needed for the function arrays
 typedef double (*getQuoteType) (Parameters& params, bool isBid);

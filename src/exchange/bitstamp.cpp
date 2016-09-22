@@ -6,7 +6,7 @@
 #include <math.h>
 #include <sstream>
 #include <sys/time.h>
-#include "base64.h"
+#include "utils/base64.h"
 #include <iomanip>
 #include <openssl/sha.h>
 #include <openssl/hmac.h>

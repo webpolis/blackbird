@@ -2,10 +2,12 @@
 #define CHECK_ENTRY_EXIT_H
 
 #include <string>
-#include <time.h>
-#include "bitcoin.h"
-#include "parameters.h"
-#include "result.h"
+#include <ctime>
+
+
+struct Bitcoin;
+struct Result;
+struct Parameters;
 
 std::string percToStr(double perc);
 
@@ -13,7 +15,7 @@ std::string percToStr(double perc);
 bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params);
 
 // check for exit opportunity between two exchanges
-bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params, time_t period);
+bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params, std::time_t period);
 
 #endif
 

@@ -3,7 +3,7 @@
 #include <sstream>
 #include <unistd.h>
 #include <math.h>
-#include "base64.h"
+#include "utils/base64.h"
 #include <openssl/evp.h>
 #include <openssl/md5.h>
 #include <jansson.h>
