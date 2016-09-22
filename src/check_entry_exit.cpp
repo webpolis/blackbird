@@ -1,8 +1,11 @@
+#include "check_entry_exit.h"
+#include "bitcoin.h"
+#include "result.h"
+#include "parameters.h"
 #include <sstream>
 #include <iomanip>
 #include <numeric>
 #include <cmath>
-#include "check_entry_exit.h"
 
 std::string percToStr(double perc)
 {
