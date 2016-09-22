@@ -32,7 +32,7 @@ std::string percToStr(double perc)
 
 bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params)
 {
-  if (btcShort->getHasShort()) return false;
+  if (!btcShort->getHasShort()) return false;
 
   double priceLong = btcLong->getAsk();
   double priceShort = btcShort->getBid();
