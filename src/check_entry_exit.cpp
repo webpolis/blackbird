@@ -4,8 +4,22 @@
 #include "parameters.h"
 #include <sstream>
 #include <iomanip>
+#include <iterator>
 #include <numeric>
 #include <cmath>
+
+
+template <typename T>
+static typename std::iterator_traits<T>::value_type compute_sd(T first, const T &last)
+{
+  using namespace std;
+  typedef typename iterator_traits<T>::value_type value_type;
+  
+  auto n  = distance(first, last);
+  auto mu = accumulate(first, last, value_type()) / n;
+  auto squareSum = inner_product(first, last, first, value_type());
+  return sqrt(squareSum / n - mu * mu);
+}
 
 std::string percToStr(double perc)
 {
@@ -38,10 +52,7 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
     *params.logFile << " [target " << percToStr(params.spreadEntry) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
     if (params.useVolatility) {
       if (res.volatility[longId][shortId].size() >= params.volatilityPeriod) {
-        double sum = std::accumulate(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), 0.0);
-        double mean = sum / res.volatility[longId][shortId].size();
-        double squareSum = std::inner_product(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), res.volatility[longId][shortId].begin(), 0.0);
-        double stdev = std::sqrt(squareSum / res.volatility[longId][shortId].size() - mean * mean);
+        auto stdev = compute_sd(begin(res.volatility[longId][shortId]), end(res.volatility[longId][shortId]));
         *params.logFile << "  volat. " << stdev * 100.0 << "%";
       } else {
         *params.logFile << "  volat. n/a " << res.volatility[longId][shortId].size() << "<" << params.volatilityPeriod << " ";
@@ -117,10 +128,7 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
     *params.logFile << " [target " << percToStr(res.exitTarget) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
     if (params.useVolatility) {
       if (res.volatility[longId][shortId].size() >= params.volatilityPeriod) {
-        double sum = std::accumulate(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), 0.0);
-        double mean = sum / res.volatility[longId][shortId].size();
-        double squareSum = std::inner_product(res.volatility[longId][shortId].begin(), res.volatility[longId][shortId].end(), res.volatility[longId][shortId].begin(), 0.0);
-        double stdev = std::sqrt(squareSum / res.volatility[longId][shortId].size() - mean * mean);
+        auto stdev = compute_sd(begin(res.volatility[longId][shortId]), end(res.volatility[longId][shortId]));
         *params.logFile << "  volat. " << stdev * 100.0 << "%";
       } else {
         *params.logFile << "  volat. n/a " << res.volatility[longId][shortId].size() << "<" << params.volatilityPeriod << " ";

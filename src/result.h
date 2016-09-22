@@ -1,21 +1,22 @@
 #ifndef RESULT_H
 #define RESULT_H
 
-#include <fstream>
-#include <time.h>
+#include <ostream>
+#include <ctime>
 #include <string>
 #include <list>
 
 // stores the information of a complete long/short trade (2 entry trades, 2 exit trades)
-struct Result {
+struct Result
+{
   unsigned id;
   unsigned idExchLong;
   unsigned idExchShort;
   double exposure;
   double feesLong;
   double feesShort;
-  time_t entryTime;
-  time_t exitTime;
+  std::time_t entryTime;
+  std::time_t exitTime;
   std::string exchNameLong;
   std::string exchNameShort;
   double priceLongIn;
@@ -37,10 +38,9 @@ struct Result {
   double targetPerfShort();
   double actualPerf();
   double getTradeLengthInMinute();
-  void printEntryInfo(std::ofstream& logFile);
-  void printExitInfo(std::ofstream& logFile);
+  void printEntryInfo(std::ostream &logFile);
+  void printExitInfo(std::ostream  &logFile);
   void reset();
 };
 
 #endif
-
