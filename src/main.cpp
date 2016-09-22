@@ -24,7 +24,6 @@
 #include "exchange/itbit.h"
 #include "exchange/btce.h"
 #include "exchange/poloniex.h"
-#include "exchange/sevenninetysix.h"
 #include "utils/send_email.h"
 
 // typedef declarations needed for the function arrays
@@ -170,20 +169,6 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = BTCe::getLimitPrice;
     if (params.useDatabase) {
       dbTableName[index] = "btce";
-      createTable(dbTableName[index], params);
-    }
-    index++;
-  }
-  if (params.sevenninetysixApi.empty() == false || params.demoMode == true) {
-    params.addExchange("796.com", params.sevenninetysixFees, false, true);
-    getQuote[index] = SevenNinetySix::getQuote;
-    getAvail[index] = SevenNinetySix::getAvail;
-    sendLongOrder[index] = SevenNinetySix::sendLongOrder;
-    isOrderComplete[index] = SevenNinetySix::isOrderComplete;
-    getActivePos[index] = SevenNinetySix::getActivePos;
-    getLimitPrice[index] = SevenNinetySix::getLimitPrice;
-    if (params.useDatabase) {
-      dbTableName[index] = "796_com";
       createTable(dbTableName[index], params);
     }
     index++;

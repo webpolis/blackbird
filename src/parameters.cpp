@@ -45,9 +45,6 @@ Parameters::Parameters(std::string fileName) {
   btceApi = getParameter("BTCeApiKey", configFile);
   btceSecret = getParameter("BTCeSecretKey", configFile);
   btceFees = getDouble(getParameter("BTCeFees", configFile));
-  sevenninetysixApi = getParameter("SevenNinetySixApiKey", configFile);
-  sevenninetysixSecret = getParameter("SevenNinetySixSecretKey", configFile);
-  sevenninetysixFees = getDouble(getParameter("SevenNinetySixFees", configFile));
   poloniexApi = getParameter("PoloniexApiKey", configFile);
   poloniexSecret = getParameter("PoloniexSecretKey", configFile);
   poloniexFees = getDouble(getParameter("PoloniexFees", configFile));
