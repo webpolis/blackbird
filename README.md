@@ -57,7 +57,6 @@ It is never entirely safe to just tell Blackbird to use, say, $25 per exchange. 
 | <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a> | ✓ |  | ✓ | ✓ | |
 | <a href="https://gemini.com" target="_blank">Gemini</a> | ✓ |  | ✓ | ✓ | |
 | <a href="https://www.kraken.com" target="_blank">Kraken</a> | ✓ |  | ✓ |  | Validation in progress |
-| <a href="https://poloniex.com" target="_blank">Poloniex</a> | ✓ | ✓ |  |  | |
 | <a href="https://btc-e.com" target="_blank">BTC-e</a> | ✓ |  |  |  | |
 | <a href="https://www.itbit.com" target="_blank">itBit</a> | ✓ |  |  |  | |
 
