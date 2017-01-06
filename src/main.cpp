@@ -540,22 +540,21 @@ int main(int argc, char** argv) {
             logFile << "Email sent" << std::endl;
           }
           res.reset();
-          // exit if a 'stop_after_exit' file is found
-          std::ifstream infile("stop_after_exit");
-          if (infile.good()) {
-            logFile << "Exit after last trade (file stop_after_exit found)" << std::endl;
-            stillRunning = false;
-          }
         }
       }
-      if (params.verbose) {
-        logFile << std::endl;
-      }
+      if (params.verbose) logFile << '\n';
     }
     timeinfo.tm_sec += params.gapSec;
     currIteration++;
     if (currIteration >= params.debugMaxIteration) {
       logFile << "Max iteration reached (" << params.debugMaxIteration << ")" <<std::endl;
+      stillRunning = false;
+    }
+    // exit if a 'stop_after_notrade' file is found
+    std::ifstream infile("stop_after_notrade");
+    if (infile && !inMarket)
+    {
+      logFile << "Exit after last trade (file stop_after_notrade found)\n";
       stillRunning = false;
     }
   }
