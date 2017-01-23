@@ -26,6 +26,8 @@ Unlike other Bitcoin arbitrage systems, Blackbird doesn't sell but actually _sho
 
 2. The strategy doesn't need to transfer funds (USD or BTC) between Bitcoin exchanges. The buy/sell and sell/buy trading activities are done in parallel on two different exchanges, independently. Advantage: no need to deal with transfer latency issues.
 
+More details about _short selling_ and _market neutrality_ can be found on <a href="https://github.com/butor/blackbird/issues/100" target="_blank">issue #100</a>.
+
 ### Disclaimer
 
 __USE THE SOFTWARE AT YOUR OWN RISK. YOU ARE RESPONSIBLE FOR YOUR OWN MONEY. PAST PERFORMANCE IS NOT NECESSARILY INDICATIVE OF FUTURE RESULTS.__
@@ -38,7 +40,7 @@ The trade results are stored in CSV files and the detailed activity is stored in
 
 It is possible to automatically stop Blackbird after the next trade has closed by creating, at any time, an empty file named _stop_after_exit_.
 
-Blackbird uses functions written by <a href="http://www.adp-gmbh.ch/cpp/common/base64.html" target="_target">René Nyffenegger</a> to encode and decode base64.
+Blackbird uses functions written by <a href="http://www.adp-gmbh.ch/cpp/common/base64.html" target="_blank">René Nyffenegger</a> to encode and decode base64.
 
 ### How To Test Blackbird
 
