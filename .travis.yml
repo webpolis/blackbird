@@ -1,0 +1,16 @@
+language: cpp
+
+sudo: required
+dist: trusty
+
+compiler:
+  - clang
+  - gcc
+
+before_install:
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get install -y libjansson-dev libcurl4-openssl-dev sendemail
+
+script: make
