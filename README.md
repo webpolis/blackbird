@@ -103,10 +103,6 @@ libmysqlclient-dev
 sendemail
 ```
 
-__Note:__ you need Jansson version 2.7 minimum otherwise you will get the following compilation error:
-
-`'json_boolean_value' was not declared in this scope`
-
 
 Once you have downloaded the source code, build Blackbird by typing:
 

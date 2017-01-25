@@ -241,7 +241,7 @@ int borrowBtc(Parameters& params, double amount) {
   std::string content = oss.str();
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/borrow_money.do", signature, content);
   std::cout << "<OKCoin> Borrow " << amount << " BTC:\n" << json_dumps(root, 0) << std::endl;
-  isBorrowAccepted = json_boolean_value(json_object_get(root, "result"));
+  isBorrowAccepted = json_is_true(json_object_get(root, "result"));
   if (isBorrowAccepted) {
     borrowId = json_integer_value(json_object_get(root, "borrow_id"));
   }

@@ -93,7 +93,7 @@ bool isOrderComplete(Parameters& params, int orderId) {
   oss << "\"order_id\":" << orderId;
   std::string options = oss.str();
   json_t* root = authRequest(params, "https://poloniex.com/tradingApi", "order/status", options);
-  bool isComplete = !json_boolean_value(json_object_get(root, "is_live"));
+  bool isComplete = json_is_false(json_object_get(root, "is_live"));
   json_decref(root);
   return isComplete;
 }
