@@ -1,6 +1,7 @@
 <p align="center">
 <img src="https://cloud.githubusercontent.com/assets/11370278/10808535/02230d46-7dc3-11e5-92d8-da15cae8c6e9.png" width="50%" alt="Blackbird Bitcoin Arbitrage">
 </p>
+[![Build Status](https://travis-ci.org/greatwolf/blackbird.svg?branch=master)](https://travis-ci.org/greatwolf/blackbird)
 
 ### Introduction
 
