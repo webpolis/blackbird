@@ -5,7 +5,7 @@
 #include <ctime>
 
 
-struct Bitcoin;
+class  Bitcoin;
 struct Result;
 struct Parameters;
 
