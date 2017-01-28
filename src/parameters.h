@@ -33,6 +33,7 @@ struct Parameters {
   double maxExposure;
   bool useVolatility;
   unsigned volatilityPeriod;
+  std::string cacert;
 
   std::string bitfinexApi;
   std::string bitfinexSecret;
