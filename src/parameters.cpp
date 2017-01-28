@@ -22,6 +22,7 @@ Parameters::Parameters(std::string fileName) {
   maxExposure = getDouble(getParameter("MaxExposure", configFile));
   useVolatility = getBool(getParameter("UseVolatility", configFile));
   volatilityPeriod = getUnsigned(getParameter("VolatilityPeriod", configFile));
+  cacert = getParameter("CACert", configFile);
 
   bitfinexApi = getParameter("BitfinexApiKey", configFile);
   bitfinexSecret = getParameter("BitfinexSecretKey", configFile);

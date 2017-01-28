@@ -11,10 +11,15 @@ size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
 }
 
 json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFields,
-                       bool getRequest) {
+                       bool getRequest)
+{
+  if (!params.cacert.empty())
+    curl_easy_setopt(params.curl, CURLOPT_CAINFO, params.cacert.c_str());
+
   curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
   curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
   curl_easy_setopt(params.curl, CURLOPT_TIMEOUT, 20L);
+  curl_easy_setopt(params.curl, CURLOPT_ENCODING, "gzip");
   if (!postFields.empty()) {
     curl_easy_setopt(params.curl, CURLOPT_POSTFIELDS, postFields.c_str());
   }
