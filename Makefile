@@ -15,6 +15,7 @@ OBJECTS = $(SOURCES:.cpp=.o)
 
 SQLITE3 = libsqlite3.a
 SQLITE3CLI = sqlite3
+SQLITE3LIBS :=
 
 ifndef VERBOSE
   Q := @
@@ -30,11 +31,15 @@ else
   CXXFLAGS += -O0 -g
 endif
 
+ifneq ($(OS),Windows_NT)
+  SQLITE3LIBS += -lpthread -ldl
+endif
+
 all: $(SQLITE3CLI) $(EXEC)
 
 $(SQLITE3CLI): shell.o $(SQLITE3)
 	@echo Linking $@:
-	$(Q)$(CC) $(LDFLAGS) $(LIB_DIR) $< -o $@ -lsqlite3
+	$(Q)$(CC) $(LDFLAGS) $(LIB_DIR) $< -o $@ -lsqlite3 $(SQLITE3LIBS)
 
 $(SQLITE3): sqlite3.o
 	@echo Archiving $@:
