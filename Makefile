@@ -1,11 +1,11 @@
 # Blackbird Bitcoin Arbitrage Makefile
 
-override INC_DIR += -I ./src -I ./extern/sqlite3/include -I/usr/include/mysql/
+override INC_DIR += -I ./src -I ./extern/sqlite3/include
 override LIB_DIR += -L .
 CFLAGS   := -std=c99
 CXXFLAGS := -Wall -pedantic -std=c++11
 LDFLAGS  := 
-LDLIBS   := -lsqlite3 -lcrypto -ljansson -lcurl -lmysqlclient
+LDLIBS   := -lsqlite3 -lcrypto -ljansson -lcurl
 CC       := gcc
 
 
