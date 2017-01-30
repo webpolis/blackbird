@@ -7,7 +7,7 @@
 #include <jansson.h>
 #include <curl/curl.h>
 #include <string.h>
-#include <mysql.h>
+
 #include "utils/base64.h"
 #include "bitcoin.h"
 #include "result.h"
@@ -60,12 +60,13 @@ int main(int argc, char** argv) {
       }
     }
   }
-  if (params.useDatabase) {
-    if (createDbConnection(params) != 0) {
-      std::cout << "ERROR: cannot connect to the database \'" << params.dbName << "\'\n" << std::endl;
-      return -1;
-    }
+
+  if (createDbConnection(params) != 0)
+  {
+    std::cerr << "ERROR: cannot connect to the database \'" << params.dbFile << "\'\n" << std::endl;
+    return -1;
   }
+
   // function arrays containing all the exchanges functions
   getQuoteType getQuote[10];
   getAvailType getAvail[10];
@@ -86,10 +87,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = Bitfinex::isOrderComplete;
     getActivePos[index] = Bitfinex::getActivePos;
     getLimitPrice[index] = Bitfinex::getLimitPrice;
-    if (params.useDatabase) {
-      dbTableName[index] = "bitfinex";
-      createTable(dbTableName[index], params);
-    }
+
+    dbTableName[index] = "bitfinex";
+    createTable(dbTableName[index], params);
+
     index++;
   }
   if (params.okcoinApi.empty() == false || params.demoMode == true) {
@@ -101,10 +102,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = OKCoin::isOrderComplete;
     getActivePos[index] = OKCoin::getActivePos;
     getLimitPrice[index] = OKCoin::getLimitPrice;
-    if (params.useDatabase) {
-      dbTableName[index] = "okcoin";
-      createTable(dbTableName[index], params);
-    }
+
+    dbTableName[index] = "okcoin";
+    createTable(dbTableName[index], params);
+
     index++;
   }
   if (params.bitstampClientId.empty() == false || params.demoMode == true) {
@@ -115,10 +116,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = Bitstamp::isOrderComplete;
     getActivePos[index] = Bitstamp::getActivePos;
     getLimitPrice[index] = Bitstamp::getLimitPrice;
-    if (params.useDatabase) {
-      dbTableName[index] = "bitstamp";
-      createTable(dbTableName[index], params);
-    }
+
+    dbTableName[index] = "bitstamp";
+    createTable(dbTableName[index], params);
+
     index++;
   }
   if (params.geminiApi.empty() == false || params.demoMode == true) {
@@ -129,10 +130,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = Gemini::isOrderComplete;
     getActivePos[index] = Gemini::getActivePos;
     getLimitPrice[index] = Gemini::getLimitPrice;
-    if (params.useDatabase) {
-      dbTableName[index] = "gemini";
-      createTable(dbTableName[index], params);
-    }
+
+    dbTableName[index] = "gemini";
+    createTable(dbTableName[index], params);
+
     index++;
   }
   if (params.krakenApi.empty() == false || params.demoMode == true) {
@@ -143,10 +144,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = Kraken::isOrderComplete;
     getActivePos[index] = Kraken::getActivePos;
     getLimitPrice[index] = Kraken::getLimitPrice;
-    if (params.useDatabase) {
-      dbTableName[index] = "kraken";
-      createTable(dbTableName[index], params);
-    }
+
+    dbTableName[index] = "kraken";
+    createTable(dbTableName[index], params);
+
     index++;
   }
   if (params.itbitApi.empty() == false || params.demoMode == true) {
@@ -155,10 +156,10 @@ int main(int argc, char** argv) {
     getAvail[index] = ItBit::getAvail;
     getActivePos[index] = ItBit::getActivePos;
     getLimitPrice[index] = ItBit::getLimitPrice;
-    if (params.useDatabase) {
-      dbTableName[index] = "itbit";
-      createTable(dbTableName[index], params);
-    }
+
+    dbTableName[index] = "itbit";
+    createTable(dbTableName[index], params);
+
     index++;
   }
   if (params.btceApi.empty() == false || params.demoMode == true) {
@@ -167,10 +168,10 @@ int main(int argc, char** argv) {
     getAvail[index] = BTCe::getAvail;
     getActivePos[index] = BTCe::getActivePos;
     getLimitPrice[index] = BTCe::getLimitPrice;
-    if (params.useDatabase) {
-      dbTableName[index] = "btce";
-      createTable(dbTableName[index], params);
-    }
+
+    dbTableName[index] = "btce";
+    createTable(dbTableName[index], params);
+
     index++;
   }
   if (params.poloniexApi.empty() == false || params.demoMode == true) {
@@ -182,10 +183,10 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = Poloniex::isOrderComplete;
     getActivePos[index] = Poloniex::getActivePos;
     getLimitPrice[index] = Poloniex::getLimitPrice;
-    if (params.useDatabase) {
-      dbTableName[index] = "poloniex";
-      createTable(dbTableName[index], params);
-    }
+
+    dbTableName[index] = "poloniex";
+    createTable(dbTableName[index], params);
+
     index++;
   }
   if (index < 2) {
@@ -211,9 +212,9 @@ int main(int argc, char** argv) {
   logFile << "|   Blackbird Bitcoin Arbitrage Log File   |" << std::endl;
   logFile << "--------------------------------------------\n" << std::endl;
   logFile << "Blackbird started on " << printDateTime() << "\n" << std::endl;
-  if (params.useDatabase) {
-    logFile << "Connected to database \'" << params.dbName << "\'\n" << std::endl;
-  }
+
+  logFile << "Connected to database \'" << params.dbFile << "\'\n" << std::endl;
+
   if (params.demoMode) {
     logFile << "Demo mode: trades won't be generated\n" << std::endl;
   }
@@ -325,9 +326,9 @@ int main(int argc, char** argv) {
     for (int i = 0; i < numExch; ++i) {
       double bid = getQuote[i](params, true);
       double ask = getQuote[i](params, false);
-      if (params.useDatabase) {
-        addBidAskToDb(dbTableName[i], printDateTimeDb(currTime), bid, ask, params);
-      }
+
+      addBidAskToDb(dbTableName[i], printDateTimeDb(currTime), bid, ask, params);
+
       if (bid == 0.0) {
         logFile << "   WARNING: " << params.exchName[i] << " bid is null" << std::endl;
       }
@@ -561,9 +562,7 @@ int main(int argc, char** argv) {
   // analysis loop exited, do some cleanup
   curl_easy_cleanup(params.curl);
   curl_global_cleanup();
-  if (params.useDatabase) {
-    mysql_close(params.dbConn);
-  }
+
   csvFile.close();
   logFile.close();
 
