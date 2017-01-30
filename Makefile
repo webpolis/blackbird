@@ -47,7 +47,7 @@ $(SQLITE3): sqlite3.o
 
 $(EXEC): $(SQLITE3) $(OBJECTS)
 	@echo Linking $@:
-	$(Q)$(CXX) $(LDFLAGS) $(LIB_DIR) $(OBJECTS) -o $@ $(LDLIBS)
+	$(Q)$(CXX) $(LDFLAGS) $(LIB_DIR) $(OBJECTS) -o $@ $(LDLIBS) $(SQLITE3LIBS)
 
 %.o: %.cpp
 	@echo Compiling $@:
