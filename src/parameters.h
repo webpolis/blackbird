@@ -4,8 +4,12 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <memory>
 #include <curl/curl.h>
-#include <mysql.h>
+
+
+struct sqlite3;
+using sqlite3_deleter = int (*)(sqlite3 *);
 
 struct Parameters {
 
@@ -67,12 +71,9 @@ struct Parameters {
   std::string senderPassword;
   std::string smtpServerAddress;
   std::string receiverAddress;
-  bool useDatabase;
-  std::string dbHost;
-  std::string dbName;
-  std::string dbUser;
-  std::string dbPassword;
-  MYSQL* dbConn;
+
+  std::string dbFile;
+  std::unique_ptr<sqlite3, sqlite3_deleter> dbConn;
 
   Parameters(std::string fileName);
 

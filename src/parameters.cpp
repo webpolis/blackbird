@@ -1,9 +1,12 @@
+#include "parameters.h"
+#include "sqlite3.h"
 #include <iostream>
 #include <stdlib.h>
-#include "parameters.h"
 
 
-Parameters::Parameters(std::string fileName) {
+Parameters::Parameters(std::string fileName)
+  : dbConn(nullptr, sqlite3_close)
+{
 
   std::ifstream configFile(fileName.c_str());
   spreadEntry = getDouble(getParameter("SpreadEntry", configFile));
@@ -56,11 +59,9 @@ Parameters::Parameters(std::string fileName) {
   senderPassword = getParameter("SenderPassword", configFile);
   smtpServerAddress = getParameter("SmtpServerAddress", configFile);
   receiverAddress = getParameter("ReceiverAddress", configFile);
-  useDatabase = getBool(getParameter("UseDatabase", configFile));
-  dbHost = getParameter("DBHost", configFile);
-  dbName = getParameter("DBName", configFile);
-  dbUser = getParameter("DBUser", configFile);
-  dbPassword = getParameter("DBPassword", configFile);
+
+  dbFile = getParameter("DBFile", configFile);
+
   configFile.close();
 }
 
