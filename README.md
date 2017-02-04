@@ -90,17 +90,17 @@ Parameter | Default Value | Description
 | UseVolatility | false |  If true, display the spreads volatility infirmation in the log file. This is not used for the moment and only displayed as information |
 | VolatilityPeriod | 600 | The period length of the volatility in number of iterations. This is not used for the moment and only displayed as information |
 | SendEmail | false | When true, an e-mail will be sent every time an arbitrage trade is completed, with information such as the names of the exchanges and the trade return |
-| UseDatabase | false | When true,  the bid/ask information of the exchanges will be stored into a MySQL database for reference |
+| DBFile | 'blackbird.db' | SQLite3 database file to use for storing the bid/ask information of the exchanges for reference. Blackbird will create this file if it doesn't already exist |
 
 #### Run the software
 
-You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a>, <a href="http://curl.haxx.se" target="_blank">cURL</a>, <a href="http://dev.mysql.com/doc" target="_blank">MySQL Client</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>. Usually this is what you need to install:
+You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a>, <a href="http://curl.haxx.se" target="_blank">cURL</a>, <a href="http://www.sqlite.org" target="_blank">SQLite3</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>. Usually this is what you need to install:
 
 ```
 libssl-dev
 libjansson-dev
 libcurl4-openssl-dev
-libmysqlclient-dev
+libsqlite3-dev (available as a Blackbird submodule)
 sendemail
 ```
 
