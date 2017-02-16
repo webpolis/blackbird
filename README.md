@@ -92,7 +92,7 @@ Parameter | Default Value | Description
 | SendEmail | false | When true, an e-mail will be sent every time an arbitrage trade is completed, with information such as the names of the exchanges and the trade return |
 | DBFile | 'blackbird.db' | SQLite3 database file to use for storing the bid/ask information of the exchanges for reference. Blackbird will create this file if it doesn't already exist |
 
-#### Run the software
+#### Getting and building the software
 
 You need the following libraries: <a href="https://www.openssl.org/docs/crypto/crypto.html" target="_blank">Crypto</a>, <a href="http://www.digip.org/jansson" target="_blank">Jansson</a>, <a href="http://curl.haxx.se" target="_blank">cURL</a>, <a href="http://www.sqlite.org" target="_blank">SQLite3</a> and <a href="http://caspian.dotconf.net/menu/Software/SendEmail" target="_blank">sendEmail</a>. Usually this is what you need to install:
 
@@ -104,14 +104,29 @@ libsqlite3-dev (available as a Blackbird submodule)
 sendemail
 ```
 
+Download the source from github with:
+
+    mkdir blackbird
+    cd blackbird
+    git clone --recursive  git://github.com/butor/blackbird.git .
+
+Alternatively, if you already have the existing source tree use:
+
+    git submodule update --init
+
+to sync the submodules.
 
 Once you have downloaded the source code, build Blackbird by typing:
 
-`make`
+    make
 
-Then start it by typing:
+If all goes well this produces a Blackbird executable in the project directory.
 
-`./blackbird`
+#### Run the software
+
+Start it by typing:
+
+    ./blackbird
 
 ### Tasks And Issues
 
