@@ -1,5 +1,9 @@
 *.log
 *.csv
 *.o
+*.a
 blackbird
+blackbird.db
+sqlite3
 core
+
