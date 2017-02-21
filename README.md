@@ -1,7 +1,9 @@
+[![Build Status](https://travis-ci.org/butor/blackbird.svg?branch=master)](https://travis-ci.org/butor/blackbird)
+
 <p align="center">
 <img src="https://cloud.githubusercontent.com/assets/11370278/10808535/02230d46-7dc3-11e5-92d8-da15cae8c6e9.png" width="50%" alt="Blackbird Bitcoin Arbitrage">
 </p>
-[![Build Status](https://travis-ci.org/butor/blackbird.svg?branch=master)](https://travis-ci.org/butor/blackbird)
+
 
 ### Introduction
 
@@ -27,7 +29,7 @@ Unlike other Bitcoin arbitrage systems, Blackbird doesn't sell but actually _sho
 
 2. The strategy doesn't need to transfer funds (USD or BTC) between Bitcoin exchanges. The buy/sell and sell/buy trading activities are done in parallel on two different exchanges, independently. Advantage: no need to deal with transfer latency issues.
 
-More details about _short selling_ and _market neutrality_ can be found on <a href="https://github.com/butor/blackbird/issues/100" target="_blank">issue #100</a>.
+More details about _short selling_ and _market neutrality_ can be found on <a href="https://github.com/butor/blackbird/issues/100" target="_blank">issue __#100__</a>.
 
 ### Disclaimer
 
@@ -50,6 +52,8 @@ Please make sure that you understand the disclaimer above if you want to test Bl
 __IMPORTANT: all your BTC accounts must be empty before starting Blackbird. Make sure that you only have USD on your accounts and no BTC.__
 
 It is never entirely safe to just tell Blackbird to use, say, $25 per exchange. You also need to only have $25 available on each of your trading accounts as well as 0 BTC. In this case you are sure that even with a bug your maximum loss on an exchange won't be greater than $25 no matter what.
+
+Note: on Bitfinex, your money has to be available on the _Margin_ account.
 
 #### Covered Exchanges
 
@@ -140,12 +144,7 @@ Please check the <a href="https://github.com/butor/blackbird/issues" target="_bl
 
 * If you found a bug, please open a new <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _bug_
 * If you have a general question or have troubles running Blackbird, you can open a new  <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _question_ or _help wanted_
-* For anything else you can contact me at julien.hamilton@gmail.com or on <a href="https://www.linkedin.com/in/julienhamilton" target="_blank">LinkedIn</a>.
-
-### Recent Changes
-
-* Fixed a segmentation fault that occurs when the credentials are wrong
-* At least $10 of exposure is now needed with real trading, otherwise orders will be rejected by some exchanges
+* For anything else you can contact me at julien.hamilton@gmail.com
 
 ### Log Output Example
 
