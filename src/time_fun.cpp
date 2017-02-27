@@ -23,6 +23,14 @@ std::string fmtDateTime(const time_t &t)
   return buff;
 }
 
+/*
+ * Apparently gcc and msvc have a bug
+ * 'auto' deduces a type different from the earlier
+ * extern declaration.
+ * clang compiles with 'auto' however.
+ * Also see SO question:
+ *  http://stackoverflow.com/q/28835198/234175
+ */
 extern const char csvfmt[] = "%Y-%m-%d_%H:%M:%S";
 const decltype(&fmtDateTime<csvfmt>) printDateTimeCsv = &fmtDateTime<csvfmt>;
 
