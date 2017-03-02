@@ -12,14 +12,6 @@
 #include "kraken.h"
 #include "curl_fun.h"
 
-// INFO workaround for std::to_string when not using c++11
-namespace patch {
-  template < typename T > std::string to_string(const T& n) {
-    std::ostringstream stm;
-    stm << n;
-    return stm.str();
-  }
-}
 
 // Initialise global variables
 json_t *krakenTicker;
@@ -88,8 +80,8 @@ int sendLongOrder(Parameters& params, std::string direction, double quantity, do
   std::string pair = "XXBTZUSD";
   std::string type = direction;
   std::string ordertype = "limit";
-  std::string pricelimit = patch::to_string(price);
-  std::string volume = patch::to_string(quantity);
+  std::string pricelimit = std::to_string(price);
+  std::string volume = std::to_string(quantity);
   std::string options = "pair=" + pair + "&type=" + type + "&ordertype=" + ordertype + "&price=" + pricelimit + "&volume=" + volume;
   json_t* res = authRequest(params, "https://api.kraken.com", "/0/private/AddOrder", options);
   json_t* root = json_object_get(res, "result");
@@ -171,13 +163,13 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   unsigned long long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
   std::string post_data = "";
   if (options.empty()) {
-    post_data = "nonce=" + patch::to_string(nonce);
+    post_data = "nonce=" + std::to_string(nonce);
   } else {
-    post_data = "nonce=" + patch::to_string(nonce) + "&" + options;
+    post_data = "nonce=" + std::to_string(nonce) + "&" + options;
   }
   // Message signature using HMAC-SHA512 of (URI path + SHA256(nonce + POST data))
   // and base64 decoded secret API key
-  std::string payload_for_signature = patch::to_string(nonce) + post_data;
+  std::string payload_for_signature = std::to_string(nonce) + post_data;
   unsigned char digest[SHA256_DIGEST_LENGTH];
   SHA256((unsigned char*)payload_for_signature.c_str(), strlen(payload_for_signature.c_str()), (unsigned char*)&digest);
   int signature_data_length = request.length() + SHA256_DIGEST_LENGTH;
