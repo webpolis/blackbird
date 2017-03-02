@@ -21,7 +21,7 @@ bool krakenGotLimPrice = false;
 
 namespace Kraken {
 
-static std::map<int, std::string> *id_to_transaction = new std::map<int, std::string>();
+static std::map<int, std::string> id_to_transaction;
 
 double getQuote(Parameters& params, bool isBid) {
   bool GETRequest = false;
@@ -90,8 +90,8 @@ int sendLongOrder(Parameters& params, std::string direction, double quantity, do
     exit(0);
   }
   std::string txid = json_string_value(json_array_get(json_object_get(root, "txid"), 0));
-  int max_id = id_to_transaction->size();
-  (*id_to_transaction)[max_id] = txid;
+  int max_id = id_to_transaction.size();
+  id_to_transaction[max_id] = txid;
   *params.logFile << "<Kraken> Done (transaction ID: " << txid << ")\n" << std::endl;
   json_decref(root);
   return max_id;
@@ -106,7 +106,7 @@ bool isOrderComplete(Parameters& params, int orderId) {
     return true;
   }
   *params.logFile << json_dumps(root, 0) << std::endl;
-  std::string transaction_id = (*id_to_transaction)[orderId];
+  std::string transaction_id = id_to_transaction[orderId];
   root = json_object_get(root, transaction_id.c_str());
   // open orders exist but specific order not found: return true
   if (json_object_size(root) == 0) {
