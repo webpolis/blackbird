@@ -126,6 +126,16 @@ Once you have downloaded the source code, build Blackbird by typing:
 
 If all goes well this produces a Blackbird executable in the project directory.
 
+#### Ubuntu (Amazon EC2 compatible)
+
+Run the following commands:
+
+    sudo apt-get install libssl-dev libjansson-dev libcurl4-openssl-dev libsqlite3-dev sendemail make gcc g++
+    mkdir blackbird
+    cd blackbird
+    git clone --recursive  git://github.com/butor/blackbird.git .
+    make
+
 #### Run the software
 
 Start it by typing:
