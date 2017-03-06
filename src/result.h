@@ -34,12 +34,13 @@ struct Result
   std::list<double> volatility[10][10];
   double usdTotBalanceBefore;
   double usdTotBalanceAfter;
-  double targetPerfLong();
-  double targetPerfShort();
-  double actualPerf();
-  double getTradeLengthInMinute();
-  void printEntryInfo(std::ostream &logFile);
-  void printExitInfo(std::ostream  &logFile);
+
+  double targetPerfLong()   const;
+  double targetPerfShort()  const;
+  double actualPerf()       const;
+  double getTradeLengthInMinute()             const;
+  void printEntryInfo(std::ostream &logFile)  const;
+  void printExitInfo(std::ostream  &logFile)  const;
   void reset();
 };
 

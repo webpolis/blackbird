@@ -3,31 +3,31 @@
 #include <type_traits>
 
 
-double Result::targetPerfLong()
+double Result::targetPerfLong() const
 {
   return (priceLongOut - priceLongIn) / priceLongIn - 2.0 * feesLong;
 }
 
-double Result::targetPerfShort()
+double Result::targetPerfShort() const
 {
   return (priceShortIn - priceShortOut) / priceShortIn - 2.0 * feesShort;
 }
 
-double Result::actualPerf()
+double Result::actualPerf() const
 {
   if (exposure == 0.0) return 0.0;
 
   return (usdTotBalanceAfter - usdTotBalanceBefore) / (exposure * 2.0);
 }
 
-double Result::getTradeLengthInMinute()
+double Result::getTradeLengthInMinute() const
 {
   if (entryTime > 0 && exitTime > 0) return (exitTime - entryTime) / 60.0;
 
   return 0;
 }
 
-void Result::printEntryInfo(std::ostream &logFile)
+void Result::printEntryInfo(std::ostream &logFile) const
 {
   logFile << "\n[ ENTRY FOUND ]" << std::endl;
   logFile << "   Date & Time:       "  << printDateTime(entryTime) << std::endl;
@@ -42,7 +42,7 @@ void Result::printEntryInfo(std::ostream &logFile)
   logFile << std::endl;
 }
 
-void Result::printExitInfo(std::ostream &logFile)
+void Result::printExitInfo(std::ostream &logFile) const
 {
   logFile << "\n[ EXIT FOUND ]" << std::endl;
   logFile << "   Date & Time:       "  << printDateTime(exitTime) << std::endl;
