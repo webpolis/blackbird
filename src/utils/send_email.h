@@ -1,10 +1,9 @@
 #ifndef SEND_EMAIL_H
 #define SEND_EMAIL_H
 
-#include "result.h"
-#include "parameters.h"
+struct Result;
+struct Parameters;
 
-void sendEmail(Result& res, Parameters& params);
+void sendEmail(const Result &res, Parameters &params);
 
 #endif
-
