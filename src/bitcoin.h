@@ -1,21 +1,19 @@
 #ifndef BITCOIN_H
 #define BITCOIN_H
 
-#include <iostream>
 #include <string>
-#include <vector>
+
 
 // contains all the information for a given exchange
-class Bitcoin {
-
+class Bitcoin
+{
   private:
     unsigned id;
     std::string exchName;
     double fees;
     bool hasShort;
     bool isImplemented;
-    double bid;
-    double ask;
+    double bid, ask;
 
   public:
     Bitcoin(unsigned id, std::string n, double f, bool h, bool m);
@@ -28,7 +26,6 @@ class Bitcoin {
     double getFees() const;
     bool getHasShort() const;
     bool getIsImplemented() const;
- };
+};
 
 #endif
-
