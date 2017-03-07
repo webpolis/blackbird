@@ -1,15 +1,3 @@
-#include <iostream>
-#include <fstream>
-#include <iomanip>
-#include <unistd.h>
-#include <numeric>
-#include <math.h>
-#include <algorithm>
-#include <jansson.h>
-#include <curl/curl.h>
-#include <string.h>
-
-#include "utils/base64.h"
 #include "bitcoin.h"
 #include "result.h"
 #include "time_fun.h"
@@ -26,6 +14,15 @@
 #include "exchange/btce.h"
 #include "exchange/poloniex.h"
 #include "utils/send_email.h"
+
+#include <curl/curl.h>
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include <unistd.h>
+#include <math.h>
+#include <algorithm>
+
 
 // typedef declarations needed for the function arrays
 typedef double (*getQuoteType) (Parameters& params, bool isBid);
