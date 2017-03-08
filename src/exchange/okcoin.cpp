@@ -12,26 +12,19 @@
 
 namespace OKCoin {
 
-double getQuote(Parameters& params, bool isBid) {
+double getQuote(Parameters &params, bool isBid)
+{
   bool GETRequest = false;
   json_t* root = getJsonFromUrl(params, "https://www.okcoin.com/api/ticker.do?ok=1", "", GETRequest);
-  const char* quote;
-  double quoteValue;
-  if (isBid) {
-    quote = json_string_value(json_object_get(json_object_get(root, "ticker"), "buy"));
-  } else {
-    quote = json_string_value(json_object_get(json_object_get(root, "ticker"), "sell"));
-  }
-  if (quote != NULL) {
-    quoteValue = atof(quote);
-  } else {
-    quoteValue = 0.0;
-  }
+  const char* quote = json_string_value(json_object_get(json_object_get(root, "ticker"),
+                                                        isBid ? "buy" : "sell"));
   json_decref(root);
-  return quoteValue;
+
+  return quote ? atof(quote) : 0.0;
 }
 
-double getAvail(Parameters& params, std::string currency) {
+double getAvail(Parameters& params, std::string currency)
+{
   std::ostringstream oss;
   oss << "api_key=" << params.okcoinApi << "&secret_key=" << params.okcoinSecret;
   std::string signature(oss.str());
@@ -42,13 +35,16 @@ double getAvail(Parameters& params, std::string currency) {
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/userinfo.do", signature, content);
   double availability = 0.0;
   const char* returnedText;
-  if (currency.compare("usd") == 0) {
+  if (currency == "usd")
+  {
     returnedText = json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "usd"));
-  } else if (currency.compare("btc") == 0) {
-    returnedText = json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "btc"));
-  } else {
-    returnedText = "0.0";
   }
+  else if (currency == "btc")
+  {
+    returnedText = json_string_value(json_object_get(json_object_get(json_object_get(json_object_get(root, "info"), "funds"), "free"), "btc"));
+  }
+  else returnedText = "0.0";
+
   if (returnedText != NULL) {
     availability = atof(returnedText);
   } else {
@@ -92,10 +88,10 @@ int sendShortOrder(Parameters& params, std::string direction, double quantity, d
   return 0;
 }
 
-bool isOrderComplete(Parameters& params, int orderId) {
-  if (orderId == 0) {
-    return true;
-  }
+bool isOrderComplete(Parameters& params, int orderId)
+{
+  if (orderId == 0) return true;
+
   // signature
   std::ostringstream oss;
   oss << "api_key=" << params.okcoinApi << "&order_id=" << orderId << "&symbol=btc_usd" << "&secret_key=" << params.okcoinSecret;
@@ -108,16 +104,11 @@ bool isOrderComplete(Parameters& params, int orderId) {
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/order_info.do", signature, content);
   int status = json_integer_value(json_object_get(json_array_get(json_object_get(root, "orders"), 0), "status"));
   json_decref(root);
-  if (status == 2) {
-    return true;
-  } else {
-    return false;
-  }
+
+  return status == 2;
 }
 
-double getActivePos(Parameters& params) {
-  return getAvail(params, "btc");
-}
+double getActivePos(Parameters& params) { return getAvail(params, "btc"); }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
   bool GETRequest = false;
@@ -229,9 +220,8 @@ void getBorrowInfo(Parameters& params) {
   json_decref(root);
 }
 
-int borrowBtc(Parameters& params, double amount) {
-  int borrowId = 0;
-  bool isBorrowAccepted = false;
+int borrowBtc(Parameters& params, double amount)
+{
   std::ostringstream oss;
   oss << "api_key=" << params.okcoinApi << "&symbol=btc_usd&days=fifteen&amount=" << 1 << "&rate=0.0001&secret_key=" << params.okcoinSecret;
   std::string signature = oss.str();
@@ -241,10 +231,10 @@ int borrowBtc(Parameters& params, double amount) {
   std::string content = oss.str();
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/borrow_money.do", signature, content);
   std::cout << "<OKCoin> Borrow " << amount << " BTC:\n" << json_dumps(root, 0) << std::endl;
-  isBorrowAccepted = json_is_true(json_object_get(root, "result"));
-  if (isBorrowAccepted) {
-    borrowId = json_integer_value(json_object_get(root, "borrow_id"));
-  }
+
+  bool isBorrowAccepted = json_is_true(json_object_get(root, "result"));
+  int borrowId = isBorrowAccepted ? json_integer_value(json_object_get(root, "borrow_id")) : 0;
+
   json_decref(root);
   return borrowId;
 }
@@ -263,4 +253,3 @@ void repayBtc(Parameters& params, int borrowId) {
 }
 
 }
-
