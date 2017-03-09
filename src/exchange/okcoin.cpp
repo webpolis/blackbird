@@ -18,9 +18,10 @@ double getQuote(Parameters &params, bool isBid)
   json_t* root = getJsonFromUrl(params, "https://www.okcoin.com/api/ticker.do?ok=1", "", GETRequest);
   const char* quote = json_string_value(json_object_get(json_object_get(root, "ticker"),
                                                         isBid ? "buy" : "sell"));
+  auto quoteValue = quote ? atof(quote) : 0.0;
   json_decref(root);
 
-  return quote ? atof(quote) : 0.0;
+  return quoteValue;
 }
 
 double getAvail(Parameters& params, std::string currency)
