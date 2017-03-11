@@ -2,6 +2,7 @@
 #include "parameters.h"
 #include "utils/base64.h"
 #include "curl_fun.h"
+#include "hex_str.hpp"
 
 #include "jansson.h"
 #include "openssl/sha.h"
@@ -145,7 +146,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   } else {
     oss << "{\"request\":\"/v1/" << request << "\",\"nonce\":\"" << nonce << "\", " << options << "}";
   }
-  std::string tmpPayload = base64_encode(reinterpret_cast<const unsigned char*>(oss.str().c_str()), oss.str().length());
+  std::string tmpPayload = base64_encode(reinterpret_cast<const uint8_t *>(oss.str().c_str()), oss.str().length());
   oss.clear();
   oss.str("");
   oss << "X-BFX-PAYLOAD:" << tmpPayload;
@@ -154,14 +155,9 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   oss.clear();
   oss.str("");
   // signature
-  unsigned char* digest;
-  digest = HMAC(EVP_sha384(), params.bitfinexSecret.c_str(), strlen(params.bitfinexSecret.c_str()), (unsigned char*)tmpPayload.c_str(), strlen(tmpPayload.c_str()), NULL, NULL);
-  char mdString[SHA384_DIGEST_LENGTH+100];   // FIXME +100
-  for (int i = 0; i < SHA384_DIGEST_LENGTH; ++i) {
-    sprintf(&mdString[i*2], "%02x", (unsigned int)digest[i]);
-  }
+  uint8_t *digest = HMAC(EVP_sha384(), params.bitfinexSecret.c_str(), params.bitfinexSecret.length(), (uint8_t *)tmpPayload.c_str(), tmpPayload.length(), NULL, NULL);
 
-  oss << "X-BFX-SIGNATURE:" << mdString;
+  oss << "X-BFX-SIGNATURE:" << hex_str(digest, digest + SHA384_DIGEST_LENGTH);
   struct curl_slist *headers = NULL;
   std::string api = "X-BFX-APIKEY:" + std::string(params.bitfinexApi);
   headers = curl_slist_append(headers, api.c_str());
