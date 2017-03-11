@@ -1,15 +1,18 @@
+#include "bitfinex.h"
+#include "parameters.h"
+#include "utils/base64.h"
+#include "curl_fun.h"
+
+#include "jansson.h"
+#include "openssl/sha.h"
+#include "openssl/hmac.h"
+
 #include <string.h>
 #include <iostream>
 #include <unistd.h>
 #include <sstream>
 #include <math.h>
 #include <sys/time.h>
-#include <openssl/sha.h>
-#include <openssl/hmac.h>
-#include "utils/base64.h"
-#include <jansson.h>
-#include "bitfinex.h"
-#include "curl_fun.h"
 
 namespace Bitfinex {
 
@@ -157,8 +160,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   for (int i = 0; i < SHA384_DIGEST_LENGTH; ++i) {
     sprintf(&mdString[i*2], "%02x", (unsigned int)digest[i]);
   }
-  oss.clear();
-  oss.str("");
+
   oss << "X-BFX-SIGNATURE:" << mdString;
   struct curl_slist *headers = NULL;
   std::string api = "X-BFX-APIKEY:" + std::string(params.bitfinexApi);
@@ -211,4 +213,3 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
 }
 
 }
-

@@ -1,9 +1,11 @@
 #ifndef BITFINEX_H
 #define BITFINEX_H
 
-#include <curl/curl.h>
+
 #include <string>
-#include "parameters.h"
+
+struct json_t;
+struct Parameters;
 
 namespace Bitfinex {
 
@@ -28,4 +30,3 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
 }
 
 #endif
-
