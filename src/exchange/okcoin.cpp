@@ -1,14 +1,15 @@
-#include <string.h>
+#include "okcoin.h"
+#include "parameters.h"
+#include "curl_fun.h"
+#include "hex_str.hpp"
+
+#include "openssl/md5.h"
+#include "jansson.h"
+
 #include <iostream>
 #include <sstream>
-#include <unistd.h>
-#include <math.h>
-#include "utils/base64.h"
-#include <openssl/evp.h>
-#include <openssl/md5.h>
-#include <jansson.h>
-#include "okcoin.h"
-#include "curl_fun.h"
+#include <unistd.h> // sleep
+#include <math.h>   // fabs
 
 namespace OKCoin {
 
@@ -111,7 +112,8 @@ bool isOrderComplete(Parameters& params, int orderId)
 
 double getActivePos(Parameters& params) { return getAvail(params, "btc"); }
 
-double getLimitPrice(Parameters& params, double volume, bool isBid) {
+double getLimitPrice(Parameters& params, double volume, bool isBid)
+{
   bool GETRequest = false;
   json_t* root;
   double limPrice = 0.0;
@@ -152,15 +154,13 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
   return limPrice;
 }
 
-json_t* authRequest(Parameters& params, std::string url, std::string signature, std::string content) {
-  unsigned char digest[MD5_DIGEST_LENGTH];
-  MD5((unsigned char*)signature.c_str(), strlen(signature.c_str()), (unsigned char*)&digest);
-  char mdString[33];
-  for (int i = 0; i < 16; i++) {
-    sprintf(&mdString[i*2], "%02X", (unsigned int)digest[i]);
-  }
+json_t* authRequest(Parameters& params, std::string url, std::string signature, std::string content)
+{
+  uint8_t digest[MD5_DIGEST_LENGTH];
+  MD5((uint8_t *)signature.data(), signature.length(), (uint8_t *)&digest);
+
   std::ostringstream oss;
-  oss << content << "&sign=" << mdString;
+  oss << content << "&sign=" << hex_str<upperhex>(digest, digest + MD5_DIGEST_LENGTH);
   std::string postParameters = oss.str().c_str();
   struct curl_slist* headers = NULL;
   headers = curl_slist_append(headers, "contentType: application/x-www-form-urlencoded");

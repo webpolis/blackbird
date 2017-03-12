@@ -1,9 +1,11 @@
 #ifndef OKCOIN_H
 #define OKCOIN_H
 
-#include <curl/curl.h>
+
 #include <string>
-#include "parameters.h"
+
+struct json_t;
+struct Parameters;
 
 namespace OKCoin {
 
@@ -32,4 +34,3 @@ void repayBtc(Parameters& params, int borrowId);
 }
 
 #endif
-
