@@ -64,8 +64,10 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a> | ✓ |  | ✓ | ✓ | |
 | <a href="https://gemini.com" target="_blank">Gemini</a> | ✓ |  | ✓ | ✓ | |
 | <a href="https://www.kraken.com" target="_blank">Kraken</a> | ✓ |  | ✓ |  | Validation in progress |
+| <a href="https://poloniex.com" target="_blank">Poloniex</a> | ✓ | ✓ |  |  | | 
 | <a href="https://btc-e.com" target="_blank">BTC-e</a> | ✓ |  |  |  | |
 | <a href="https://www.itbit.com" target="_blank">itBit</a> | ✓ |  |  |  | |
+
 
 #### Credentials
 
@@ -145,10 +147,6 @@ Start it by typing:
 ### Tasks And Issues
 
 Please check the <a href="https://github.com/butor/blackbird/issues" target="_blank">issues page</a> for the current tasks and issues. If you face any problems with Blackbird please open a new issue on that page.
-
-### License
-
-* <a href="https://en.wikipedia.org/wiki/MIT_License" target="_blank">MIT</a>
 
 ### Contact
 
