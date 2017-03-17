@@ -34,29 +34,39 @@ double getQuote(Parameters& params, bool isBid) {
 
 double getAvail(Parameters& params, std::string currency) {
   // TODO
+  return 0.0;
 }
 
 int sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
   // TODO
+  return 0;
 }
 
 int sendShortOrder(Parameters& params, std::string direction, double quantity, double price) {
   // TODO
+  return 0;
 }
 
 bool isOrderComplete(Parameters& params, int orderId) {
   // TODO
+  return false;
 }
 
 double getActivePos(Parameters& params) {
   // TODO
+  return 0.0;
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
   // TODO
+  return 0.0;
 }
 
 json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options) {
   // TODO
+  return NULL;
 }
+  
+}
+
 
