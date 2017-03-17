@@ -69,7 +69,7 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 
 | Exchange | Long | Short |
 | -------- |:----:|:-----:|
-| <a href="https://poloniex.com" target="_blank">Poloniex</a> | ✓ | ✓ | 
+| <a href="https://poloniex.com" target="_blank">Poloniex</a> | ✓ | ✓ |
 | <a href="https://btc-e.com" target="_blank">BTC-e</a> | ✓ |  |
 | <a href="https://www.itbit.com" target="_blank">itBit</a> | ✓ |  |
 
@@ -134,19 +134,37 @@ If all goes well this produces a Blackbird executable in the project directory.
 
 #### Ubuntu (Amazon EC2 compatible)
 
-Run the following commands:
+1. Run the following commands:
 
-    sudo apt-get install libssl-dev libjansson-dev libcurl4-openssl-dev libsqlite3-dev sendemail make gcc g++
-    mkdir blackbird
-    cd blackbird
-    git clone --recursive  git://github.com/butor/blackbird.git .
-    make
+  ```
+  sudo apt-get install libssl-dev libjansson-dev libcurl4-openssl-dev libsqlite3-dev sendemail make gcc g++
+  mkdir blackbird
+  cd blackbird
+  git clone --recursive  git://github.com/butor/blackbird.git .
+  make
+  ```
 
-#### Run the software
+2. Run the software, by typing:
 
-Start it by typing:
+  ```
+  ./blackbird
+  ```
 
-    ./blackbird
+#### Docker
+
+1. Download and install Docker [here](https://www.docker.com/).
+
+2. Build the container:
+
+  ```
+  docker build -t blackbird .
+  ```
+
+3. Mount your configuration and run the container (OSX/Linux):
+
+  ```
+  docker run -v $(pwd)/blackbird.conf:/blackbird/blackbird.conf -it blackbird /blackbird/blackbird
+  ```
 
 ### Tasks And Issues
 
