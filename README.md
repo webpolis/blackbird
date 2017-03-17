@@ -57,8 +57,8 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 
 #### Implemented Exchanges
 
-| Exchange | Long | Short | Implemented | Tested  | Note |
-| -------- |:----:|:-----:|:-----------:|:-------:| ---- |
+| Exchange | Long | Short | Tested | Note |
+| -------- |:----:|:-----:|:------:| ---- |
 | <a href="https://www.bitfinex.com" target="_blank">Bitfinex</a> | ✓ | ✓ | ✓ | |
 | <a href="https://www.okcoin.com" target="_blank">OKCoin</a> | ✓ |  | ✓ |their API now offers short selling: <a href="https://www.okcoin.com/about/rest_api.do" target="_blank">link here</a> |
 | <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a> | ✓ |  | ✓ | |
