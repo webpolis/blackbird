@@ -297,6 +297,9 @@ int main(int argc, char** argv) {
   time_t currTime;
   time_t diffTime;
 
+  // Check for restore.txt to see if the program exited with an open position.
+  inMarket = res.loadPartialResult("restore.txt");
+
   // main analysis loop
   while (stillRunning) {
     currTime = mktime(&timeinfo);
@@ -442,6 +445,11 @@ int main(int argc, char** argv) {
                 }
               }
               logFile << "Done" << std::endl;
+
+              // Store the partial result to file in case
+              // the program exits before closing the position.
+              res.savePartialResult("restore.txt");
+
               longOrderId = 0;
               shortOrderId = 0;
               break;
@@ -539,6 +547,10 @@ int main(int argc, char** argv) {
             logFile << "Email sent" << std::endl;
           }
           res.reset();
+          // Remove restore.txt since this trade is done.
+          std::ofstream resFile;
+          resFile.open("restore.txt", std::ofstream::trunc);
+          resFile.close();
         }
       }
       if (params.verbose) logFile << '\n';
