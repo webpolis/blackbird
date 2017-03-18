@@ -38,7 +38,7 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
 
 retry_state:
   sleep(2.0);
-  readBuffer = "";
+  readBuffer.clear();
   curl_easy_setopt(params.curl, CURLOPT_DNS_CACHE_TIMEOUT, 0);
 
 curl_state:
