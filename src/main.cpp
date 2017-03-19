@@ -250,6 +250,11 @@ int main(int argc, char** argv) {
                      return tmp;
                    } );
 
+  // Check for restore.txt to see if the program exited with an open position.
+  Result res;
+  res.reset();
+  bool inMarket = res.loadPartialResult("restore.txt");
+
   // write the balances into the log file
   for (int i = 0; i < numExch; ++i) {
     logFile << "   " << params.exchName[i] << ":\t";
@@ -260,7 +265,7 @@ int main(int argc, char** argv) {
     } else {
       logFile << balance[i].usd << " USD\t" << std::setprecision(6) << balance[i].btc  << std::setprecision(2) << " BTC" << std::endl;
     }
-    if (balance[i].btc > 0.0300) {
+    if (balance[i].btc > 0.0300 && !inMarket) {
       logFile << "ERROR: All BTC accounts must be empty before starting Blackbird" << std::endl;
       return -1;
     }
@@ -288,17 +293,12 @@ int main(int argc, char** argv) {
   if (!params.verbose) {
     logFile << "Running..." << std::endl;
   }
-  bool inMarket = false;
+
   int resultId = 0;
-  Result res;
-  res.reset();
   unsigned currIteration = 0;
   bool stillRunning = true;
   time_t currTime;
   time_t diffTime;
-
-  // Check for restore.txt to see if the program exited with an open position.
-  inMarket = res.loadPartialResult("restore.txt");
 
   // main analysis loop
   while (stillRunning) {
