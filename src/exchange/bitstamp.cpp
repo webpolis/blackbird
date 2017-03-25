@@ -20,24 +20,10 @@ double getQuote(Parameters& params, bool isBid)
 {
   bool GETRequest = false;
   json_t* root = getJsonFromUrl(params, "https://www.bitstamp.net/api/ticker/", "", GETRequest);
-  const char* quote;
-  double quoteValue;
-  if (isBid)
-  {
-    quote = json_string_value(json_object_get(root, "bid"));
-  }
-  else
-  {
-    quote = json_string_value(json_object_get(root, "ask"));
-  }
-  if (quote != NULL)
-  {
-    quoteValue = atof(quote);
-  }
-  else
-  {
-    quoteValue = 0.0;
-  }
+
+  const char *quote = json_string_value(json_object_get(root, isBid ? "bid" : "ask"));
+  double quoteValue = quote ? atof(quote) : 0.0;
+
   json_decref(root);
   return quoteValue;
 }
@@ -53,11 +39,11 @@ double getAvail(Parameters& params, std::string currency)
   }
   double availability = 0.0;
   const char* returnedText = NULL;
-  if (currency.compare("btc") == 0)
+  if (currency == "btc")
   {
     returnedText = json_string_value(json_object_get(root, "btc_balance"));
   }
-  else if (currency.compare("usd") == 0)
+  else if (currency == "usd")
   {
     returnedText = json_string_value(json_object_get(root, "usd_balance"));
   }
@@ -88,7 +74,7 @@ int sendLongOrder(Parameters& params, std::string direction, double quantity, do
   int orderId = json_integer_value(json_object_get(root, "id"));
   if (orderId == 0)
   {
-    *params.logFile << "<Bitstamp> Order ID = 0. Message: " << json_dumps(root, 0) << std::endl;
+    *params.logFile << "<Bitstamp> Order ID = 0. Message: " << json_dumps(root, 0) << '\n';
   }
   *params.logFile << "<Bitstamp> Done (order ID: " << orderId << ")\n" << std::endl;
   json_decref(root);
@@ -105,14 +91,7 @@ bool isOrderComplete(Parameters& params, int orderId)
   json_t* root = authRequest(params, "https://www.bitstamp.net/api/order_status/", options);
   std::string status = json_string_value(json_object_get(root, "status"));
   json_decref(root);
-  if (status.compare("Finished") == 0)
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return status == "Finished";
 }
 
 double getActivePos(Parameters& params) { return getAvail(params, "btc"); }
@@ -120,15 +99,9 @@ double getActivePos(Parameters& params) { return getAvail(params, "btc"); }
 double getLimitPrice(Parameters& params, double volume, bool isBid)
 {
   bool GETRequest = false;
-  json_t* root;
-  if (isBid)
-  {
-    root = json_object_get(getJsonFromUrl(params, "https://www.bitstamp.net/api/order_book/", "", GETRequest), "bids");
-  }
-  else
-  {
-    root = json_object_get(getJsonFromUrl(params, "https://www.bitstamp.net/api/order_book/", "", GETRequest), "asks");
-  }
+  json_t *root = getJsonFromUrl(params, "https://www.bitstamp.net/api/order_book/", "", GETRequest);
+  auto orderbook = json_object_get(root, isBid ? "bids" : "asks");
+
   // loop on volume
   *params.logFile << "<Bitstamp> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
   double tmpVol = 0.0;
@@ -137,14 +110,14 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   int i = 0;
   while (tmpVol < fabs(volume) * params.orderBookFactor)
   {
-    p = atof(json_string_value(json_array_get(json_array_get(root, i), 0)));
-    v = atof(json_string_value(json_array_get(json_array_get(root, i), 1)));
+    p = atof(json_string_value(json_array_get(json_array_get(orderbook, i), 0)));
+    v = atof(json_string_value(json_array_get(json_array_get(orderbook, i), 1)));
     *params.logFile << "<Bitstamp> order book: " << v << "@$" << p << std::endl;
     tmpVol += v;
     i++;
   }
   double limPrice = 0.0;
-  limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
+  limPrice = atof(json_string_value(json_array_get(json_array_get(orderbook, i-1), 0)));
   json_decref(root);
   return limPrice;
 }
@@ -167,7 +140,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string options)
   oss.str("");
   oss << "key=" << params.bitstampApi << "&signature=" << mdString << "&nonce=" << nonce << "&" << options;
   std::string postParams = oss.str().c_str();
-  CURLcode resCurl;
+
   if (params.curl)
   {
     std::string readBuffer;
@@ -178,9 +151,8 @@ json_t* authRequest(Parameters& params, std::string url, std::string options)
     curl_easy_setopt(params.curl, CURLOPT_WRITEDATA, &readBuffer);
     curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
-    resCurl = curl_easy_perform(params.curl);
-    json_t* root;
-    json_error_t error;
+    CURLcode resCurl = curl_easy_perform(params.curl);
+
     while (resCurl != CURLE_OK)
     {
       *params.logFile << "<Bitstamp> Error with cURL. Retry in 2 sec..." << std::endl;
@@ -188,12 +160,13 @@ json_t* authRequest(Parameters& params, std::string url, std::string options)
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
     }
-    root = json_loads(readBuffer.c_str(), 0, &error);
+    json_error_t error;
+    json_t *root = json_loads(readBuffer.c_str(), 0, &error);
     while (!root)
     {
-      *params.logFile << "<Bitstamp> Error with JSON:\n" << error.text << std::endl;
-      *params.logFile << "<Bitstamp> Buffer:\n" << readBuffer.c_str() << std::endl;
-      *params.logFile << "<Bitstamp> Retrying..." << std::endl;
+      *params.logFile << "<Bitstamp> Error with JSON:\n" << error.text << '\n'
+                      << "<Bitstamp> Buffer:\n" << readBuffer << '\n'
+                      << "<Bitstamp> Retrying..." << std::endl;
       sleep(2.0);
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
