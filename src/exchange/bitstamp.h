@@ -24,4 +24,3 @@ json_t* authRequest(Parameters& params, std::string url, std::string options);
 }
 
 #endif
-
