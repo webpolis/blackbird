@@ -60,7 +60,7 @@ double getAvail(Parameters& params, std::string currency)
   return availability;
 }
 
-int sendLongOrder(Parameters& params, std::string direction, double quantity, double price)
+std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price)
 {
   *params.logFile << "<Bitstamp> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
   std::ostringstream oss;
@@ -71,8 +71,8 @@ int sendLongOrder(Parameters& params, std::string direction, double quantity, do
   oss << "amount=" << quantity << "&price=" << std::fixed << std::setprecision(2) << price;
   std::string options = oss.str();
   json_t* root = authRequest(params, url, options);
-  int orderId = json_integer_value(json_object_get(root, "id"));
-  if (orderId == 0)
+  auto orderId = std::to_string(json_integer_value(json_object_get(root, "id")));
+  if (orderId == "0")
   {
     *params.logFile << "<Bitstamp> Order ID = 0. Message: " << json_dumps(root, 0) << '\n';
   }
@@ -81,13 +81,11 @@ int sendLongOrder(Parameters& params, std::string direction, double quantity, do
   return orderId;
 }
 
-bool isOrderComplete(Parameters& params, int orderId)
+bool isOrderComplete(Parameters& params, std::string orderId)
 {
-  if (orderId == 0) return true;
+  if (orderId == "0") return true;
 
-  std::ostringstream oss;
-  oss << "id=" << orderId;
-  std::string options = oss.str();
+  auto options = "id=" + orderId;
   json_t* root = authRequest(params, "https://www.bitstamp.net/api/order_status/", options);
   std::string status = json_string_value(json_object_get(root, "status"));
   json_decref(root);
