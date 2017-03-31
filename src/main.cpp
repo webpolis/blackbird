@@ -265,7 +265,7 @@ int main(int argc, char** argv) {
     } else {
       logFile << balance[i].usd << " USD\t" << std::setprecision(6) << balance[i].btc  << std::setprecision(2) << " BTC" << std::endl;
     }
-    if (balance[i].btc > 0.0300 && !inMarket) {
+    if (balance[i].btc > 0.0050 && !inMarket) {
       logFile << "ERROR: All BTC accounts must be empty before starting Blackbird" << std::endl;
       return -1;
     }
