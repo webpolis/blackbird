@@ -1,13 +1,15 @@
 #ifndef BTCE_H
 #define BTCE_H
 
+#include "quote_t.h"
+#include "parameters.h"
+
 #include <curl/curl.h>
 #include <string>
-#include "parameters.h"
 
 namespace BTCe {
 
-double getQuote(Parameters& params, bool isBid);
+quote_t getQuote(Parameters& params);
 
 double getAvail(Parameters& params, std::string currency);
 

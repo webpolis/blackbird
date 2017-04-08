@@ -8,23 +8,18 @@
 
 namespace ItBit {
 
-double getQuote(Parameters& params, bool isBid) {
+quote_t getQuote(Parameters& params)
+{
   bool GETRequest = false;
   json_t* root = getJsonFromUrl(params, "https://api.itbit.com/v1/markets/XBTUSD/ticker", "", GETRequest);
-  const char* quote;
-  double quoteValue;
-  if (isBid) {
-    quote = json_string_value(json_object_get(root, "bid"));
-  } else {
-    quote = json_string_value(json_object_get(root, "ask"));
-  }
-  if (quote != NULL) {
-    quoteValue = atof(quote);
-  } else {
-    quoteValue = 0.0;
-  }
+  const char *quote = json_string_value(json_object_get(root, "bid"));
+  auto bidValue = quote ? std::stod(quote) : 0.0;
+
+  quote = json_string_value(json_object_get(root, "ask"));
+  auto askValue = quote ? std::stod(quote) : 0.0;
+
   json_decref(root);
-  return quoteValue;
+  return std::make_pair(bidValue, askValue);
 }
 
 double getAvail(Parameters& params, std::string currency) {

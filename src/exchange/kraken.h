@@ -1,9 +1,11 @@
 #ifndef KRAKEN_H
 #define KRAKEN_H
 
+#include "quote_t.h"
+#include "parameters.h"
+
 #include <curl/curl.h>
 #include <string>
-#include "parameters.h"
 
 extern json_t* krakenTicker;
 extern bool krakenGotTicker;
@@ -12,7 +14,7 @@ extern bool krakenGotLimPrice;
 
 namespace Kraken {
 
-double getQuote(Parameters& params, bool isBid);
+quote_t getQuote(Parameters& params);
 
 double getAvail(Parameters& params, std::string currency);
 

@@ -16,16 +16,19 @@
 
 namespace Bitstamp {
 
-double getQuote(Parameters& params, bool isBid)
+quote_t getQuote(Parameters& params)
 {
   bool GETRequest = false;
   json_t* root = getJsonFromUrl(params, "https://www.bitstamp.net/api/ticker/", "", GETRequest);
 
-  const char *quote = json_string_value(json_object_get(root, isBid ? "bid" : "ask"));
-  double quoteValue = quote ? atof(quote) : 0.0;
+  const char *quote = json_string_value(json_object_get(root, "bid"));
+  auto bidValue = quote ? atof(quote) : 0.0;
+
+  quote = json_string_value(json_object_get(root, "ask"));
+  auto askValue = quote ? atof(quote) : 0.0;
 
   json_decref(root);
-  return quoteValue;
+  return std::make_pair(bidValue, askValue);
 }
 
 double getAvail(Parameters& params, std::string currency)

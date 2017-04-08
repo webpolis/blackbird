@@ -13,23 +13,18 @@
 
 namespace Poloniex {
 
-double getQuote(Parameters& params, bool isBid) {
+quote_t getQuote(Parameters& params)
+{
   bool GETRequest = false;
   json_t* root = getJsonFromUrl(params, "https://poloniex.com/public?command=returnTicker", "", GETRequest);
-  const char* quote;
-  double quoteValue;
-  if (isBid) {
-    quote = json_string_value(json_object_get(json_object_get(root, "USDT_BTC"), "highestBid"));
-  } else {
-    quote = json_string_value(json_object_get(json_object_get(root, "USDT_BTC"), "lowestAsk"));
-  }
-  if (quote != NULL) {
-    quoteValue = atof(quote);
-  } else {
-    quoteValue = 0.0;
-  }
+  const char *quote = json_string_value(json_object_get(json_object_get(root, "USDT_BTC"), "highestBid"));
+  auto bidValue = quote ? std::stod(quote) : 0.0;
+
+  quote = json_string_value(json_object_get(json_object_get(root, "USDT_BTC"), "lowestAsk"));
+  auto askValue = quote ? std::stod(quote) : 0.0;
+
   json_decref(root);
-  return quoteValue;
+  return std::make_pair(bidValue, askValue);
 }
 
 double getAvail(Parameters& params, std::string currency) {

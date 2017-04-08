@@ -17,30 +17,19 @@
 
 namespace Bitfinex {
 
-double getQuote(Parameters& params, bool isBid)
+quote_t getQuote(Parameters& params)
 {
   bool GETRequest = true;
-  json_t* root = getJsonFromUrl(params, "https://api.bitfinex.com/v1/ticker/btcusd", "", GETRequest);
-  const char* quote;
-  double quoteValue;
-  if (isBid)
-  {
-    quote = json_string_value(json_object_get(root, "bid"));
-  }
-  else
-  {
-    quote = json_string_value(json_object_get(root, "ask"));
-  }
-  if (quote != NULL)
-  {
-    quoteValue = atof(quote);
-  }
-  else
-  {
-    quoteValue = 0.0;
-  }
+  json_t *root = getJsonFromUrl(params, "https://api.bitfinex.com/v1/ticker/btcusd", "", GETRequest);
+
+  const char *quote = json_string_value(json_object_get(root, "bid"));
+  double bidValue = quote ? std::stod(quote) : 0.0;
+
+  quote = json_string_value(json_object_get(root, "ask"));
+  double askValue = quote ? std::stod(quote) : 0.0;
+
   json_decref(root);
-  return quoteValue;
+  return std::make_pair(bidValue, askValue);
 }
 
 double getAvail(Parameters& params, std::string currency)

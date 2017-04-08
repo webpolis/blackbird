@@ -8,17 +8,15 @@
 
 namespace BTCe {
 
-double getQuote(Parameters& params, bool isBid) {
+quote_t getQuote(Parameters& params)
+{
   bool GETRequest = false;
-  json_t* root = getJsonFromUrl(params, "https://btc-e.com/api/3/ticker/btc_usd", "", GETRequest);
-  double quoteValue;
-  if (isBid) {
-    quoteValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "buy"));
-  } else {
-    quoteValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "sell"));
-  }
+  json_t *root = getJsonFromUrl(params, "https://btc-e.com/api/3/ticker/btc_usd", "", GETRequest);
+  double bidValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "buy"));
+  double askValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "sell"));
+
   json_decref(root);
-  return quoteValue;
+  return std::make_pair(bidValue, askValue);
 }
 
 double getAvail(Parameters& params, std::string currency) {

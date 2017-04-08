@@ -25,7 +25,7 @@
 
 
 // typedef declarations needed for the function arrays
-typedef double (*getQuoteType) (Parameters& params, bool isBid);
+typedef quote_t (*getQuoteType) (Parameters& params);
 typedef double (*getAvailType) (Parameters& params, std::string currency);
 typedef std::string (*sendOrderType) (Parameters& params, std::string direction, double quantity, double price);
 typedef bool (*isOrderCompleteType) (Parameters& params, std::string orderId);
@@ -325,8 +325,9 @@ int main(int argc, char** argv) {
     }
     // get the bid and ask of all the exchanges
     for (int i = 0; i < numExch; ++i) {
-      double bid = getQuote[i](params, true);
-      double ask = getQuote[i](params, false);
+      auto quote = getQuote[i](params);
+      double bid = quote.bid();
+      double ask = quote.ask();
 
       addBidAskToDb(dbTableName[i], printDateTimeDb(currTime), bid, ask, params);
 

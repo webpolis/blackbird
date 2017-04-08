@@ -21,7 +21,8 @@ bool krakenGotLimPrice = false;
 
 namespace Kraken {
 
-double getQuote(Parameters& params, bool isBid) {
+quote_t getQuote(Parameters& params)
+{
   bool GETRequest = false;
   json_t* root;
   if (krakenGotTicker) {
@@ -32,22 +33,16 @@ double getQuote(Parameters& params, bool isBid) {
     krakenGotTicker = true;
     krakenTicker = root;
   }
-  const char* quote;
-  double quoteValue;
-  if (isBid) {
-    quote = json_string_value(json_array_get(json_object_get(json_object_get(json_object_get(root, "result"), "XXBTZUSD"), "b"), 0));
-  } else {
-    quote = json_string_value(json_array_get(json_object_get(json_object_get(json_object_get(root, "result"), "XXBTZUSD"), "a"), 0));
-  }
-  if (quote != NULL) {
-    quoteValue = atof(quote);
-  } else {
-    quoteValue = 0.0;
-  }
+  const char *quote = json_string_value(json_array_get(json_object_get(json_object_get(json_object_get(root, "result"), "XXBTZUSD"), "b"), 0));
+  auto bidValue = quote ? std::stod(quote) : 0.0;
+
+  quote = json_string_value(json_array_get(json_object_get(json_object_get(json_object_get(root, "result"), "XXBTZUSD"), "a"), 0));
+  auto askValue = quote ? std::stod(quote) : 0.0;
+
   if (!krakenGotTicker) {
     json_decref(root);
   }
-  return quoteValue;
+  return std::make_pair(bidValue, askValue);
 }
 
 double getAvail(Parameters& params, std::string currency) {

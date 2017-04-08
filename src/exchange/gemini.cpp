@@ -13,23 +13,18 @@
 
 namespace Gemini {
 
-double getQuote(Parameters& params, bool isBid) {
+quote_t getQuote(Parameters& params)
+{
   bool GETRequest = false;
   json_t* root = getJsonFromUrl(params, "https://api.gemini.com/v1/book/BTCUSD", "", GETRequest);
-  const char *quote;
-  double quoteValue;
-  if (isBid) {
-    quote = json_string_value(json_object_get(json_array_get(json_object_get(root, "bids"), 0), "price"));
-  } else {
-    quote = json_string_value(json_object_get(json_array_get(json_object_get(root, "asks"), 0), "price"));
-  }
-  if (quote != NULL) {
-    quoteValue = atof(quote);
-  } else {
-    quoteValue = 0.0;
-  }
+  const char *quote = json_string_value(json_object_get(json_array_get(json_object_get(root, "bids"), 0), "price"));
+  auto bidValue = quote ? std::stod(quote) : 0.0;
+
+  quote = json_string_value(json_object_get(json_array_get(json_object_get(root, "asks"), 0), "price"));
+  auto askValue = quote ? std::stod(quote) : 0.0;
+
   json_decref(root);
-  return quoteValue;
+  return std::make_pair(bidValue, askValue);
 }
 
 double getAvail(Parameters& params, std::string currency) {
