@@ -12,10 +12,10 @@ Bitcoin::Bitcoin(unsigned i, std::string n, double f, bool h, bool m)
   ask = 0.0;
 }
 
-void Bitcoin::updateData(double b, double a)
+void Bitcoin::updateData(quote_t quote)
 {
-  bid = b;
-  ask = a;
+  bid = quote.bid();
+  ask = quote.ask();
 }
 
 unsigned Bitcoin::getId() const { return id; }

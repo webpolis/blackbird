@@ -340,7 +340,7 @@ int main(int argc, char** argv) {
       if (params.verbose) {
         logFile << "   " << params.exchName[i] << ": \t" << bid << " / " << ask << std::endl;
       }
-      btcVec[i].updateData(bid, ask);
+      btcVec[i].updateData(quote);
       curl_easy_reset(params.curl);
     }
     if (params.verbose) {
