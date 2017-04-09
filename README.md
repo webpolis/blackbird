@@ -98,7 +98,7 @@ Parameter | Default Value | Description
 | TrailingSpreadLim | 0.0008 | The limit under which the trailing spread is generated. If the current spread is above SpreadTarget and at 0.70%, then by default the trailing spread will be generated at 0.62% |
 | TrailingSpreadCount | 1 |  The number of time the spread must be between SpreadTarget and the trailing spread before sending the orders to the market |
 | OrderBookFactor | 3.0 | In order to be executed as fast as possible and avoid slippage, Blackbird checks the liquidity in the order books of the exchanges and makes sure there is at least 3.0 times the needed liquidity before executing the order |
-| UseVolatility | false |  If true, display the spreads volatility infirmation in the log file. This is not used for the moment and only displayed as information |
+| UseVolatility | false |  If true, display the spreads volatility information in the log file. This is not used for the moment and only displayed as information |
 | VolatilityPeriod | 600 | The period length of the volatility in number of iterations. This is not used for the moment and only displayed as information |
 | SendEmail | false | When true, an e-mail will be sent every time an arbitrage trade is completed, with information such as the names of the exchanges and the trade return |
 | DBFile | 'blackbird.db' | SQLite3 database file to use for storing the bid/ask information of the exchanges for reference. Blackbird will create this file if it doesn't already exist |
