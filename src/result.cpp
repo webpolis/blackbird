@@ -70,61 +70,56 @@ void Result::reset()
   std::fill_n(reinterpret_cast<arr2d_t *>(trailing), arr2d_size, -1.0);
 }
 
-bool Result::loadPartialResult(std::string filename){
+bool Result::loadPartialResult(std::string filename)
+{
   // tries to load the state from a previous position.
-  std::ifstream resFile;
-  resFile.open(filename, std::ifstream::ate);
-  if(resFile.is_open() && (resFile.tellg() != 0)){
-    resFile.seekg(0);
-    resFile >> id;
-    resFile >> idExchLong;
-    resFile >> idExchShort;
-    resFile >> exchNameLong;
-    resFile >> exchNameShort;
-    resFile >> exposure;
-    resFile >> feesLong;
-    resFile >> feesShort;
-    resFile >> entryTime;
-    resFile >> spreadIn;
-    resFile >> priceLongIn;
-    resFile >> priceShortIn;
-    resFile >> usdTotBalanceBefore;
-    resFile >> exitTarget;
+  std::ifstream resFile(filename, std::ifstream::ate);
+  if(!resFile || resFile.tellg() == 0) return false;
 
-    resFile >> maxSpread[idExchLong][idExchShort];
-    resFile >> minSpread[idExchLong][idExchShort];
-    resFile >> trailing[idExchLong][idExchShort];
-    resFile >> trailingWaitCount[idExchLong][idExchShort];
+  resFile.seekg(0);
+  resFile >> id
+          >> idExchLong   >> idExchShort
+          >> exchNameLong >> exchNameShort
+          >> exposure
+          >> feesLong
+          >> feesShort
+          >> entryTime
+          >> spreadIn
+          >> priceLongIn
+          >> priceShortIn
+          >> usdTotBalanceBefore
+          >> exitTarget;
 
-    resFile.close();
-    return true;
-  }
-  return false;
+  resFile >> maxSpread[idExchLong][idExchShort]
+          >> minSpread[idExchLong][idExchShort]
+          >> trailing[idExchLong][idExchShort]
+          >> trailingWaitCount[idExchLong][idExchShort];
+
+  return true;
 }
 
-void Result::savePartialResult(std::string filename){
-  std::ofstream resFile;
-  resFile.open(filename, std::ofstream::trunc);
-  resFile << id << std::endl;
-  resFile << idExchLong << std::endl;
-  resFile << idExchShort << std::endl;
-  resFile << exchNameLong << std::endl;
-  resFile << exchNameShort << std::endl;
-  resFile << exposure << std::endl;
-  resFile << feesLong << std::endl;
-  resFile << feesShort << std::endl;
-  resFile << entryTime << std::endl;
-  resFile << spreadIn << std::endl;
-  resFile << priceLongIn << std::endl;
-  resFile << priceShortIn << std::endl;
-  resFile << usdTotBalanceBefore << std::endl;
-  resFile << exitTarget << std::endl;
+void Result::savePartialResult(std::string filename)
+{
+  std::ofstream resFile(filename, std::ofstream::trunc);
 
-  resFile << maxSpread[idExchLong][idExchShort] << std::endl;
-  resFile << minSpread[idExchLong][idExchShort] << std::endl;
-  resFile << trailing[idExchLong][idExchShort] << std::endl;
-  resFile << trailingWaitCount[idExchLong][idExchShort] << std::endl;
+  resFile << id << '\n'
+          << idExchLong << '\n'
+          << idExchShort << '\n'
+          << exchNameLong << '\n'
+          << exchNameShort << '\n'
+          << exposure << '\n'
+          << feesLong << '\n'
+          << feesShort << '\n'
+          << entryTime << '\n'
+          << spreadIn << '\n'
+          << priceLongIn << '\n'
+          << priceShortIn << '\n'
+          << usdTotBalanceBefore << '\n'
+          << exitTarget << '\n';
 
-  resFile.flush();
-  resFile.close();
+  resFile << maxSpread[idExchLong][idExchShort] << '\n'
+          << minSpread[idExchLong][idExchShort] << '\n'
+          << trailing[idExchLong][idExchShort] << '\n'
+          << trailingWaitCount[idExchLong][idExchShort]
+          << std::endl;
 }
