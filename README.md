@@ -9,7 +9,6 @@
 
 ### Introduction
 
-
 Blackbird Bitcoin Arbitrage is a C++ trading system that does automatic long/short arbitrage between Bitcoin exchanges.
 
 ### How It Works
