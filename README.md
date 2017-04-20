@@ -7,6 +7,8 @@
 
 ### Introduction
 
+[![Join the chat at https://gitter.im/blackbird_bitcoin_arbitrage/Lobby](https://badges.gitter.im/blackbird_bitcoin_arbitrage/Lobby.svg)](https://gitter.im/blackbird_bitcoin_arbitrage/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Blackbird Bitcoin Arbitrage is a C++ trading system that does automatic long/short arbitrage between Bitcoin exchanges.
 
 ### How It Works
