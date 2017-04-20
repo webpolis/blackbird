@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/butor/blackbird.svg?branch=master)](https://travis-ci.org/butor/blackbird)
 
+[![Blackbird chat](https://badges.gitter.im/blackbird_bitcoin_arbitrage/Lobby.svg)](https://gitter.im/blackbird_bitcoin_arbitrage/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 <p align="center">
 <img src="https://cloud.githubusercontent.com/assets/11370278/10808535/02230d46-7dc3-11e5-92d8-da15cae8c6e9.png" width="50%" alt="Blackbird Bitcoin Arbitrage">
 </p>
