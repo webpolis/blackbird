@@ -129,7 +129,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string options)
   std::ostringstream oss;
   oss << nonce << params.bitstampClientId << params.bitstampApi;
   unsigned char* digest;
-  digest = HMAC(EVP_sha256(), params.bitstampSecret.c_str(), strlen(params.bitstampSecret.c_str()), (unsigned char*)oss.str().c_str(), strlen(oss.str().c_str()), NULL, NULL);
+  digest = HMAC(EVP_sha256(), params.bitstampSecret.c_str(), params.bitstampSecret.size(), (unsigned char*)oss.str().data(), oss.str().size(), NULL, NULL);
   char mdString[SHA256_DIGEST_LENGTH+100];  // FIXME +100
   for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i)
   {
