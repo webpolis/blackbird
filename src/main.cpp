@@ -224,7 +224,7 @@ int main(int argc, char** argv) {
   for (int i = 0; i < numExch; ++i) {
     btcVec.push_back(Bitcoin(i, params.exchName[i], params.fees[i], params.canShort[i], params.isImplemented[i]));
   }
-  curl_global_init(CURL_GLOBAL_ALL);
+
   params.curl = curl_easy_init();
   logFile << "[ Targets ]" << std::endl;
   logFile << "   Spread Entry:  " << params.spreadEntry * 100.0 << "%" << std::endl;
@@ -570,7 +570,6 @@ int main(int argc, char** argv) {
   }
   // analysis loop exited, do some cleanup
   curl_easy_cleanup(params.curl);
-  curl_global_cleanup();
 
   csvFile.close();
   logFile.close();
