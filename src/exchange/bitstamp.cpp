@@ -1,6 +1,7 @@
 #include "bitstamp.h"
-#include "curl_fun.h"
 #include "parameters.h"
+#include "curl_fun.h"
+#include "utils/restapi.h"
 #include "utils/base64.h"
 
 #include "jansson.h"
@@ -14,10 +15,17 @@
 
 namespace Bitstamp {
 
+RestApi& queryHandle(Parameters &params)
+{
+  static RestApi query ("https://www.bitstamp.net",
+                        params.cacert.c_str(), *params.logFile);
+  return query;
+}
+
 quote_t getQuote(Parameters& params)
 {
-  bool GETRequest = false;
-  json_t* root = getJsonFromUrl(params, "https://www.bitstamp.net/api/ticker/", "", GETRequest);
+  auto &exchange = queryHandle(params);
+  json_t *root = exchange.getRequest("/api/ticker");
 
   const char *quote = json_string_value(json_object_get(root, "bid"));
   auto bidValue = quote ? atof(quote) : 0.0;
@@ -97,8 +105,8 @@ double getActivePos(Parameters& params) { return getAvail(params, "btc"); }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid)
 {
-  bool GETRequest = false;
-  json_t *root = getJsonFromUrl(params, "https://www.bitstamp.net/api/order_book/", "", GETRequest);
+  auto &exchange = queryHandle(params);
+  json_t *root = exchange.getRequest("/api/order_book");
   auto orderbook = json_object_get(root, isBid ? "bids" : "asks");
 
   // loop on volume
