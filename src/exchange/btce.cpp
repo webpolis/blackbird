@@ -19,8 +19,8 @@ quote_t getQuote(Parameters& params)
   auto &exchange = queryHandle(params);
   json_t *root = exchange.getRequest("/api/3/ticker/btc_usd");
 
-  double bidValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "buy"));
-  double askValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "sell"));
+  double bidValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "sell"));
+  double askValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "buy"));
 
   json_decref(root);
   return std::make_pair(bidValue, askValue);
