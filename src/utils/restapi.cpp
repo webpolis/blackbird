@@ -7,6 +7,13 @@
 
 namespace
 {
+// automatic init of curl's systems
+struct CurlStartup
+{
+  CurlStartup()   { curl_global_init(CURL_GLOBAL_ALL); }
+  ~CurlStartup()  { curl_global_cleanup(); }
+}runCurlStartup;
+
 // internal helpers
 size_t recvCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {
