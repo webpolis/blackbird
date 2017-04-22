@@ -1,5 +1,5 @@
-#ifndef restapi_H
-#define restapi_H
+#ifndef RESTAPI_H
+#define RESTAPI_H
 
 #include "curl/curl.h"
 #include <iostream>
