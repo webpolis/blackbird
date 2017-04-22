@@ -2,10 +2,10 @@
 #define BTCE_H
 
 #include "quote_t.h"
-#include "parameters.h"
 
-#include <curl/curl.h>
 #include <string>
+
+struct Parameters;
 
 namespace BTCe {
 
@@ -20,4 +20,3 @@ double getLimitPrice(Parameters& params, double volume, bool isBid);
 }
 
 #endif
-

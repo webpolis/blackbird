@@ -1,17 +1,24 @@
-#include <string.h>
-#include <iostream>
-#include <sstream>
-#include <unistd.h>
-#include <jansson.h>
 #include "btce.h"
-#include "curl_fun.h"
+#include "parameters.h"
+#include "utils/restapi.h"
+
+#include "jansson.h"
+#include <unistd.h>
 
 namespace BTCe {
 
+RestApi& queryHandle(Parameters &params)
+{
+  static RestApi query ("https://btc-e.com",
+                        params.cacert.c_str(), *params.logFile);
+  return query;
+}
+
 quote_t getQuote(Parameters& params)
 {
-  bool GETRequest = false;
-  json_t *root = getJsonFromUrl(params, "https://btc-e.com/api/3/ticker/btc_usd", "", GETRequest);
+  auto &exchange = queryHandle(params);
+  json_t *root = exchange.getRequest("/api/3/ticker/btc_usd");
+
   double bidValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "buy"));
   double askValue = json_real_value(json_object_get(json_object_get(root, "btc_usd"), "sell"));
 
@@ -35,4 +42,3 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
 }
 
 }
-
