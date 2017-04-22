@@ -1,18 +1,16 @@
-#include <string.h>
-#include <iostream>
-#include <stdio.h>
+#include "bitstamp.h"
+#include "curl_fun.h"
+#include "parameters.h"
+#include "utils/base64.h"
+
+#include "jansson.h"
+#include "openssl/sha.h"
+#include "openssl/hmac.h"
 #include <unistd.h>
-#include <vector>
 #include <math.h>
 #include <sstream>
 #include <sys/time.h>
-#include "utils/base64.h"
 #include <iomanip>
-#include <openssl/sha.h>
-#include <openssl/hmac.h>
-#include <jansson.h>
-#include "bitstamp.h"
-#include "curl_fun.h"
 
 namespace Bitstamp {
 
