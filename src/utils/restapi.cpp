@@ -81,7 +81,7 @@ void RestApi::CURL_deleter::operator () (curl_slist *slist)
   curl_slist_free_all(slist);
 }
 
-RestApi::RestApi(std::string host,  const char *cacert, std::ostream &log)
+RestApi::RestApi(string host, const char *cacert, std::ostream &log)
     : C(curl_easy_init()), host(std::move(host)), log(log)
 {
   assert(C != nullptr);
@@ -97,22 +97,22 @@ RestApi::RestApi(std::string host,  const char *cacert, std::ostream &log)
   curl_easy_setopt(C.get(), CURLOPT_WRITEFUNCTION, recvCallback);
 }
 
-json_t* RestApi::getRequest(const std::string &uri, unique_slist headers)
+json_t* RestApi::getRequest(const string &uri, unique_slist headers)
 {
   curl_easy_setopt(C.get(), CURLOPT_HTTPGET, true);
   return doRequest(C.get(), host + uri, headers.get(), log);
 }
 
-json_t* RestApi::postRequest (const std::string &uri,
+json_t* RestApi::postRequest (const string &uri,
                               unique_slist headers,
-                              const std::string &post_data)
+                              const string &post_data)
 {
   curl_easy_setopt(C.get(), CURLOPT_POSTFIELDS,     post_data.data());
   curl_easy_setopt(C.get(), CURLOPT_POSTFIELDSIZE,  post_data.size());
   return doRequest(C.get(), host + uri, headers.get(), log);
 }
 
-json_t* RestApi::postRequest (const std::string &uri, const std::string &post_data)
+json_t* RestApi::postRequest (const string &uri, const string &post_data)
 {
   return postRequest(uri, nullptr, post_data);
 }
