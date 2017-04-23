@@ -2,13 +2,11 @@
 #include "parameters.h"
 #include "utils/restapi.h"
 #include "utils/base64.h"
-#include "curl_fun.h"
 #include "hex_str.hpp"
 
 #include "jansson.h"
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
-#include <iostream>
 #include <unistd.h>
 #include <sstream>
 #include <math.h>
@@ -150,84 +148,41 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
 
 json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options)
 {
+  using namespace std;
+
   struct timeval tv;
   gettimeofday(&tv, NULL);
   unsigned long long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
-  std::ostringstream oss;
+  request = "/v1/" + request;
+
+  string payload = "{\"request\":\"" + request +
+                   "\",\"nonce\":\"" + to_string(nonce);
   if (options.empty())
   {
-    oss << "{\"request\":\"/v1/" << request << "\",\"nonce\":\"" << nonce << "\"}";
+    payload += "\"}";
   }
   else
   {
-    oss << "{\"request\":\"/v1/" << request << "\",\"nonce\":\"" << nonce << "\", " << options << "}";
+    payload += "\", " + options + "}";
   }
-  std::string tmpPayload = base64_encode(reinterpret_cast<const uint8_t *>(oss.str().c_str()), oss.str().length());
-  oss.clear();
-  oss.str("");
-  oss << "X-BFX-PAYLOAD:" << tmpPayload;
-  std::string payload;
-  payload = oss.str();
-  oss.clear();
-  oss.str("");
-  // signature
-  uint8_t *digest = HMAC(EVP_sha384(), params.bitfinexSecret.c_str(), params.bitfinexSecret.length(), (uint8_t *)tmpPayload.c_str(), tmpPayload.length(), NULL, NULL);
 
-  oss << "X-BFX-SIGNATURE:" << hex_str(digest, digest + SHA384_DIGEST_LENGTH);
-  struct curl_slist *headers = NULL;
-  std::string api = "X-BFX-APIKEY:" + std::string(params.bitfinexApi);
-  headers = curl_slist_append(headers, api.c_str());
-  headers = curl_slist_append(headers, payload.c_str());
-  headers = curl_slist_append(headers, oss.str().c_str());
-  CURLcode resCurl;
-  if (params.curl)
+  payload = base64_encode(reinterpret_cast<const uint8_t *>(payload.c_str()), payload.length());
+
+  // signature
+  uint8_t *digest = HMAC (EVP_sha384(),
+                          params.bitfinexSecret.c_str(), params.bitfinexSecret.length(),
+                          reinterpret_cast<const uint8_t *> (payload.data()), payload.size(),
+                          NULL, NULL);
+
+  array<string, 3> headers
   {
-    std::string readBuffer;
-    curl_easy_setopt(params.curl, CURLOPT_POST, 1L);
-    curl_easy_setopt(params.curl, CURLOPT_HTTPHEADER, headers);
-    curl_easy_setopt(params.curl, CURLOPT_POSTFIELDS, "");
-    curl_easy_setopt(params.curl, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(params.curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    curl_easy_setopt(params.curl, CURLOPT_WRITEDATA, &readBuffer);
-    curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
-    resCurl = curl_easy_perform(params.curl);
-    json_t* root;
-    json_error_t error;
-    while (resCurl != CURLE_OK)
-    {
-      *params.logFile << "<Bitfinex> Error with cURL. Retry in 2 sec..." << std::endl;
-      sleep(2.0);
-      readBuffer = "";
-      resCurl = curl_easy_perform(params.curl);
-    }
-    root = json_loads(readBuffer.c_str(), 0, &error);
-    while (!root)
-    {
-      *params.logFile << "<Bitfinex> Error with JSON:\n" << error.text << std::endl;
-      *params.logFile << "<Bitfinex> Buffer:\n" << readBuffer.c_str() << std::endl;
-      *params.logFile << "<Bitfinex> Retrying..." << std::endl;
-      sleep(2.0);
-      readBuffer = "";
-      resCurl = curl_easy_perform(params.curl);
-      while (resCurl != CURLE_OK)
-      {
-        *params.logFile << "<Bitfinex> Error with cURL. Retry in 2 sec..." << std::endl;
-        sleep(2.0);
-        readBuffer = "";
-        resCurl = curl_easy_perform(params.curl);
-      }
-      root = json_loads(readBuffer.c_str(), 0, &error);
-    }
-    curl_slist_free_all(headers);
-    curl_easy_reset(params.curl);
-    return root;
-  }
-  else
-  {
-    *params.logFile << "<Bitfinex> Error with cURL init." << std::endl;
-    return NULL;
-  }
+    "X-BFX-APIKEY:"     + params.bitfinexApi,
+    "X-BFX-SIGNATURE:"  + hex_str(digest, digest + SHA384_DIGEST_LENGTH),
+    "X-BFX-PAYLOAD:"    + payload,
+  };
+  auto &exchange = queryHandle(params);
+  return exchange.postRequest(request,
+                              make_slist(begin(headers), end(headers)));
 }
 
 }
