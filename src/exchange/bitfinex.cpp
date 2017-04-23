@@ -38,12 +38,12 @@ quote_t getQuote(Parameters& params)
 
 double getAvail(Parameters& params, std::string currency)
 {
-  json_t* root = authRequest(params, "https://api.bitfinex.com/v1/balances", "balances", "");
+  json_t *root = authRequest(params, "/v1/balances", "");
   while (json_object_get(root, "message") != NULL)
   {
     sleep(1.0);
     *params.logFile << "<Bitfinex> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
-    root = authRequest(params, "https://api.bitfinex.com/v1/balances", "balances", "");
+    root = authRequest(params, "/v1/balances", "");
   }
   size_t arraySize = json_array_size(root);
   double availability = 0.0;
@@ -86,7 +86,7 @@ std::string sendOrder(Parameters& params, std::string direction, double quantity
   std::ostringstream oss;
   oss << "\"symbol\":\"btcusd\", \"amount\":\"" << quantity << "\", \"price\":\"" << price << "\", \"exchange\":\"bitfinex\", \"side\":\"" << direction << "\", \"type\":\"limit\"";
   std::string options = oss.str();
-  json_t* root = authRequest(params, "https://api.bitfinex.com/v1/order/new", "order/new", options);
+  json_t *root = authRequest(params, "/v1/order/new", options);
   auto orderId = std::to_string(json_integer_value(json_object_get(root, "order_id")));
   *params.logFile << "<Bitfinex> Done (order ID: " << orderId << ")\n" << std::endl;
   json_decref(root);
@@ -98,7 +98,7 @@ bool isOrderComplete(Parameters& params, std::string orderId)
   if (orderId == "0") return true;
 
   auto options =  "\"order_id\":" + orderId;
-  json_t* root = authRequest(params, "https://api.bitfinex.com/v1/order/status", "order/status", options);
+  json_t *root = authRequest(params, "/v1/order/status", options);
   bool isComplete = json_is_false(json_object_get(root, "is_live"));
   json_decref(root);
   return isComplete;
@@ -106,7 +106,7 @@ bool isOrderComplete(Parameters& params, std::string orderId)
 
 double getActivePos(Parameters& params)
 {
-  json_t* root = authRequest(params, "https://api.bitfinex.com/v1/positions", "positions", "");
+  json_t *root = authRequest(params, "/v1/positions", "");
   double position;
   if (json_array_size(root) == 0)
   {
@@ -146,14 +146,13 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   return limPrice;
 }
 
-json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options)
+json_t* authRequest(Parameters &params, std::string request, std::string options)
 {
   using namespace std;
 
   struct timeval tv;
   gettimeofday(&tv, NULL);
   unsigned long long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
-  request = "/v1/" + request;
 
   string payload = "{\"request\":\"" + request +
                    "\",\"nonce\":\"" + to_string(nonce);
