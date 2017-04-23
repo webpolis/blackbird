@@ -7,7 +7,7 @@
 
 namespace BTCe {
 
-RestApi& queryHandle(Parameters &params)
+static RestApi& queryHandle(Parameters &params)
 {
   static RestApi query ("https://btc-e.com",
                         params.cacert.c_str(), *params.logFile);

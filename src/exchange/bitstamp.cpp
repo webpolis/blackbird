@@ -15,7 +15,7 @@
 
 namespace Bitstamp {
 
-RestApi& queryHandle(Parameters &params)
+static RestApi& queryHandle(Parameters &params)
 {
   static RestApi query ("https://www.bitstamp.net",
                         params.cacert.c_str(), *params.logFile);
