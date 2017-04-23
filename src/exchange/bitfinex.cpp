@@ -1,5 +1,6 @@
 #include "bitfinex.h"
 #include "parameters.h"
+#include "utils/restapi.h"
 #include "utils/base64.h"
 #include "curl_fun.h"
 #include "hex_str.hpp"
@@ -7,8 +8,6 @@
 #include "jansson.h"
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
-
-#include <string.h>
 #include <iostream>
 #include <unistd.h>
 #include <sstream>
@@ -17,10 +16,17 @@
 
 namespace Bitfinex {
 
+static RestApi& queryHandle(Parameters &params)
+{
+  static RestApi query ("https://api.bitfinex.com",
+                        params.cacert.c_str(), *params.logFile);
+  return query;
+}
+
 quote_t getQuote(Parameters& params)
 {
-  bool GETRequest = true;
-  json_t *root = getJsonFromUrl(params, "https://api.bitfinex.com/v1/ticker/btcusd", "", GETRequest);
+  auto &exchange = queryHandle(params);
+  json_t *root = exchange.getRequest("/v1/ticker/btcusd");
 
   const char *quote = json_string_value(json_object_get(root, "bid"));
   double bidValue = quote ? std::stod(quote) : 0.0;
@@ -119,16 +125,10 @@ double getActivePos(Parameters& params)
 
 double getLimitPrice(Parameters& params, double volume, bool isBid)
 {
-  json_t* root;
-  bool GETRequest = true;
-  if (isBid)
-  {
-    root = json_object_get(getJsonFromUrl(params, "https://api.bitfinex.com/v1/book/btcusd", "", GETRequest), "bids");
-  }
-  else
-  {
-    root = json_object_get(getJsonFromUrl(params, "https://api.bitfinex.com/v1/book/btcusd", "", GETRequest), "asks");
-  }
+  auto &exchange  = queryHandle(params);
+  json_t *root    = exchange.getRequest("/v1/book/btcusd");
+  json_t *bidask  = json_object_get(root, isBid ? "bids" : "asks");
+
   *params.logFile << "<Bitfinex> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
   double tmpVol = 0.0;
   double p;
@@ -137,14 +137,13 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
     // loop on volume
   while (tmpVol < fabs(volume) * params.orderBookFactor)
   {
-    p = atof(json_string_value(json_object_get(json_array_get(root, i), "price")));
-    v = atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
+    p = atof(json_string_value(json_object_get(json_array_get(bidask, i), "price")));
+    v = atof(json_string_value(json_object_get(json_array_get(bidask, i), "amount")));
     *params.logFile << "<Bitfinex> order book: " << v << "@$" << p << std::endl;
     tmpVol += v;
     i++;
   }
-  double limPrice = 0.0;
-  limPrice = atof(json_string_value(json_object_get(json_array_get(root, i-1), "price")));
+  double limPrice = atof(json_string_value(json_object_get(json_array_get(bidask, i-1), "price")));
   json_decref(root);
   return limPrice;
 }
