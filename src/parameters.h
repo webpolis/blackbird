@@ -64,6 +64,9 @@ struct Parameters {
   std::string poloniexApi;
   std::string poloniexSecret;
   double poloniexFees;
+  std::string gdaxApi;
+  std::string gdaxSecret;
+  double gdaxFees;
 
   bool sendEmail;
   std::string senderAddress;

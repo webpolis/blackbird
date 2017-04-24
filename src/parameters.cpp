@@ -52,6 +52,9 @@ Parameters::Parameters(std::string fileName)
   poloniexApi = getParameter("PoloniexApiKey", configFile);
   poloniexSecret = getParameter("PoloniexSecretKey", configFile);
   poloniexFees = getDouble(getParameter("PoloniexFees", configFile));
+  gdaxApi = getParameter("GDAXApiKey", configFile);
+  gdaxSecret = getParameter("GDAXSecretKey", configFile);
+  gdaxFees = getDouble(getParameter("GDAXFees", configFile));
 
   sendEmail = getBool(getParameter("SendEmail", configFile));
   senderAddress = getParameter("SenderAddress", configFile);

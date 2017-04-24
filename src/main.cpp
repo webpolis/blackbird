@@ -13,6 +13,7 @@
 #include "exchange/itbit.h"
 #include "exchange/btce.h"
 #include "exchange/poloniex.h"
+#include "exchange/gdax.h"
 #include "utils/send_email.h"
 
 #include <curl/curl.h>
@@ -183,6 +184,18 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = Poloniex::getLimitPrice;
 
     dbTableName[index] = "poloniex";
+    createTable(dbTableName[index], params);
+
+    index++;
+  }
+  if (params.gdaxApi.empty() == false || params.demoMode == true) {
+    params.addExchange("GDAX", params.gdaxFees, false, false);
+    getQuote[index] = GDAX::getQuote;
+    getAvail[index] = GDAX::getAvail;
+    getActivePos[index] = GDAX::getActivePos;
+    getLimitPrice[index] = GDAX::getLimitPrice;
+
+    dbTableName[index] = "gdax";
     createTable(dbTableName[index], params);
 
     index++;
