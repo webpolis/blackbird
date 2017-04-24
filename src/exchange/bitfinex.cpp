@@ -43,6 +43,7 @@ double getAvail(Parameters& params, std::string currency)
   {
     sleep(1.0);
     *params.logFile << "<Bitfinex> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
+    json_decref(root);
     root = authRequest(params, "/v1/balances", "");
   }
   size_t arraySize = json_array_size(root);
