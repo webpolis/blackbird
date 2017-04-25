@@ -1,6 +1,7 @@
 #include "kraken.h"
-#include "curl_fun.h"
 #include "parameters.h"
+#include "curl_fun.h"
+#include "utils/restapi.h"
 #include "utils/base64.h"
 
 #include "openssl/sha.h"
@@ -14,20 +15,27 @@
 namespace Kraken {
 
 // Initialise internal variables
-static json_t *krakenTicker;
+static json_t *krakenTicker = nullptr;
 static bool krakenGotTicker = false;
-static json_t *krakenLimPrice;
+static json_t *krakenLimPrice = nullptr;
 static bool krakenGotLimPrice = false;
 
-quote_t getQuote(Parameters& params)
+static RestApi& queryHandle(Parameters &params)
 {
-  bool GETRequest = false;
-  json_t* root;
+  static RestApi query ("https://api.kraken.com",
+                        params.cacert.c_str(), *params.logFile);
+  return query;
+}
+
+quote_t getQuote(Parameters &params)
+{
+  json_t *root;
   if (krakenGotTicker) {
     root = krakenTicker;
     krakenGotTicker = false;
   } else {
-    root = getJsonFromUrl(params, "https://api.kraken.com/0/public/Ticker", "pair=XXBTZUSD", GETRequest);
+    auto &exchange = queryHandle(params);
+    root = exchange.getRequest("/0/public/Ticker?pair=XXBTZUSD");
     krakenGotTicker = true;
     krakenTicker = root;
   }
@@ -111,37 +119,30 @@ double getActivePos(Parameters& params) {
   return getAvail(params, "btc");
 }
 
-double getLimitPrice(Parameters& params, double volume, bool isBid) {
-  bool GETRequest = false;
-  json_t* root;
-  if (krakenGotLimPrice) {
-    root = krakenLimPrice;
-    krakenGotLimPrice = false;
-  } else {
-    root = json_object_get(json_object_get(getJsonFromUrl(params, "https://api.kraken.com/0/public/Depth", "pair=XXBTZUSD", GETRequest), "result"), "XXBTZUSD");
-    krakenGotLimPrice = true;
-    krakenLimPrice = root;
+double getLimitPrice(Parameters &params, double volume, bool isBid)
+{
+  if (!krakenGotLimPrice)
+  {
+    if (krakenLimPrice) json_decref(krakenLimPrice);
+    auto &exchange = queryHandle(params);
+    krakenLimPrice = exchange.getRequest("/0/public/Depth?pair=XXBTZUSD");
   }
-  if (isBid) {
-    root = json_object_get(root, "bids");
-  } else {
-    root = json_object_get(root, "asks");
-  }
+  krakenGotLimPrice = !krakenGotLimPrice;
+  auto root = krakenLimPrice;
+  auto branch = json_object_get(json_object_get(root, "result"), "XXBTZUSD");
+  branch = json_object_get(branch, isBid ? "bids" : "asks");
+
   // loop on volume
   double tmpVol = 0.0;
   int i = 0;
   // [[<price>, <volume>, <timestamp>], [<price>, <volume>, <timestamp>], ...]
   while (tmpVol < volume) {
     // volumes are added up until the requested volume is reached
-    tmpVol += atof(json_string_value(json_array_get(json_array_get(root, i), 1)));
+    tmpVol += atof(json_string_value(json_array_get(json_array_get(branch, i), 1)));
     i++;
   }
-  double limPrice = 0.0;
-  limPrice = atof(json_string_value(json_array_get(json_array_get(root, i-1), 0)));
-  if (!krakenGotLimPrice) {
-    json_decref(root);
-  }
-  return limPrice;
+
+  return atof(json_string_value(json_array_get(json_array_get(branch, i-1), 0)));
 }
 
 json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options) {

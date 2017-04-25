@@ -1,6 +1,7 @@
 #include "gemini.h"
-#include "curl_fun.h"
 #include "parameters.h"
+#include "curl_fun.h"
+#include "utils/restapi.h"
 #include "utils/base64.h"
 
 #include "openssl/sha.h"
@@ -13,10 +14,17 @@
 
 namespace Gemini {
 
-quote_t getQuote(Parameters& params)
+static RestApi& queryHandle(Parameters &params)
 {
-  bool GETRequest = false;
-  json_t* root = getJsonFromUrl(params, "https://api.gemini.com/v1/book/BTCUSD", "", GETRequest);
+  static RestApi query ("https://api.gemini.com",
+                        params.cacert.c_str(), *params.logFile);
+  return query;
+}
+
+quote_t getQuote(Parameters &params)
+{
+  auto &exchange = queryHandle(params);
+  json_t *root = exchange.getRequest("/v1/book/BTCUSD");
   const char *quote = json_string_value(json_object_get(json_array_get(json_object_get(root, "bids"), 0), "price"));
   auto bidValue = quote ? std::stod(quote) : 0.0;
 
@@ -86,29 +94,28 @@ double getActivePos(Parameters& params) {
   return getAvail(params, "btc");
 }
 
-double getLimitPrice(Parameters& params, double volume, bool isBid) {
-  bool GETRequest = false;
-  json_t* root;
-  if (isBid) {
-    root = json_object_get(getJsonFromUrl(params, "https://api.gemini.com/v1/book/btcusd", "", GETRequest), "bids");
-  } else {
-    root = json_object_get(getJsonFromUrl(params, "https://api.gemini.com/v1/book/btcusd", "", GETRequest), "asks");
-  }
+double getLimitPrice(Parameters& params, double volume, bool isBid)
+{
+  auto &exchange = queryHandle(params);
+  json_t* root = exchange.getRequest("/v1/book/btcusd");
+  auto bidask = json_object_get(root, isBid ? "bids" : "asks");
+  
   // loop on volume
   *params.logFile << "<Gemini> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
   double tmpVol = 0.0;
   double p;
   double v;
   int i = 0;
-  while (tmpVol < fabs(volume) * params.orderBookFactor) {
-    p = atof(json_string_value(json_object_get(json_array_get(root, i), "price")));
-    v = atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
+  while (tmpVol < fabs(volume) * params.orderBookFactor)
+  {
+    p = atof(json_string_value(json_object_get(json_array_get(bidask, i), "price")));
+    v = atof(json_string_value(json_object_get(json_array_get(bidask, i), "amount")));
     *params.logFile << "<Gemini> order book: " << v << "@$" << p << std::endl;
     tmpVol += v;
     i++;
   }
   double limPrice = 0.0;
-  limPrice = atof(json_string_value(json_object_get(json_array_get(root, i-1), "price")));
+  limPrice = atof(json_string_value(json_object_get(json_array_get(bidask, i-1), "price")));
   json_decref(root);
   return limPrice;
 }
@@ -192,4 +199,3 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
 }
 
 }
-

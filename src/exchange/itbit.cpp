@@ -1,16 +1,25 @@
 #include "itbit.h"
-#include "curl_fun.h"
 #include "parameters.h"
+#include "curl_fun.h"
+#include "utils/restapi.h"
 
 #include "jansson.h"
 #include <unistd.h>
 
 namespace ItBit {
 
-quote_t getQuote(Parameters& params)
+static RestApi& queryHandle(Parameters &params)
 {
-  bool GETRequest = false;
-  json_t* root = getJsonFromUrl(params, "https://api.itbit.com/v1/markets/XBTUSD/ticker", "", GETRequest);
+  static RestApi query ("https://api.itbit.com",
+                        params.cacert.c_str(), *params.logFile);
+  return query;
+}
+
+quote_t getQuote(Parameters &params)
+{
+  auto &exchange = queryHandle(params);
+  json_t *root = exchange.getRequest("/v1/markets/XBTUSD/ticker");
+
   const char *quote = json_string_value(json_object_get(root, "bid"));
   auto bidValue = quote ? std::stod(quote) : 0.0;
 
@@ -37,4 +46,3 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
 }
 
 }
-

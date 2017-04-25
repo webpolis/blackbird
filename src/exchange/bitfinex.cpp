@@ -31,7 +31,7 @@ static json_t* checkResponse(std::ostream &logFile, json_t *root)
   return root;
 }
 
-quote_t getQuote(Parameters& params)
+quote_t getQuote(Parameters &params)
 {
   auto &exchange = queryHandle(params);
   json_t *root = exchange.getRequest("/v1/ticker/btcusd");

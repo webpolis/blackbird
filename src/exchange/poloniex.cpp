@@ -1,6 +1,6 @@
 #include "poloniex.h"
-#include "curl_fun.h"
 #include "parameters.h"
+#include "utils/restapi.h"
 
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
@@ -8,10 +8,17 @@
 
 namespace Poloniex {
 
-quote_t getQuote(Parameters& params)
+static RestApi& queryHandle(Parameters &params)
 {
-  bool GETRequest = false;
-  json_t* root = getJsonFromUrl(params, "https://poloniex.com/public?command=returnTicker", "", GETRequest);
+  static RestApi query ("https://poloniex.com",
+                        params.cacert.c_str(), *params.logFile);
+  return query;
+}
+
+quote_t getQuote(Parameters &params)
+{
+  auto &exchange = queryHandle(params);
+  json_t *root = exchange.getRequest("/public?command=returnTicker");
   const char *quote = json_string_value(json_object_get(json_object_get(root, "USDT_BTC"), "highestBid"));
   auto bidValue = quote ? std::stod(quote) : 0.0;
 
@@ -58,5 +65,3 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
 }
   
 }
-
-
