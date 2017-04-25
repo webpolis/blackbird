@@ -5,8 +5,6 @@
 
 #include "openssl/md5.h"
 #include "jansson.h"
-
-#include <iostream>
 #include <sstream>
 #include <unistd.h> // sleep
 #include <math.h>   // fabs
@@ -220,7 +218,7 @@ void getBorrowInfo(Parameters& params) {
   oss << "api_key=" << params.okcoinApi << "&symbol=btc_usd";
   std::string content = oss.str();
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/borrows_info.do", signature, content);
-  std::cout << "<OKCoin> Borrow info:\n" << json_dumps(root, 0) << std::endl;
+  *params.logFile << "<OKCoin> Borrow info:\n" << json_dumps(root, 0) << std::endl;
   json_decref(root);
 }
 
@@ -234,7 +232,7 @@ int borrowBtc(Parameters& params, double amount)
   oss << "api_key=" << params.okcoinApi << "&symbol=btc_usd&days=fifteen&amount=" << 1 << "&rate=0.0001";
   std::string content = oss.str();
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/borrow_money.do", signature, content);
-  std::cout << "<OKCoin> Borrow " << amount << " BTC:\n" << json_dumps(root, 0) << std::endl;
+  *params.logFile << "<OKCoin> Borrow " << amount << " BTC:\n" << json_dumps(root, 0) << std::endl;
 
   bool isBorrowAccepted = json_is_true(json_object_get(root, "result"));
   int borrowId = isBorrowAccepted ? json_integer_value(json_object_get(root, "borrow_id")) : 0;
@@ -252,7 +250,7 @@ void repayBtc(Parameters& params, int borrowId) {
   oss << "api_key=" << params.okcoinApi << "&borrow_id=" << borrowId;
   std::string content = oss.str();
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/repayment.do", signature, content);
-  std::cout << "<OKCoin> Repay borrowed BTC:\n" << json_dumps(root, 0) << std::endl;
+  *params.logFile << "<OKCoin> Repay borrowed BTC:\n" << json_dumps(root, 0) << std::endl;
   json_decref(root);
 }
 
