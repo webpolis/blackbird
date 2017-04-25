@@ -48,7 +48,7 @@ double getAvail(Parameters& params, std::string currency)
   }
 
   double availability = 0.0;
-  for (size_t i = json_array_size(root); --i;)
+  for (size_t i = json_array_size(root); i--;)
   {
     const char *each_type, *each_currency, *each_amount;
     int unpack_fail = json_unpack(json_array_get(root, i),
