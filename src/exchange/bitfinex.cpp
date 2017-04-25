@@ -21,6 +21,16 @@ static RestApi& queryHandle(Parameters &params)
   return query;
 }
 
+static json_t* checkResponse(std::ostream &logFile, json_t *root)
+{
+  auto msg = json_object_get(root, "message");
+  if (msg)
+    logFile << "<Bitfinex> Error with response: "
+            << json_string_value(msg) << '\n';
+
+  return root;
+}
+
 quote_t getQuote(Parameters& params)
 {
   auto &exchange = queryHandle(params);
@@ -39,26 +49,22 @@ quote_t getQuote(Parameters& params)
 double getAvail(Parameters& params, std::string currency)
 {
   json_t *root = authRequest(params, "/v1/balances", "");
-  while (json_object_get(root, "message") != NULL)
-  {
-    sleep(1.0);
-    *params.logFile << "<Bitfinex> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
-    json_decref(root);
-    root = authRequest(params, "/v1/balances", "");
-  }
 
   double availability = 0.0;
   for (size_t i = json_array_size(root); i--;)
   {
     const char *each_type, *each_currency, *each_amount;
-    int unpack_fail = json_unpack(json_array_get(root, i),
-                                  "{s:s, s:s, s:s}",
-                                  "type", &each_type,
-                                  "currency", &each_currency,
-                                  "amount", &each_amount);
+    json_error_t err;
+    int unpack_fail = json_unpack_ex (json_array_get(root, i),
+                                      &err, 0,
+                                      "{s:s, s:s, s:s}",
+                                      "type", &each_type,
+                                      "currency", &each_currency,
+                                      "amount", &each_amount);
     if (unpack_fail)
     {
-      *params.logFile << "<Bitfinex> Error with the credentials." << std::endl;
+      *params.logFile << "<Bitfinex> Error with JSON: "
+                      << err.text << std::endl;
     }
     else if (each_type == std::string("trading") && each_currency == currency)
     {
@@ -180,8 +186,9 @@ json_t* authRequest(Parameters &params, std::string request, std::string options
     "X-BFX-PAYLOAD:"    + payload,
   };
   auto &exchange = queryHandle(params);
-  return exchange.postRequest(request,
-                              make_slist(begin(headers), end(headers)));
+  auto root = exchange.postRequest (request,
+                                    make_slist(begin(headers), end(headers)));
+  return checkResponse(*params.logFile, root);
 }
 
 }
