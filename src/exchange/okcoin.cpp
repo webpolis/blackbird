@@ -1,6 +1,7 @@
 #include "okcoin.h"
 #include "parameters.h"
 #include "curl_fun.h"
+#include "utils/restapi.h"
 #include "hex_str.hpp"
 
 #include "openssl/md5.h"
@@ -11,10 +12,17 @@
 
 namespace OKCoin {
 
+static RestApi& queryHandle(Parameters &params)
+{
+  static RestApi query ("https://www.okcoin.com",
+                        params.cacert.c_str(), *params.logFile);
+  return query;
+}
+
 quote_t getQuote(Parameters &params)
 {
-  bool GETRequest = false;
-  json_t* root = getJsonFromUrl(params, "https://www.okcoin.com/api/ticker.do?ok=1", "", GETRequest);
+  auto &exchange = queryHandle(params);
+  json_t *root = exchange.getRequest("/api/ticker.do?ok=1");
   const char *quote = json_string_value(json_object_get(json_object_get(root, "ticker"), "buy"));
   auto bidValue = quote ? std::stod(quote) : 0.0;
 
@@ -115,11 +123,12 @@ double getActivePos(Parameters& params) { return getAvail(params, "btc"); }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid)
 {
-  bool GETRequest = false;
-  json_t* root;
+  auto &exchange = queryHandle(params);
+  json_t *toproot = exchange.getRequest("/api/v1/depth.do");
+  json_t *root = toproot;
   double limPrice = 0.0;
   if (isBid) {
-    root = json_object_get(getJsonFromUrl(params, "https://www.okcoin.com/api/v1/depth.do", "", GETRequest), "bids");
+    root = json_object_get(root, "bids");
     // loop on volume
     *params.logFile << "<OKCoin> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
     double tmpVol = 0.0;
@@ -135,7 +144,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
     }
     limPrice = json_real_value(json_array_get(json_array_get(root, i-1), 0));
   } else {
-    root = json_object_get(getJsonFromUrl(params, "https://www.okcoin.com/api/v1/depth.do", "", GETRequest), "asks");
+    root = json_object_get(root, "asks");
     // loop on volume
     *params.logFile << "<OKCoin> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
     double tmpVol = 0.0;
@@ -151,7 +160,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
     }
     limPrice = json_real_value(json_array_get(json_array_get(root, i+1), 0));
   }
-  json_decref(root);
+  json_decref(toproot);
   return limPrice;
 }
 
