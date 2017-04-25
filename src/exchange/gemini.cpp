@@ -133,8 +133,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   oss.clear();
   oss.str("");
   // build the signature
-  unsigned char* digest;
-  digest = HMAC(EVP_sha384(), params.geminiSecret.c_str(), strlen(params.geminiSecret.c_str()), (unsigned char*)tmpPayload.c_str(), strlen(tmpPayload.c_str()), NULL, NULL);
+  uint8_t *digest = HMAC(EVP_sha384(), params.geminiSecret.c_str(), params.geminiSecret.size(), (uint8_t*)tmpPayload.c_str(), tmpPayload.size(), NULL, NULL);
   char mdString[SHA384_DIGEST_LENGTH+100];   // FIXME +100
   for (int i = 0; i < SHA384_DIGEST_LENGTH; ++i) {
     sprintf(&mdString[i*2], "%02x", (unsigned int)digest[i]);
