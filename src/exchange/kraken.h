@@ -7,11 +7,6 @@
 #include <curl/curl.h>
 #include <string>
 
-extern json_t* krakenTicker;
-extern bool krakenGotTicker;
-extern json_t* krakenLimPrice;
-extern bool krakenGotLimPrice;
-
 namespace Kraken {
 
 quote_t getQuote(Parameters& params);

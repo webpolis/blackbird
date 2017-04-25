@@ -12,14 +12,13 @@
 #include "kraken.h"
 #include "curl_fun.h"
 
-
-// Initialise global variables
-json_t *krakenTicker;
-bool krakenGotTicker = false;
-json_t *krakenLimPrice;
-bool krakenGotLimPrice = false;
-
 namespace Kraken {
+
+// Initialise internal variables
+static json_t *krakenTicker;
+static bool krakenGotTicker = false;
+static json_t *krakenLimPrice;
+static bool krakenGotLimPrice = false;
 
 quote_t getQuote(Parameters& params)
 {
