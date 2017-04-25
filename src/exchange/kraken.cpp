@@ -1,16 +1,15 @@
-#include <string.h>
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <map>
-#include <unistd.h>
-#include <sys/time.h>
-#include <openssl/sha.h>
-#include <openssl/hmac.h>
-#include "utils/base64.h"
-#include <jansson.h>
 #include "kraken.h"
 #include "curl_fun.h"
+#include "parameters.h"
+#include "utils/base64.h"
+
+#include "openssl/sha.h"
+#include "openssl/hmac.h"
+#include "jansson.h"
+#include <sstream>
+#include <vector>
+#include <unistd.h>
+#include <sys/time.h>
 
 namespace Kraken {
 

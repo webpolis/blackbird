@@ -2,10 +2,10 @@
 #define ITBIT_H
 
 #include "quote_t.h"
-#include "parameters.h"
-
-#include <curl/curl.h>
 #include <string>
+
+struct json_t;
+struct Parameters;
 
 namespace ItBit {
 
@@ -20,4 +20,3 @@ double getLimitPrice(Parameters& params, double volume, bool isBid);
 }
 
 #endif
-

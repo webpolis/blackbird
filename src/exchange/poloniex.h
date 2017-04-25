@@ -2,10 +2,10 @@
 #define POLONIEX_H
 
 #include "quote_t.h"
-#include "parameters.h"
-
-#include <curl/curl.h>
 #include <string>
+
+struct json_t;
+struct Parameters;
 
 namespace Poloniex {
 
