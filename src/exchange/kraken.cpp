@@ -158,8 +158,8 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   // Message signature using HMAC-SHA512 of (URI path + SHA256(nonce + POST data))
   // and base64 decoded secret API key
   std::string payload_for_signature = std::to_string(nonce) + post_data;
-  unsigned char digest[SHA256_DIGEST_LENGTH];
-  SHA256((unsigned char*)payload_for_signature.c_str(), strlen(payload_for_signature.c_str()), (unsigned char*)&digest);
+  uint8_t digest[SHA256_DIGEST_LENGTH];
+  SHA256((uint8_t *)payload_for_signature.c_str(), payload_for_signature.size(), &digest[0]);
   int signature_data_length = request.length() + SHA256_DIGEST_LENGTH;
   std::vector<unsigned char> signature_data(signature_data_length);
   auto signature_digest = std::copy(begin(request), end(request), begin(signature_data));
