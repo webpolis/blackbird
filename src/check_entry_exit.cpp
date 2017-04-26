@@ -61,55 +61,62 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
     if (res.trailing[longId][shortId] != -1.0) {
       *params.logFile << "   trailing " << percToStr(res.trailing[longId][shortId]) << "  " << res.trailingWaitCount[longId][shortId] << "/" << params.trailingCount;
     }
-    if ((btcLong->getIsImplemented() == false || btcShort->getIsImplemented() == false) && params.demoMode == false) {
-      *params.logFile << "   info only"  << std::endl;
-    } else {
-      *params.logFile << std::endl;
-    }
+    if ((!btcLong->getIsImplemented() || !btcShort->getIsImplemented()) && !params.demoMode)
+      *params.logFile << "   info only";
+
+    *params.logFile << std::endl;
   }
   if (!btcLong->getIsImplemented() ||
       !btcShort->getIsImplemented() ||
       res.spreadIn == 0.0)
     return false;
 
-  if (res.spreadIn >= params.spreadEntry) {
-    double newTrailValue = res.spreadIn - params.trailingLim;
-    if (res.trailing[longId][shortId] == -1.0) {
-      res.trailing[longId][shortId] = std::max(newTrailValue, params.spreadEntry);
-    } else {
-      if (newTrailValue >= res.trailing[longId][shortId]) {
-        res.trailing[longId][shortId] = newTrailValue;
-        res.trailingWaitCount[longId][shortId] = 0;
-      }
-      if (res.spreadIn < res.trailing[longId][shortId]) {
-        if (res.trailingWaitCount[longId][shortId] < params.trailingCount) {
-          res.trailingWaitCount[longId][shortId]++;
-        } else {
-          res.idExchLong = longId;
-          res.idExchShort = shortId;
-          res.feesLong = btcLong->getFees();
-          res.feesShort = btcShort->getFees();
-          res.exchNameLong = btcLong->getExchName();
-          res.exchNameShort = btcShort->getExchName();
-          res.priceLongIn = priceLong;
-          res.priceShortIn = priceShort;
-          res.exitTarget = res.spreadIn - params.spreadTarget - (2.0 * btcLong->getFees() + 2.0 * btcShort->getFees());
-          res.trailingWaitCount[longId][shortId] = 0;
-          return true;
-        }
-      } else {
-        res.trailingWaitCount[longId][shortId] = 0;
-      }
-    }
-  } else {
+  if (res.spreadIn < params.spreadEntry)
+  {
     res.trailing[longId][shortId] = -1.0;
     res.trailingWaitCount[longId][shortId] = 0;
+    return false;
   }
 
-  return false;
+  double newTrailValue = res.spreadIn - params.trailingLim;
+  if (res.trailing[longId][shortId] == -1.0)
+  {
+    res.trailing[longId][shortId] = std::max(newTrailValue, params.spreadEntry);
+    return false;
+  }
+
+  if (newTrailValue >= res.trailing[longId][shortId])
+  {
+    res.trailing[longId][shortId] = newTrailValue;
+    res.trailingWaitCount[longId][shortId] = 0;
+  }
+  if (res.spreadIn >= res.trailing[longId][shortId])
+  {
+    res.trailingWaitCount[longId][shortId] = 0;
+    return false;
+  }
+
+  if (res.trailingWaitCount[longId][shortId] < params.trailingCount)
+  {
+    res.trailingWaitCount[longId][shortId]++;
+    return false;
+  }
+
+  res.idExchLong = longId;
+  res.idExchShort = shortId;
+  res.feesLong = btcLong->getFees();
+  res.feesShort = btcShort->getFees();
+  res.exchNameLong = btcLong->getExchName();
+  res.exchNameShort = btcShort->getExchName();
+  res.priceLongIn = priceLong;
+  res.priceShortIn = priceShort;
+  res.exitTarget = res.spreadIn - params.spreadTarget - 2.0*(res.feesLong + res.feesShort);
+  res.trailingWaitCount[longId][shortId] = 0;
+  return true;
 }
 
-bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params, time_t period) {
+bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params, time_t period)
+{
   double priceLong  = btcLong->getBid();
   double priceShort = btcShort->getAsk();
   if (priceLong > 0.0 && priceShort > 0.0) {
