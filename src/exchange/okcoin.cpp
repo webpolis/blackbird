@@ -66,7 +66,8 @@ double getAvail(Parameters& params, std::string currency)
   return availability;
 }
 
-std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
+std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price)
+{
   // signature
   std::ostringstream oss;
   oss << "amount=" << quantity << "&api_key=" << params.okcoinApi << "&price=" << price << "&symbol=btc_usd&type=" << direction << "&secret_key=" << params.okcoinSecret;
@@ -172,8 +173,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string signature, 
   std::ostringstream oss;
   oss << content << "&sign=" << hex_str<upperhex>(digest, digest + MD5_DIGEST_LENGTH);
   std::string postParameters = oss.str().c_str();
-  struct curl_slist* headers = NULL;
-  headers = curl_slist_append(headers, "contentType: application/x-www-form-urlencoded");
+  curl_slist *headers = curl_slist_append(nullptr, "contentType: application/x-www-form-urlencoded");
   CURLcode resCurl;
   if (params.curl) {
     curl_easy_setopt(params.curl, CURLOPT_POST,1L);
@@ -186,14 +186,14 @@ json_t* authRequest(Parameters& params, std::string url, std::string signature, 
     curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
     resCurl = curl_easy_perform(params.curl);
-    json_t* root;
-    json_error_t error;
+
     while (resCurl != CURLE_OK) {
       *params.logFile << "<OKCoin> Error with cURL. Retry in 2 sec..." << std::endl;
       sleep(4.0);
       resCurl = curl_easy_perform(params.curl);
     }
-    root = json_loads(readBuffer.c_str(), 0, &error);
+    json_error_t error;
+    json_t *root = json_loads(readBuffer.c_str(), 0, &error);
     while (!root) {
       *params.logFile << "<OKCoin> Error with JSON:\n" << error.text << std::endl;
       *params.logFile << "<OKCoin> Buffer:\n" << readBuffer.c_str() << std::endl;
@@ -218,7 +218,8 @@ json_t* authRequest(Parameters& params, std::string url, std::string signature, 
   }
 }
 
-void getBorrowInfo(Parameters& params) {
+void getBorrowInfo(Parameters& params)
+{
   std::ostringstream oss;
   oss << "api_key=" << params.okcoinApi << "&symbol=btc_usd&secret_key=" << params.okcoinSecret;
   std::string signature = oss.str();
@@ -250,7 +251,8 @@ int borrowBtc(Parameters& params, double amount)
   return borrowId;
 }
 
-void repayBtc(Parameters& params, int borrowId) {
+void repayBtc(Parameters& params, int borrowId)
+{
   std::ostringstream oss;
   oss << "api_key=" << params.okcoinApi << "&borrow_id=" << borrowId << "&secret_key=" << params.okcoinSecret;
   std::string signature = oss.str();
