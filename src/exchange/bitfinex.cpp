@@ -135,21 +135,21 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
 
   *params.logFile << "<Bitfinex> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
   double tmpVol = 0.0;
-  double p;
+  double p = 0.0;
   double v;
-  int i = 0;
+
     // loop on volume
-  while (tmpVol < fabs(volume) * params.orderBookFactor)
+  for (int i = 0, n = json_array_size(bidask); i < n; ++i)
   {
     p = atof(json_string_value(json_object_get(json_array_get(bidask, i), "price")));
     v = atof(json_string_value(json_object_get(json_array_get(bidask, i), "amount")));
     *params.logFile << "<Bitfinex> order book: " << v << "@$" << p << std::endl;
     tmpVol += v;
-    i++;
+    if (tmpVol >= fabs(volume) * params.orderBookFactor) break;
   }
-  double limPrice = atof(json_string_value(json_object_get(json_array_get(bidask, i-1), "price")));
+
   json_decref(root);
-  return limPrice;
+  return p;
 }
 
 json_t* authRequest(Parameters &params, std::string request, std::string options)
