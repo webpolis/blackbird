@@ -20,7 +20,8 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <unistd.h>
+#include <chrono>
+#include <thread>
 #include <math.h>
 #include <algorithm>
 
@@ -297,9 +298,12 @@ int main(int argc, char** argv) {
   logFile << std::endl;
   time_t rawtime = time(nullptr);
   tm timeinfo = *localtime(&rawtime);
+  using std::this_thread::sleep_for;
+  using millisecs = std::chrono::milliseconds;
+  using secs      = std::chrono::seconds;
   // wait for the next 'gapSec' seconds before starting
   while ((int)timeinfo.tm_sec % params.gapSec != 0) {
-    sleep(0.01);
+    sleep_for(millisecs(100));
     time(&rawtime);
     timeinfo = *localtime(&rawtime);
   }
@@ -324,10 +328,10 @@ int main(int argc, char** argv) {
       logFile << "WARNING: " << diffTime << " second(s) too late at " << printDateTime(currTime) << std::endl;
       timeinfo.tm_sec += (ceil(diffTime / params.gapSec) + 1) * params.gapSec;
       currTime = mktime(&timeinfo);
-      sleep(params.gapSec - (diffTime % params.gapSec));
+      sleep_for(secs(params.gapSec - (diffTime % params.gapSec)));
       logFile << std::endl;
     } else if (diffTime < 0) {
-      sleep(-difftime(rawtime, currTime));
+      sleep_for(secs(-diffTime));
     }
     if (params.verbose) {
       if (!inMarket) {
@@ -443,11 +447,11 @@ int main(int argc, char** argv) {
               auto longOrderId = sendLongOrder[res.idExchLong](params, "buy", volumeLong, limPriceLong);
               auto shortOrderId = sendShortOrder[res.idExchShort](params, "sell", volumeShort, limPriceShort);
               logFile << "Waiting for the two orders to be filled..." << std::endl;
-              sleep(5.0);
+              sleep_for(millisecs(5000));
               bool isLongOrderComplete = isOrderComplete[res.idExchLong](params, longOrderId);
               bool isShortOrderComplete = isOrderComplete[res.idExchShort](params, shortOrderId);
               while (!isLongOrderComplete || !isShortOrderComplete) {
-                sleep(3.0);
+                sleep_for(millisecs(3000));
                 if (!isLongOrderComplete) {
                   logFile << "Long order on " << params.exchName[res.idExchLong] << " still open..." << std::endl;
                   isLongOrderComplete = isOrderComplete[res.idExchLong](params, longOrderId);
@@ -512,11 +516,11 @@ int main(int argc, char** argv) {
           auto longOrderId = sendLongOrder[res.idExchLong](params, "sell", fabs(btcUsed[res.idExchLong]), limPriceLong);
           auto shortOrderId = sendShortOrder[res.idExchShort](params, "buy", fabs(btcUsed[res.idExchShort]), limPriceShort);
           logFile << "Waiting for the two orders to be filled..." << std::endl;
-          sleep(5.0);
+          sleep_for(millisecs(5000));
           bool isLongOrderComplete = isOrderComplete[res.idExchLong](params, longOrderId);
           bool isShortOrderComplete = isOrderComplete[res.idExchShort](params, shortOrderId);
           while (!isLongOrderComplete || !isShortOrderComplete) {
-            sleep(3.0);
+            sleep_for(millisecs(3000));
             if (!isLongOrderComplete) {
               logFile << "Long order on " << params.exchName[res.idExchLong] << " still open..." << std::endl;
               isLongOrderComplete = isOrderComplete[res.idExchLong](params, longOrderId);
