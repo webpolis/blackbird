@@ -48,6 +48,7 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
   res.minSpread[longId][shortId] = std::min(res.spreadIn, res.minSpread[longId][shortId]);
 
   if (params.verbose) {
+    params.logFile->precision(2);
     *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadIn);
     *params.logFile << " [target " << percToStr(params.spreadEntry) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
     if (params.useVolatility) {
@@ -131,6 +132,7 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
   res.minSpread[longId][shortId] = std::min(res.spreadOut, res.minSpread[longId][shortId]);
 
   if (params.verbose) {
+    params.logFile->precision(2);
     *params.logFile << "   " << btcLong->getExchName() << "/" << btcShort->getExchName() << ":\t" << percToStr(res.spreadOut);
     *params.logFile << " [target " << percToStr(res.exitTarget) << ", min " << percToStr(res.minSpread[longId][shortId]) << ", max " << percToStr(res.maxSpread[longId][shortId]) << "]";
     if (params.useVolatility) {

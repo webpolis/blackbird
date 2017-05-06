@@ -9,6 +9,7 @@
 #include "openssl/hmac.h"
 #include <unistd.h>
 #include <sstream>
+#include <iomanip>
 #include <math.h>
 #include <sys/time.h>
 
@@ -88,7 +89,9 @@ std::string sendShortOrder(Parameters& params, std::string direction, double qua
 
 std::string sendOrder(Parameters& params, std::string direction, double quantity, double price)
 {
-  *params.logFile << "<Bitfinex> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
+  *params.logFile << "<Bitfinex> Trying to send a \"" << direction << "\" limit order: "
+                  << std::setprecision(6) << quantity << "@$"
+                  << std::setprecision(2) << price << "...\n";
   std::ostringstream oss;
   oss << "\"symbol\":\"btcusd\", \"amount\":\"" << quantity << "\", \"price\":\"" << price << "\", \"exchange\":\"bitfinex\", \"side\":\"" << direction << "\", \"type\":\"limit\"";
   std::string options = oss.str();
@@ -133,7 +136,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   json_t *root    = exchange.getRequest("/v1/book/btcusd");
   json_t *bidask  = json_object_get(root, isBid ? "bids" : "asks");
 
-  *params.logFile << "<Bitfinex> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
+  *params.logFile << "<Bitfinex> Looking for a limit price to fill "
+                  << std::setprecision(6) << fabs(volume) << " BTC...\n";
   double tmpVol = 0.0;
   double p = 0.0;
   double v;
@@ -143,7 +147,9 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   {
     p = atof(json_string_value(json_object_get(json_array_get(bidask, i), "price")));
     v = atof(json_string_value(json_object_get(json_array_get(bidask, i), "amount")));
-    *params.logFile << "<Bitfinex> order book: " << v << "@$" << p << std::endl;
+    *params.logFile << "<Bitfinex> order book: "
+                    << std::setprecision(6) << v << "@$"
+                    << std::setprecision(2) << p << std::endl;
     tmpVol += v;
     if (tmpVol >= fabs(volume) * params.orderBookFactor) break;
   }

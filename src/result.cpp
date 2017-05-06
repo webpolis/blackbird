@@ -31,6 +31,7 @@ double Result::getTradeLengthInMinute() const
 
 void Result::printEntryInfo(std::ostream &logFile) const
 {
+  logFile.precision(2);
   logFile << "\n[ ENTRY FOUND ]" << std::endl;
   logFile << "   Date & Time:       "  << printDateTime(entryTime) << std::endl;
   logFile << "   Exchange Long:     "  << exchNameLong <<  " (id " << idExchLong  << ")" << std::endl;
@@ -46,6 +47,7 @@ void Result::printEntryInfo(std::ostream &logFile) const
 
 void Result::printExitInfo(std::ostream &logFile) const
 {
+  logFile.precision(2);
   logFile << "\n[ EXIT FOUND ]" << std::endl;
   logFile << "   Date & Time:       "  << printDateTime(exitTime) << std::endl;
   logFile << "   Duration:          "  << getTradeLengthInMinute() << " minutes" << std::endl;

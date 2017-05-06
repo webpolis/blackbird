@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <math.h>
 #include <sstream>
+#include <iomanip>
 #include <sys/time.h>
 #include <iomanip>
 
@@ -71,7 +72,9 @@ double getAvail(Parameters& params, std::string currency)
 
 std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price)
 {
-  *params.logFile << "<Bitstamp> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
+  *params.logFile << "<Bitstamp> Trying to send a \"" << direction << "\" limit order: "
+                  << std::setprecision(6) << quantity << "@$"
+                  << std::setprecision(2) << price << "...\n";
   std::ostringstream oss;
   oss << "https://www.bitstamp.net/api/" << direction << "/";
   std::string url = oss.str();
@@ -110,7 +113,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   auto orderbook = json_object_get(root, isBid ? "bids" : "asks");
 
   // loop on volume
-  *params.logFile << "<Bitstamp> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
+  *params.logFile << "<Bitstamp> Looking for a limit price to fill "
+                  << std::setprecision(6) << fabs(volume) << " BTC...\n";
   double tmpVol = 0.0;
   double p;
   double v;
@@ -119,7 +123,9 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   {
     p = atof(json_string_value(json_array_get(json_array_get(orderbook, i), 0)));
     v = atof(json_string_value(json_array_get(json_array_get(orderbook, i), 1)));
-    *params.logFile << "<Bitstamp> order book: " << v << "@$" << p << std::endl;
+    *params.logFile << "<Bitstamp> order book: "
+                    << std::setprecision(6) << v << "@$"
+                    << std::setprecision(2) << p << std::endl;
     tmpVol += v;
     i++;
   }

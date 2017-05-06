@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <math.h>
 #include <sstream>
+#include <iomanip>
 #include <sys/time.h>
 
 namespace Gemini {
@@ -69,7 +70,9 @@ double getAvail(Parameters& params, std::string currency) {
 }
 
 std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
-  *params.logFile << "<Gemini> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
+  *params.logFile << "<Gemini> Trying to send a \"" << direction << "\" limit order: "
+                  << std::setprecision(6) << quantity << "@$"
+                  << std::setprecision(2) << price << "...\n";
   std::ostringstream oss;
   oss << "\"symbol\":\"BTCUSD\", \"amount\":\"" << quantity << "\", \"price\":\"" << price << "\", \"side\":\"" << direction << "\", \"type\":\"exchange limit\"";
   std::string options = oss.str();
@@ -101,7 +104,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   auto bidask = json_object_get(root, isBid ? "bids" : "asks");
   
   // loop on volume
-  *params.logFile << "<Gemini> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
+  *params.logFile << "<Gemini> Looking for a limit price to fill "
+                  << std::setprecision(6) << fabs(volume) << " BTC...\n";
   double tmpVol = 0.0;
   double p;
   double v;
@@ -110,7 +114,9 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   {
     p = atof(json_string_value(json_object_get(json_array_get(bidask, i), "price")));
     v = atof(json_string_value(json_object_get(json_array_get(bidask, i), "amount")));
-    *params.logFile << "<Gemini> order book: " << v << "@$" << p << std::endl;
+    *params.logFile << "<Gemini> order book: "
+                    << std::setprecision(6) << v << "@$"
+                    << std::setprecision(2) << p << std::endl;
     tmpVol += v;
     i++;
   }

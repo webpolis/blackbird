@@ -8,6 +8,7 @@
 #include "openssl/hmac.h"
 #include "jansson.h"
 #include <sstream>
+#include <iomanip>
 #include <vector>
 #include <unistd.h>
 #include <sys/time.h>
@@ -75,7 +76,9 @@ std::string sendLongOrder(Parameters& params, std::string direction, double quan
     *params.logFile  << "<Kraken> Error: Neither \"buy\" nor \"sell\" selected" << std::endl;
     return 0;
   }
-  *params.logFile << "<Kraken> Trying to send a \"" << direction << "\" limit order: " << quantity << " @ $" << price << "..." << std::endl;
+  *params.logFile << "<Kraken> Trying to send a \"" << direction << "\" limit order: "
+                  << std::setprecision(6) << quantity << " @ $"
+                  << std::setprecision(2) << price << "...\n";
   std::string pair = "XXBTZUSD";
   std::string type = direction;
   std::string ordertype = "limit";

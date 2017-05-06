@@ -7,6 +7,7 @@
 #include "openssl/md5.h"
 #include "jansson.h"
 #include <sstream>
+#include <iomanip>
 #include <unistd.h> // sleep
 #include <math.h>   // fabs
 
@@ -77,7 +78,9 @@ std::string sendLongOrder(Parameters& params, std::string direction, double quan
   // content
   oss << "amount=" << quantity << "&api_key=" << params.okcoinApi << "&price=" << price << "&symbol=btc_usd&type=" << direction;
   std::string content = oss.str();
-  *params.logFile << "<OKCoin> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
+  *params.logFile << "<OKCoin> Trying to send a \"" << direction << "\" limit order: "
+                  << std::setprecision(6) << quantity << "@$"
+                  << std::setprecision(2) << price << "...\n";
   json_t *root = authRequest(params, "https://www.okcoin.com/api/v1/trade.do", signature, content);
   auto orderId = std::to_string(json_integer_value(json_object_get(root, "order_id")));
   *params.logFile << "<OKCoin> Done (order ID: " << orderId << ")\n" << std::endl;
@@ -131,7 +134,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   if (isBid) {
     root = json_object_get(root, "bids");
     // loop on volume
-    *params.logFile << "<OKCoin> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
+    *params.logFile << "<OKCoin> Looking for a limit price to fill "
+                    << std::setprecision(6) << fabs(volume) << " BTC...\n";
     double tmpVol = 0.0;
     double p;
     double v;
@@ -139,7 +143,9 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
     while (tmpVol < fabs(volume) * params.orderBookFactor) {
       p = json_real_value(json_array_get(json_array_get(root, i), 0));
       v = json_real_value(json_array_get(json_array_get(root, i), 1));
-      *params.logFile << "<OKCoin> order book: " << v << "@$" << p << std::endl;
+      *params.logFile << "<OKCoin> order book: "
+                      << std::setprecision(6) << v << "@$"
+                      << std::setprecision(2) << p << std::endl;
       tmpVol += v;
       i++;
     }
@@ -147,7 +153,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   } else {
     root = json_object_get(root, "asks");
     // loop on volume
-    *params.logFile << "<OKCoin> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
+    *params.logFile << "<OKCoin> Looking for a limit price to fill "
+                    << std::setprecision(6) << fabs(volume) << " BTC...\n";
     double tmpVol = 0.0;
     double p;
     double v;
@@ -155,7 +162,9 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
     while (tmpVol < fabs(volume) * params.orderBookFactor) {
       p = json_real_value(json_array_get(json_array_get(root, i), 0));
       v = json_real_value(json_array_get(json_array_get(root, i), 1));
-      *params.logFile << "<OKCoin> order book: " << v << "@$" << p << std::endl;
+      *params.logFile << "<OKCoin> order book: "
+                      << std::setprecision(6) << v << "@$"
+                      << std::setprecision(2) << p << std::endl;
       tmpVol += v;
       i--;
     }
@@ -242,7 +251,9 @@ int borrowBtc(Parameters& params, double amount)
   oss << "api_key=" << params.okcoinApi << "&symbol=btc_usd&days=fifteen&amount=" << 1 << "&rate=0.0001";
   std::string content = oss.str();
   json_t* root = authRequest(params, "https://www.okcoin.com/api/v1/borrow_money.do", signature, content);
-  *params.logFile << "<OKCoin> Borrow " << amount << " BTC:\n" << json_dumps(root, 0) << std::endl;
+  *params.logFile << "<OKCoin> Borrow "
+                  << std::setprecision(6) << amount
+                  << " BTC:\n" << json_dumps(root, 0) << std::endl;
 
   bool isBorrowAccepted = json_is_true(json_object_get(root, "result"));
   int borrowId = isBorrowAccepted ? json_integer_value(json_object_get(root, "borrow_id")) : 0;

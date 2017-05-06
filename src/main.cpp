@@ -241,9 +241,10 @@ int main(int argc, char** argv) {
   }
 
   params.curl = curl_easy_init();
-  logFile << "[ Targets ]" << std::endl;
-  logFile << "   Spread Entry:  " << params.spreadEntry * 100.0 << "%" << std::endl;
-  logFile << "   Spread Target: " << params.spreadTarget * 100.0  << "%" << std::endl;
+  logFile << "[ Targets ]\n"
+          << std::setprecision(2)
+          << "   Spread Entry:  " << params.spreadEntry * 100.0 << "%\n"
+          << "   Spread Target: " << params.spreadTarget * 100.0  << "%\n";
   if (params.spreadEntry <= 0.0) {
     logFile << "   WARNING: Spread Entry should be positive" << std::endl;
   }
@@ -278,7 +279,8 @@ int main(int argc, char** argv) {
     } else if (!params.isImplemented[i]) {
       logFile << "n/a (API not implemented)" << std::endl;
     } else {
-      logFile << balance[i].usd << " USD\t" << std::setprecision(6) << balance[i].btc  << std::setprecision(2) << " BTC" << std::endl;
+      logFile << std::setprecision(2) << balance[i].usd << " USD\t"
+              << std::setprecision(6) << balance[i].btc << " BTC" << std::endl;
     }
     if (balance[i].btc > 0.0050 && !inMarket) {
       logFile << "ERROR: All BTC accounts must be empty before starting Blackbird" << std::endl;
@@ -286,14 +288,15 @@ int main(int argc, char** argv) {
     }
   }
   logFile << std::endl;
-  logFile << "[ Cash exposure ]" << std::endl;
+  logFile << "[ Cash exposure ]\n";
   if (params.demoMode) {
-    logFile << "   No cash - Demo mode" << std::endl;
+    logFile << "   No cash - Demo mode\n";
   } else {
     if (params.useFullCash) {
-      logFile << "   FULL cash used!" << std::endl;
+      logFile << "   FULL cash used!\n";
     } else {
-      logFile << "   TEST cash used\n   Value: $" << params.cashForTesting << std::endl;
+      logFile << "   TEST cash used\n   Value: $"
+              << std::setprecision(2) << params.cashForTesting << '\n';
     }
   }
   logFile << std::endl;
@@ -356,7 +359,9 @@ int main(int argc, char** argv) {
         logFile << "   WARNING: " << params.exchName[i] << " ask is null" << std::endl;
       }
       if (params.verbose) {
-        logFile << "   " << params.exchName[i] << ": \t" << bid << " / " << ask << std::endl;
+        logFile << "   " << params.exchName[i] << ": \t"
+                << std::setprecision(2)
+                << bid << " / " << ask << std::endl;
       }
       btcVec[i].updateData(quote);
       curl_easy_reset(params.curl);
@@ -401,15 +406,18 @@ int main(int argc, char** argv) {
                 break;
               }
               if (params.useFullCash == false && res.exposure <= params.cashForTesting) {
-                logFile << "WARNING: Opportunity found but no enough cash. Need more than TEST cash (min. $" << params.cashForTesting << "). Trade canceled" << std::endl;
+                logFile << "WARNING: Opportunity found but no enough cash. Need more than TEST cash (min. $"
+                        << std::setprecision(2) << params.cashForTesting << "). Trade canceled" << std::endl;
                 break;
               }
               if (params.useFullCash) {
                 // remove 1% of the cash
                 res.exposure -= 0.01 * res.exposure;
                 if (res.exposure > params.maxExposure) {
-                  logFile << "WARNING: Opportunity found but exposure ($" << res.exposure << ") above the limit" << std::endl;
-                  logFile << "         Max exposure will be used instead ($" << params.maxExposure << ")" << std::endl;
+                  logFile << "WARNING: Opportunity found but exposure ($"
+                          << std::setprecision(2)
+                          << res.exposure << ") above the limit\n"
+                          << "         Max exposure will be used instead ($" << params.maxExposure << ")" << std::endl;
                   res.exposure = params.maxExposure;
                 }
               } else {
@@ -421,14 +429,16 @@ int main(int argc, char** argv) {
               double limPriceLong = getLimitPrice[res.idExchLong](params, volumeLong, false);
               double limPriceShort = getLimitPrice[res.idExchShort](params, volumeShort, true);
               if (limPriceLong == 0.0 || limPriceShort == 0.0) {
-                logFile << "WARNING: Opportunity found but error with the order books (limit price is null). Trade canceled" << std::endl;
+                logFile << "WARNING: Opportunity found but error with the order books (limit price is null). Trade canceled\n";
+                logFile.precision(2);
                 logFile << "         Long limit price:  " << limPriceLong << std::endl;
                 logFile << "         Short limit price: " << limPriceShort << std::endl;
                 res.trailing[res.idExchLong][res.idExchShort] = -1.0;
                 break;
               }
               if (limPriceLong - res.priceLongIn > params.priceDeltaLim || res.priceShortIn - limPriceShort > params.priceDeltaLim) {
-                logFile << "WARNING: Opportunity found but not enough liquidity. Trade canceled" << std::endl;
+                logFile << "WARNING: Opportunity found but not enough liquidity. Trade canceled\n";
+                logFile.precision(2);
                 logFile << "         Target long price:  " << res.priceLongIn << ", Real long price:  " << limPriceLong << std::endl;
                 logFile << "         Target short price: " << res.priceShortIn << ", Real short price: " << limPriceShort << std::endl;
                 res.trailing[res.idExchLong][res.idExchShort] = -1.0;
@@ -496,12 +506,14 @@ int main(int argc, char** argv) {
         double limPriceLong = getLimitPrice[res.idExchLong](params, volumeLong, true);
         double limPriceShort = getLimitPrice[res.idExchShort](params, volumeShort, false);
         if (limPriceLong == 0.0 || limPriceShort == 0.0) {
-          logFile << "WARNING: Opportunity found but error with the order books (limit price is null). Trade canceled" << std::endl;
+          logFile << "WARNING: Opportunity found but error with the order books (limit price is null). Trade canceled\n";
+          logFile.precision(2);
           logFile << "         Long limit price:  " << limPriceLong << std::endl;
           logFile << "         Short limit price: " << limPriceShort << std::endl;
           res.trailing[res.idExchLong][res.idExchShort] = 1.0;
         } else if (res.priceLongOut - limPriceLong > params.priceDeltaLim || limPriceShort - res.priceShortOut > params.priceDeltaLim) {
-          logFile << "WARNING: Opportunity found but not enough liquidity. Trade canceled" << std::endl;
+          logFile << "WARNING: Opportunity found but not enough liquidity. Trade canceled\n";
+          logFile.precision(2);
           logFile << "         Target long price:  " << res.priceLongOut << ", Real long price:  " << limPriceLong << std::endl;
           logFile << "         Target short price: " << res.priceShortOut << ", Real short price: " << limPriceShort << std::endl;
           res.trailing[res.idExchLong][res.idExchShort] = 1.0;
@@ -511,9 +523,10 @@ int main(int argc, char** argv) {
           res.priceShortOut = limPriceShort;
           res.printExitInfo(*params.logFile);
 
-          logFile << std::setprecision(6) << "BTC exposure on " << params.exchName[res.idExchLong] << ": " << volumeLong << std::setprecision(2) << std::endl;
-          logFile << std::setprecision(6) << "BTC exposure on " << params.exchName[res.idExchShort] << ": " << volumeShort << std::setprecision(2) << std::endl;
-          logFile << std::endl;
+          logFile.precision(6);
+          logFile << "BTC exposure on " << params.exchName[res.idExchLong] << ": " << volumeLong << '\n'
+                  << "BTC exposure on " << params.exchName[res.idExchShort] << ": " << volumeShort << '\n'
+                  << std::endl;
           auto longOrderId = sendLongOrder[res.idExchLong](params, "sell", fabs(btcUsed[res.idExchLong]), limPriceLong);
           auto shortOrderId = sendShortOrder[res.idExchShort](params, "buy", fabs(btcUsed[res.idExchShort]), limPriceShort);
           logFile << "Waiting for the two orders to be filled..." << std::endl;
@@ -541,8 +554,9 @@ int main(int argc, char** argv) {
           }
           for (int i = 0; i < numExch; ++i) {
             logFile << "New balance on " << params.exchName[i] << ":  \t";
+            logFile.precision(2);
             logFile << balance[i].usdAfter << " USD (perf $" << balance[i].usdAfter - balance[i].usd << "), ";
-            logFile << std::setprecision(6) << balance[i].btcAfter  << std::setprecision(2) << " BTC" << std::endl;
+            logFile << std::setprecision(6) << balance[i].btcAfter << " BTC\n";
           }
           logFile << std::endl;
           // update total USD balance
@@ -555,6 +569,7 @@ int main(int argc, char** argv) {
             balance[i].usd = balance[i].usdAfter;
             balance[i].btc = balance[i].btcAfter;
           }
+          logFile.precision(2);
           logFile << "ACTUAL PERFORMANCE: " << "$" << res.usdTotBalanceAfter - res.usdTotBalanceBefore << " (" << res.actualPerf() * 100.0 << "%)\n" << std::endl;
           csvFile << res.id << "," << res.exchNameLong << "," << res.exchNameShort << "," << printDateTimeCsv(res.entryTime) << "," << printDateTimeCsv(res.exitTime);
           csvFile << "," << res.getTradeLengthInMinute() << "," << res.exposure * 2.0 << "," << res.usdTotBalanceBefore << "," << res.usdTotBalanceAfter << "," << res.actualPerf() << "\n";
