@@ -128,50 +128,30 @@ double getActivePos(Parameters& params) { return getAvail(params, "btc"); }
 double getLimitPrice(Parameters& params, double volume, bool isBid)
 {
   auto &exchange = queryHandle(params);
-  json_t *toproot = exchange.getRequest("/api/v1/depth.do");
-  json_t *root = toproot;
-  double limPrice = 0.0;
-  if (isBid) {
-    root = json_object_get(root, "bids");
-    // loop on volume
-    *params.logFile << "<OKCoin> Looking for a limit price to fill "
-                    << std::setprecision(6) << fabs(volume) << " BTC...\n";
-    double tmpVol = 0.0;
-    double p;
-    double v;
-    size_t i = 0;
-    while (tmpVol < fabs(volume) * params.orderBookFactor) {
-      p = json_real_value(json_array_get(json_array_get(root, i), 0));
-      v = json_real_value(json_array_get(json_array_get(root, i), 1));
-      *params.logFile << "<OKCoin> order book: "
-                      << std::setprecision(6) << v << "@$"
-                      << std::setprecision(2) << p << std::endl;
-      tmpVol += v;
-      i++;
-    }
-    limPrice = json_real_value(json_array_get(json_array_get(root, i-1), 0));
-  } else {
-    root = json_object_get(root, "asks");
-    // loop on volume
-    *params.logFile << "<OKCoin> Looking for a limit price to fill "
-                    << std::setprecision(6) << fabs(volume) << " BTC...\n";
-    double tmpVol = 0.0;
-    double p;
-    double v;
-    size_t i = json_array_size(root) - 1;
-    while (tmpVol < fabs(volume) * params.orderBookFactor) {
-      p = json_real_value(json_array_get(json_array_get(root, i), 0));
-      v = json_real_value(json_array_get(json_array_get(root, i), 1));
-      *params.logFile << "<OKCoin> order book: "
-                      << std::setprecision(6) << v << "@$"
-                      << std::setprecision(2) << p << std::endl;
-      tmpVol += v;
-      i--;
-    }
-    limPrice = json_real_value(json_array_get(json_array_get(root, i+1), 0));
+  json_t *root = exchange.getRequest("/api/v1/depth.do");
+  json_t *bidask = json_object_get(root, isBid ? "bids" : "asks");
+
+  // loop on volume
+  *params.logFile << "<OKCoin> Looking for a limit price to fill "
+                  << std::setprecision(6) << fabs(volume) << " BTC...\n";
+  double tmpVol = 0.0;
+  double p = 0.0;
+  double v;
+  size_t i = isBid ? 0 : json_array_size(bidask) - 1;
+  size_t step = isBid ? 1 : -1;
+  while (tmpVol < fabs(volume) * params.orderBookFactor)
+  {
+    p = json_number_value(json_array_get(json_array_get(bidask, i), 0));
+    v = json_number_value(json_array_get(json_array_get(bidask, i), 1));
+    *params.logFile << "<OKCoin> order book: "
+                    << std::setprecision(6) << v << "@$"
+                    << std::setprecision(2) << p << std::endl;
+    tmpVol += v;
+    i += step;
   }
-  json_decref(toproot);
-  return limPrice;
+
+  json_decref(root);
+  return p;
 }
 
 json_t* authRequest(Parameters& params, std::string url, std::string signature, std::string content)
