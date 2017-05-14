@@ -47,7 +47,8 @@ int createTable(std::string exchangeName, Parameters& params)
   return res;
 }
 
-int addBidAskToDb(std::string exchangeName, std::string datetime, double bid, double ask, Parameters& params) {
+int addBidAskToDb(std::string exchangeName, std::string datetime, double bid, double ask, Parameters& params)
+{
   std::stringstream query;
   query << "INSERT INTO `" << exchangeName << "` VALUES ('" << datetime << "'," << bid << "," << ask << ");";
   int res;
