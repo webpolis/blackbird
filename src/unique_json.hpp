@@ -9,7 +9,6 @@ struct json_deleter
   void operator () (json_t *J)
   {
     json_decref(J);
-    std::cerr << __PRETTY_FUNCTION__ << '\n';
   }
 };
 
