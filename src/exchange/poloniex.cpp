@@ -1,10 +1,10 @@
 #include "poloniex.h"
 #include "parameters.h"
 #include "utils/restapi.h"
+#include "unique_json.hpp"
 
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
-#include "jansson.h"
 
 namespace Poloniex {
 
@@ -18,14 +18,14 @@ static RestApi& queryHandle(Parameters &params)
 quote_t getQuote(Parameters &params)
 {
   auto &exchange = queryHandle(params);
-  json_t *root = exchange.getRequest("/public?command=returnTicker");
-  const char *quote = json_string_value(json_object_get(json_object_get(root, "USDT_BTC"), "highestBid"));
+  unique_json root { exchange.getRequest("/public?command=returnTicker") };
+
+  const char *quote = json_string_value(json_object_get(json_object_get(root.get(), "USDT_BTC"), "highestBid"));
   auto bidValue = quote ? std::stod(quote) : 0.0;
 
-  quote = json_string_value(json_object_get(json_object_get(root, "USDT_BTC"), "lowestAsk"));
+  quote = json_string_value(json_object_get(json_object_get(root.get(), "USDT_BTC"), "lowestAsk"));
   auto askValue = quote ? std::stod(quote) : 0.0;
 
-  json_decref(root);
   return std::make_pair(bidValue, askValue);
 }
 
