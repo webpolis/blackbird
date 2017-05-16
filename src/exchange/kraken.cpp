@@ -2,10 +2,10 @@
 #include "parameters.h"
 #include "utils/restapi.h"
 #include "utils/base64.h"
+#include "unique_json.hpp"
 
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
-#include "jansson.h"
 #include <iomanip>
 #include <vector>
 #include <sys/time.h>
@@ -13,9 +13,9 @@
 namespace Kraken {
 
 // Initialise internal variables
-static json_t *krakenTicker = nullptr;
+static unique_json krakenTicker = nullptr;
 static bool krakenGotTicker = false;
-static json_t *krakenLimPrice = nullptr;
+static unique_json krakenLimPrice = nullptr;
 static bool krakenGotLimPrice = false;
 
 static RestApi& queryHandle(Parameters &params)
@@ -27,31 +27,26 @@ static RestApi& queryHandle(Parameters &params)
 
 quote_t getQuote(Parameters &params)
 {
-  json_t *root;
   if (krakenGotTicker) {
-    root = krakenTicker;
     krakenGotTicker = false;
   } else {
     auto &exchange = queryHandle(params);
-    root = exchange.getRequest("/0/public/Ticker?pair=XXBTZUSD");
+    krakenTicker.reset(exchange.getRequest("/0/public/Ticker?pair=XXBTZUSD"));
     krakenGotTicker = true;
-    krakenTicker = root;
   }
+  json_t *root = krakenTicker.get();
   const char *quote = json_string_value(json_array_get(json_object_get(json_object_get(json_object_get(root, "result"), "XXBTZUSD"), "b"), 0));
   auto bidValue = quote ? std::stod(quote) : 0.0;
 
   quote = json_string_value(json_array_get(json_object_get(json_object_get(json_object_get(root, "result"), "XXBTZUSD"), "a"), 0));
   auto askValue = quote ? std::stod(quote) : 0.0;
 
-  if (!krakenGotTicker) {
-    json_decref(root);
-  }
   return std::make_pair(bidValue, askValue);
 }
 
 double getAvail(Parameters& params, std::string currency) {
-  json_t* root = authRequest(params, "/0/private/Balance");
-  json_t* result = json_object_get(root, "result");
+  unique_json root { authRequest(params, "/0/private/Balance") };
+  json_t *result = json_object_get(root.get(), "result");
   if (json_object_size(result) == 0) {
     return 0.0;
   }
@@ -82,30 +77,29 @@ std::string sendLongOrder(Parameters& params, std::string direction, double quan
   std::string pricelimit = std::to_string(price);
   std::string volume = std::to_string(quantity);
   std::string options = "pair=" + pair + "&type=" + type + "&ordertype=" + ordertype + "&price=" + pricelimit + "&volume=" + volume;
-  json_t* res = authRequest(params, "/0/private/AddOrder", options);
-  json_t* root = json_object_get(res, "result");
-  if (json_is_object(root) == 0) {
-    *params.logFile << json_dumps(res, 0) << std::endl;
+  unique_json root { authRequest(params, "/0/private/AddOrder", options) };
+  json_t *res = json_object_get(root.get(), "result");
+  if (json_is_object(res) == 0) {
+    *params.logFile << json_dumps(root.get(), 0) << std::endl;
     exit(0);
   }
-  std::string txid = json_string_value(json_array_get(json_object_get(root, "txid"), 0));
+  std::string txid = json_string_value(json_array_get(json_object_get(res, "txid"), 0));
   *params.logFile << "<Kraken> Done (transaction ID: " << txid << ")\n" << std::endl;
-  json_decref(root);
   return txid;
 }
 
 bool isOrderComplete(Parameters& params, std::string orderId) {
-  json_t* root = authRequest(params, "/0/private/OpenOrders");
+  unique_json root { authRequest(params, "/0/private/OpenOrders") };
   // no open order: return true
-  root = json_object_get(json_object_get(root, "result"), "open");
-  if (json_object_size(root) == 0) {
+  auto res = json_object_get(json_object_get(root.get(), "result"), "open");
+  if (json_object_size(res) == 0) {
     *params.logFile << "<Kraken> No order exists" << std::endl;
     return true;
   }
-  *params.logFile << json_dumps(root, 0) << std::endl;
-  root = json_object_get(root, orderId.c_str());
+  *params.logFile << json_dumps(res, 0) << std::endl;
+  res = json_object_get(res, orderId.c_str());
   // open orders exist but specific order not found: return true
-  if (json_object_size(root) == 0) {
+  if (json_object_size(res) == 0) {
     *params.logFile << "<Kraken> Order " << orderId << " does not exist" << std::endl;
     return true;
   // open orders exist and specific order was found: return false
@@ -123,12 +117,11 @@ double getLimitPrice(Parameters &params, double volume, bool isBid)
 {
   if (!krakenGotLimPrice)
   {
-    if (krakenLimPrice) json_decref(krakenLimPrice);
     auto &exchange = queryHandle(params);
-    krakenLimPrice = exchange.getRequest("/0/public/Depth?pair=XXBTZUSD");
+    krakenLimPrice.reset(exchange.getRequest("/0/public/Depth?pair=XXBTZUSD"));
   }
   krakenGotLimPrice = !krakenGotLimPrice;
-  auto root = krakenLimPrice;
+  auto root = krakenLimPrice.get();
   auto branch = json_object_get(json_object_get(root, "result"), "XXBTZUSD");
   branch = json_object_get(branch, isBid ? "bids" : "asks");
 
