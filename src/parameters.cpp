@@ -5,7 +5,6 @@
 
 
 Parameters::Parameters(std::string fileName)
-  : dbConn(nullptr, sqlite3_close)
 {
 
   std::ifstream configFile(fileName.c_str());
