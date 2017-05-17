@@ -1,5 +1,5 @@
 #include "parameters.h"
-#include "sqlite3.h"
+
 #include <iostream>
 #include <stdlib.h>
 
