@@ -6,7 +6,7 @@
 
 Parameters::Parameters(std::string fileName)
 {
-  std::ifstream configFile(fileName.c_str());
+  std::ifstream configFile(fileName);
   spreadEntry = getDouble(getParameter("SpreadEntry", configFile));
   spreadTarget = getDouble(getParameter("SpreadTarget", configFile));
   maxLength = getUnsigned(getParameter("MaxLength", configFile));
@@ -62,8 +62,6 @@ Parameters::Parameters(std::string fileName)
   receiverAddress = getParameter("ReceiverAddress", configFile);
 
   dbFile = getParameter("DBFile", configFile);
-
-  configFile.close();
 }
 
 void Parameters::addExchange(std::string n, double f, bool h, bool m)
