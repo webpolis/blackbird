@@ -9,8 +9,8 @@
 #include <curl/curl.h>
 
 
-struct Parameters {
-
+struct Parameters
+{
   std::vector<std::string> exchName;
   std::vector<double> fees;
   std::vector<bool> canShort;

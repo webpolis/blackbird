@@ -6,7 +6,6 @@
 
 Parameters::Parameters(std::string fileName)
 {
-
   std::ifstream configFile(fileName.c_str());
   spreadEntry = getDouble(getParameter("SpreadEntry", configFile));
   spreadTarget = getDouble(getParameter("SpreadTarget", configFile));
@@ -67,34 +66,43 @@ Parameters::Parameters(std::string fileName)
   configFile.close();
 }
 
-void Parameters::addExchange(std::string n, double f, bool h, bool m) {
+void Parameters::addExchange(std::string n, double f, bool h, bool m)
+{
   exchName.push_back(n);
   fees.push_back(f);
   canShort.push_back(h);
   isImplemented.push_back(m);
 }
 
-int Parameters::nbExch() const {
+int Parameters::nbExch() const
+{
   return exchName.size();
 }
 
-std::string getParameter(std::string parameter, std::ifstream& configFile) {
+std::string getParameter(std::string parameter, std::ifstream& configFile)
+{
   std::string line;
   configFile.clear();
   configFile.seekg(0);
-  if (configFile.is_open()) {
-    while (getline(configFile, line)) {
-      if (line.length() > 0 && line.at(0) != '#') {
+  if (configFile.is_open())
+  {
+    while (getline(configFile, line))
+    {
+      if (line.length() > 0 && line.at(0) != '#')
+      {
         std::string key = line.substr(0, line.find('='));
         std::string value = line.substr(line.find('=') + 1, line.length());
-        if (key == parameter) {
+        if (key == parameter)
+        {
           return value;
         }
       }
     }
     std::cout << "ERROR: parameter '" << parameter << "' not found. Your configuration file might be too old.\n" << std::endl;
     exit(EXIT_FAILURE);
-  } else {
+  }
+  else
+  {
     std::cout << "ERROR: file cannot be open.\n" << std::endl;
     exit(EXIT_FAILURE);
   }
@@ -105,10 +113,12 @@ bool getBool(std::string value)
   return value == "true";
 }
 
-double getDouble(std::string value) {
+double getDouble(std::string value)
+{
   return atof(value.c_str());
 }
 
-unsigned getUnsigned(std::string value) {
+unsigned getUnsigned(std::string value)
+{
   return atoi(value.c_str());
 }
