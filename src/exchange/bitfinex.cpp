@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <sstream>
 #include <iomanip>
+#include <array>
 #include <math.h>
 #include <sys/time.h>
 

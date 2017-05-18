@@ -8,6 +8,7 @@
 #include "openssl/hmac.h"
 #include <iomanip>
 #include <vector>
+#include <array>
 #include <sys/time.h>
 
 namespace Kraken {
