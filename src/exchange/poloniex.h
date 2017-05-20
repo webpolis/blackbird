@@ -23,8 +23,6 @@ double getActivePos(Parameters& params);
 
 double getLimitPrice(Parameters& params, double volume, bool isBid);
 
-json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options);
-
 }
 
 #endif
