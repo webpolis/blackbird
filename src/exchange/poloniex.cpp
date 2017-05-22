@@ -65,9 +65,17 @@ std::string sendShortOrder(Parameters& params, std::string direction, double qua
   return "0";
 }
 
-bool isOrderComplete(Parameters& params, std::string orderId) {
-  // TODO
-  return false;
+bool isOrderComplete(Parameters& params, std::string orderId)
+{
+  unique_json root { authRequest(params, "returnOpenOrders", "currencyPair=USDT_BTC") };
+  auto n = json_array_size(root.get());
+  while (n --> 0)
+  {
+    auto item = json_object_get(json_array_get(root.get(), n), "orderNumber");
+    if (orderId == json_string_value(item))
+      return false;
+  }
+  return true;
 }
 
 double getActivePos(Parameters& params) {
