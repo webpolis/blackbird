@@ -83,7 +83,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid) {
 json_t* authRequest(Parameters &params, const char *request, const std::string &options)
 {
   using namespace std;
-  string post_body = "nonce="   + to_string(time(nullptr)) +
+  static uint64_t nonce = time(nullptr) * 4;
+  string post_body = "nonce="   + to_string(++nonce) +
                      "&command=" + request;
   if (!options.empty())
   {
