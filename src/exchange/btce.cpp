@@ -8,11 +8,12 @@
 #include "openssl/hmac.h"
 #include <array>
 #include <time.h>
-#include <unistd.h>
+#include <assert.h>
 
 namespace BTCe {
 
 static json_t* authRequest(Parameters &, const char *, const std::string & = "");
+static json_t* adjustResponse(json_t *);
 
 static RestApi& queryHandle(Parameters &params)
 {
@@ -24,8 +25,8 @@ static RestApi& queryHandle(Parameters &params)
 static json_t* checkResponse(std::ostream &logFile, json_t *root)
 {
   unique_json own { root };
-  auto stat = json_object_get(root, "success");
-  if (json_integer_value(stat) == 0)
+  auto success = json_object_get(root, "success");
+  if (json_integer_value(success) == 0)
   {
     auto errmsg = json_object_get(root, "error");
     logFile << "<BTC-e> Error with response: "
@@ -55,6 +56,14 @@ double getAvail(Parameters &params, std::string currency)
   return json_number_value(funds);
 }
 
+bool isOrderComplete(Parameters& params, std::string orderId)
+{
+  if (orderId == "0") return true;
+  unique_json root { authRequest(params, "ActiveOrders", "pair=btc_usd") };
+
+  return json_object_get(root.get(), orderId.c_str()) == nullptr;
+}
+
 double getActivePos(Parameters& params) {
   // TODO
   return 0.0;
@@ -63,6 +72,30 @@ double getActivePos(Parameters& params) {
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
   // TODO
   return 0.0;
+}
+
+/*
+ * This is here to handle annoying inconsistences in btce's api.
+ * For example, if there are no open orders, the 'ActiveOrders'
+ * method returns an *error* instead of an empty object/array.
+ * This function turns that error into an empty object for sake
+ * of regularity.
+ */
+json_t* adjustResponse(json_t *root)
+{
+  auto errmsg = json_object_get(root, "error");
+  if (!errmsg) return root;
+
+  if (json_string_value(errmsg) == std::string("no orders"))
+  {
+    int err = 0;
+    err += json_integer_set(json_object_get(root, "success"), 1);
+    err += json_object_set_new(root, "return", json_object());
+    err += json_object_del(root, "error");
+    assert (err == 0);
+  }
+
+  return root;
 }
 
 json_t* authRequest(Parameters &params, const char *request, const std::string &options)
@@ -87,10 +120,10 @@ json_t* authRequest(Parameters &params, const char *request, const std::string &
     "Key:"  + params.btceApi,
     "Sign:" + hex_str(sign, sign + SHA512_DIGEST_LENGTH),
   };
-  return checkResponse (*params.logFile,
-                        exchange.postRequest ("/tapi",
-                                              make_slist(begin(headers), end(headers)),
-                                              post_body));
+  auto result = exchange.postRequest ("/tapi",
+                                      make_slist(begin(headers), end(headers)),
+                                      post_body);
+  return checkResponse(*params.logFile, adjustResponse(result));
 }
 
 }
