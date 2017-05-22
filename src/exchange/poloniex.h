@@ -4,7 +4,6 @@
 #include "quote_t.h"
 #include <string>
 
-struct json_t;
 struct Parameters;
 
 namespace Poloniex {
