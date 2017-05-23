@@ -4,17 +4,6 @@
 <img src="https://cloud.githubusercontent.com/assets/11370278/10808535/02230d46-7dc3-11e5-92d8-da15cae8c6e9.png" width="50%" alt="Blackbird Bitcoin Arbitrage">
 </p>
 
-
-___
-<p align="center">
-:warning:&nbsp;&nbsp;&nbsp;<b>WARNING</b>&nbsp;&nbsp;&nbsp;:warning:
-</p>
-<p align="center">
-<i><a href="https://www.bitfinex.com" target="_blank">Bitfinex</a> is currently trading at a premium due to their <a href="https://news.bitcoin.com/uncertainty-surrounds-bitcoin-rally-bitfinex-price-spreads/" target="_blank">current banking issues</a>. Therefore, there is a large spread (>4%) between that exchange and the other ones. That spread is unlikely going to narrow until those banking issues are resolved (or until Bitfinex becomes insolvent as this case is similar to <a href="https://en.wikipedia.org/wiki/Mt._Gox" target="_blank">Mt. Gox</a>).</i>
-</p>
-
-___
-
 ### Introduction
 
 Blackbird Bitcoin Arbitrage is a C++ trading system that does automatic long/short arbitrage between Bitcoin exchanges.
