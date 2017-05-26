@@ -8,9 +8,10 @@
 #include <vector>
 #include <curl/curl.h>
 
-
-struct Parameters
-{
+// Stores all the parameters defined
+// in the configuration file.
+struct Parameters {
+  
   std::vector<std::string> exchName;
   std::vector<double> fees;
   std::vector<bool> canShort;
@@ -26,12 +27,14 @@ struct Parameters
   unsigned trailingCount;
   double orderBookFactor;
   bool demoMode;
+  std::string leg1;
+  std::string leg2;
   bool verbose;
   std::ofstream* logFile;
-  unsigned gapSec;
+  unsigned interval;
   unsigned debugMaxIteration;
-  bool useFullCash;
-  double cashForTesting;
+  bool useFullExposure;
+  double testedExposure;
   double maxExposure;
   bool useVolatility;
   unsigned volatilityPeriod;
@@ -81,8 +84,12 @@ struct Parameters
   void addExchange(std::string n, double f, bool h, bool m);
 
   int nbExch() const;
+  
+  std::string tradedPair() const;
 };
 
+// Copies the parameters from the configuration file
+// to the Parameter structure.
 std::string getParameter(std::string parameter, std::ifstream& configFile);
 
 bool getBool(std::string value);

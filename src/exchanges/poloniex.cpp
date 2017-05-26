@@ -32,15 +32,17 @@ static json_t* checkResponse(std::ostream &logFile, json_t *root)
   return root;
 }
 
+
+// We only get ETH/BTC as there is no USD on Poloniex
 quote_t getQuote(Parameters &params)
 {
   auto &exchange = queryHandle(params);
   unique_json root { exchange.getRequest("/public?command=returnTicker") };
 
-  const char *quote = json_string_value(json_object_get(json_object_get(root.get(), "USDT_BTC"), "highestBid"));
+  const char *quote = json_string_value(json_object_get(json_object_get(root.get(), "BTC_ETH"), "highestBid"));
   auto bidValue = quote ? std::stod(quote) : 0.0;
 
-  quote = json_string_value(json_object_get(json_object_get(root.get(), "USDT_BTC"), "lowestAsk"));
+  quote = json_string_value(json_object_get(json_object_get(root.get(), "BTC_ETH"), "lowestAsk"));
   auto askValue = quote ? std::stod(quote) : 0.0;
 
   return std::make_pair(bidValue, askValue);

@@ -4,14 +4,11 @@
 #include "sqlite3.h"
 #include <memory>
 
-struct sqlite_deleter
-{
-  void operator () (sqlite3 *S)
-  {
+struct sqlite_deleter {
+  void operator () (sqlite3 *S) {
     sqlite3_close(S);
   }
-  void operator () (char *errmsg)
-  {
+  void operator () (char *errmsg) {
     sqlite3_free(errmsg);
   }
 };

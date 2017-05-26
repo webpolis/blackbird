@@ -25,7 +25,14 @@ static RestApi& queryHandle(Parameters &params)
 quote_t getQuote(Parameters &params)
 {
   auto &exchange = queryHandle(params);
-  unique_json root { exchange.getRequest("/v1/book/BTCUSD") };
+  // OK, there is a better way to do this...
+  std::string url;
+  if (params.tradedPair().compare("BTC/USD") == 0) {
+    url = "/v1/book/BTCUSD";
+  } else if (params.tradedPair().compare("ETH/BTC") == 0) {
+    url = "/v1/book/ETHBTC";
+  }
+  unique_json root { exchange.getRequest(url) };
   const char *quote = json_string_value(json_object_get(json_array_get(json_object_get(root.get(), "bids"), 0), "price"));
   auto bidValue = quote ? std::stod(quote) : 0.0;
 

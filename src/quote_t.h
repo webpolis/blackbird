@@ -3,8 +3,8 @@
 
 #include <utility>
 
-class quote_t
-{
+class quote_t {
+  
   typedef double bid_t;
   typedef double ask_t;
   std::pair<bid_t, ask_t> quote_;

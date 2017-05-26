@@ -2,8 +2,7 @@
 #include <time.h>
 #include "time_fun.h"
 
-time_t getTime_t(int y, int m, int d, int h, int n, int s)
-{
+time_t getTime_t(int y, int m, int d, int h, int n, int s) {
   tm ttm = {0};
   ttm.tm_year = y - 1900;
   ttm.tm_mon = m - 1;
@@ -16,8 +15,7 @@ time_t getTime_t(int y, int m, int d, int h, int n, int s)
 }
 
 template <const char *fmt>
-std::string fmtDateTime(const time_t &t)
-{
+std::string fmtDateTime(const time_t &t) {
   std::string buff(20, '\0');
   buff.resize(strftime(&buff[0], buff.size(), fmt, localtime(&t)));
   return buff;
@@ -38,18 +36,17 @@ static constexpr char dbfmt[] = "%Y-%m-%d %H:%M:%S";
 const decltype(&fmtDateTime<dbfmt>) printDateTimeDb = &fmtDateTime<dbfmt>;
 
 static constexpr char filenamefmt[] = "%Y%m%d_%H%M%S";
-std::string printDateTimeFileName()
-{
+
+std::string printDateTimeFileName() {
   return fmtDateTime<filenamefmt>(time(NULL));
 }
 
 static constexpr char defaultfmt[] = "%m/%d/%Y %H:%M:%S";
-std::string printDateTime(time_t t)
-{
+
+std::string printDateTime(time_t t) {
   return fmtDateTime<defaultfmt>(t);
 }
 
-std::string printDateTime()
-{
+std::string printDateTime() {
   return printDateTime(time(NULL));
 }

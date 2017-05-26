@@ -11,10 +11,12 @@ struct Parameters;
 
 std::string percToStr(double perc);
 
-// check for entry opportunity between two exchanges
+// Checks for entry opportunity between two exchanges
+// and returns True if an opporunity is found.
 bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params);
 
-// check for exit opportunity between two exchanges
+// Checks for exit opportunity between two exchanges
+// and returns True if an opporunity is found.
 bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& params, std::time_t period);
 
 #endif

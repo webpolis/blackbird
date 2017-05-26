@@ -4,9 +4,11 @@
 #include "quote_t.h"
 #include <string>
 
-// contains all the information for a given exchange
-class Bitcoin
-{
+// Contains all the information for a given exchange, 
+// like fees and wether we can short on that exchange.
+// FIXME: short selling should depend on the currency.
+class Bitcoin {
+  
   private:
     unsigned id;
     std::string exchName;

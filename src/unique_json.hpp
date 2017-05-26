@@ -4,10 +4,8 @@
 #include "jansson.h"
 #include <memory>
 
-struct json_deleter
-{
-  void operator () (json_t *J)
-  {
+struct json_deleter {
+  void operator () (json_t *J) {
     json_decref(J);
   }
 };

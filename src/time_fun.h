@@ -6,19 +6,19 @@
 
 time_t getTime_t(int y, int m, int d, int h, int n, int s);
 
-// return 'yyyy-mm-dd_hh:nn:ss'
+// Returns 'yyyy-mm-dd_hh:nn:ss'
 extern std::string (*const printDateTimeCsv)(const time_t &t);
 
-// return 'yyyy-mm-dd hh:nn:ss'
+// Returns 'yyyy-mm-dd hh:nn:ss'
 extern std::string (*const printDateTimeDb)(const time_t &t);
 
-// return 'yyymmdd_hhnnss'
+// Returns 'yyymmdd_hhnnss'
 std::string printDateTimeFileName();
 
-// return 'mm/dd/yyyy hh:nn:ss'
+// Returns 'mm/dd/yyyy hh:nn:ss'
 std::string printDateTime(time_t t);
 
-// return current 'mm/dd/yyyy hh:mm:ss'
+// Returns current 'mm/dd/yyyy hh:mm:ss'
 std::string printDateTime();
 
 #endif
