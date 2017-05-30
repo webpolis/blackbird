@@ -87,7 +87,7 @@ Parameter | Default Value | Description
 | Leg1 | BTC | The first leg of the traded pair. This leg is hedged against market risk |
 | Leg2 | USD | The second leg of the traded pair. This leg is __not__ hedged against market risk |
 | UseFullExposure | false | When true, all the `Leg2` exposure available on your accounts will be used. Otherwise, the amount defined by `TestedExposure` will be used. Note: the cash used for a trade will be the minimum of the two exchanges, minus 1.00% as a small margin: if there is $1,000 on the first account and $1,100 on the second one, $990 will be used on each exchange, i.e. $1,000 - (1% * $1,000). The exposure is $1,980 |
-| TestedExposure | 25 | If UseFullCash is false, that parameter defines the USD amount that will be used. The minimum has to be $10 otherwise some exchanges might reject the orders |
+| TestedExposure | 25 | If UseFullExposure is false, that parameter defines the USD amount that will be used. The minimum has to be $10 otherwise some exchanges might reject the orders |
 | MaxExposure | 25,000 | Maximum exposure per exchange. If the limit is $25,000 then Blackbird won't send any order larger than that on each exchange |
 | MaxLength | 5,184,000 | The maximum length of a trade in number of iterations. If this value is reached then Blackbird will exit the market regardless of the spread. Warning: with this value the system can exit with a loss so It's recommended to use a large value. The default is 180 days with GapSec at 3 seconds |
 | DebugMaxIteration | 3,200,000 | The maximum number of iteration. Once DebugMaxIteration is reached Blackbird is terminated with return=0. Useful for troubleshooting the software |
