@@ -4,7 +4,7 @@
 #include "quote_t.h"
 #include <string>
 
-struct json_t;
+#include <jansson.h>
 struct Parameters;
 
 namespace ItBit {
@@ -16,7 +16,6 @@ double getAvail(Parameters& params, std::string currency);
 double getActivePos(Parameters& params);
 
 double getLimitPrice(Parameters& params, double volume, bool isBid);
-
 }
 
 #endif
