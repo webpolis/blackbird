@@ -33,10 +33,6 @@ find_package(OpenSSL)
 
 target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES})
 
-find_package(OpenSSL)
-
-target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES})
-
 find_package(Jansson)
 
 target_link_libraries(${PROJECT_NAME} ${JANSSON_LIBRARIES})
