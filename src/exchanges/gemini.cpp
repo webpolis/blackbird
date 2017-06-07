@@ -1,46 +1,56 @@
-#include <string.h>
-#include <iostream>
+#include "gemini.h"
+#include "parameters.h"
+#include "curl_fun.h"
+#include "utils/restapi.h"
+#include "utils/base64.h"
+#include "unique_json.hpp"
+
+#include "openssl/sha.h"
+#include "openssl/hmac.h"
 #include <unistd.h>
 #include <math.h>
 #include <sstream>
+#include <iomanip>
 #include <sys/time.h>
-#include <openssl/sha.h>
-#include <openssl/hmac.h>
-#include "utils/base64.h"
-#include <jansson.h>
-#include "gemini.h"
-#include "curl_fun.h"
 
 namespace Gemini {
 
-double getQuote(Parameters& params, bool isBid) {
-  bool GETRequest = false;
-  json_t* root = getJsonFromUrl(params, "https://api.gemini.com/v1/book/BTCUSD", "", GETRequest);
-  const char *quote;
-  double quoteValue;
-  if (isBid) {
-    quote = json_string_value(json_object_get(json_array_get(json_object_get(root, "bids"), 0), "price"));
-  } else {
-    quote = json_string_value(json_object_get(json_array_get(json_object_get(root, "asks"), 0), "price"));
+static RestApi& queryHandle(Parameters &params)
+{
+  static RestApi query ("https://api.gemini.com",
+                        params.cacert.c_str(), *params.logFile);
+  return query;
+}
+
+quote_t getQuote(Parameters &params)
+{
+  auto &exchange = queryHandle(params);
+  // OK, there is a better way to do this...
+  std::string url;
+  if (params.tradedPair().compare("BTC/USD") == 0) {
+    url = "/v1/book/BTCUSD";
+  } else if (params.tradedPair().compare("ETH/BTC") == 0) {
+    url = "/v1/book/ETHBTC";
   }
-  if (quote != NULL) {
-    quoteValue = atof(quote);
-  } else {
-    quoteValue = 0.0;
-  }
-  json_decref(root);
-  return quoteValue;
+  unique_json root { exchange.getRequest(url) };
+  const char *quote = json_string_value(json_object_get(json_array_get(json_object_get(root.get(), "bids"), 0), "price"));
+  auto bidValue = quote ? std::stod(quote) : 0.0;
+
+  quote = json_string_value(json_object_get(json_array_get(json_object_get(root.get(), "asks"), 0), "price"));
+  auto askValue = quote ? std::stod(quote) : 0.0;
+
+  return std::make_pair(bidValue, askValue);
 }
 
 double getAvail(Parameters& params, std::string currency) {
-  json_t* root = authRequest(params, "https://api.gemini.com/v1/balances", "balances", "");
-  while (json_object_get(root, "message") != NULL) {
+  unique_json root { authRequest(params, "https://api.gemini.com/v1/balances", "balances", "") };
+  while (json_object_get(root.get(), "message") != NULL) {
     sleep(1.0);
-    *params.logFile << "<Gemini> Error with JSON: " << json_dumps(root, 0) << ". Retrying..." << std::endl;
-    root = authRequest(params, "https://api.gemini.com/v1/balances", "balances", "");
+    *params.logFile << "<Gemini> Error with JSON: " << json_dumps(root.get(), 0) << ". Retrying..." << std::endl;
+    root.reset(authRequest(params, "https://api.gemini.com/v1/balances", "balances", ""));
   }
   // go through the list
-  size_t arraySize = json_array_size(root);
+  size_t arraySize = json_array_size(root.get());
   double availability = 0.0;
   const char* returnedText;
   std::string currencyAllCaps;
@@ -50,9 +60,9 @@ double getAvail(Parameters& params, std::string currency) {
     currencyAllCaps = "USD";
   }
   for (size_t i = 0; i < arraySize; i++) {
-    std::string tmpCurrency = json_string_value(json_object_get(json_array_get(root, i), "currency"));
+    std::string tmpCurrency = json_string_value(json_object_get(json_array_get(root.get(), i), "currency"));
     if (tmpCurrency.compare(currencyAllCaps.c_str()) == 0) {
-      returnedText = json_string_value(json_object_get(json_array_get(root, i), "amount"));
+      returnedText = json_string_value(json_object_get(json_array_get(root.get(), i), "amount"));
       if (returnedText != NULL) {
         availability = atof(returnedText);
       } else {
@@ -61,64 +71,60 @@ double getAvail(Parameters& params, std::string currency) {
       }
     }
   }
-  json_decref(root);
+
   return availability;
 }
 
-int sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
-  *params.logFile << "<Gemini> Trying to send a \"" << direction << "\" limit order: " << quantity << "@$" << price << "..." << std::endl;
+std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
+  *params.logFile << "<Gemini> Trying to send a \"" << direction << "\" limit order: "
+                  << std::setprecision(6) << quantity << "@$"
+                  << std::setprecision(2) << price << "...\n";
   std::ostringstream oss;
   oss << "\"symbol\":\"BTCUSD\", \"amount\":\"" << quantity << "\", \"price\":\"" << price << "\", \"side\":\"" << direction << "\", \"type\":\"exchange limit\"";
   std::string options = oss.str();
-  json_t* root = authRequest(params, "https://api.gemini.com/v1/order/new", "order/new", options);
-  int orderId = atoi(json_string_value(json_object_get(root, "order_id")));
+  unique_json root { authRequest(params, "https://api.gemini.com/v1/order/new", "order/new", options) };
+  std::string orderId = json_string_value(json_object_get(root.get(), "order_id"));
   *params.logFile << "<Gemini> Done (order ID: " << orderId << ")\n" << std::endl;
-  json_decref(root);
   return orderId;
 }
 
-bool isOrderComplete(Parameters& params, int orderId) {
-  if (orderId == 0) {
-    return true;
-  }
-  std::ostringstream oss;
-  oss << "\"order_id\":" << orderId;
-  std::string options = oss.str();
-  json_t* root = authRequest(params, "https://api.gemini.com/v1/order/status", "order/status", options);
-  bool isComplete = json_is_false(json_object_get(root, "is_live"));
-  json_decref(root);
-  return isComplete;
+bool isOrderComplete(Parameters& params, std::string orderId) {
+  if (orderId == "0") return true;
+
+  auto options = "\"order_id\":" + orderId;
+  unique_json root { authRequest(params, "https://api.gemini.com/v1/order/status", "order/status", options) };
+  return json_is_false(json_object_get(root.get(), "is_live"));
 }
 
 double getActivePos(Parameters& params) {
   return getAvail(params, "btc");
 }
 
-double getLimitPrice(Parameters& params, double volume, bool isBid) {
-  bool GETRequest = false;
-  json_t* root;
-  if (isBid) {
-    root = json_object_get(getJsonFromUrl(params, "https://api.gemini.com/v1/book/btcusd", "", GETRequest), "bids");
-  } else {
-    root = json_object_get(getJsonFromUrl(params, "https://api.gemini.com/v1/book/btcusd", "", GETRequest), "asks");
-  }
+double getLimitPrice(Parameters& params, double volume, bool isBid)
+{
+  auto &exchange = queryHandle(params);
+  unique_json root { exchange.getRequest("/v1/book/btcusd") };
+  auto bidask = json_object_get(root.get(), isBid ? "bids" : "asks");
+  
   // loop on volume
-  *params.logFile << "<Gemini> Looking for a limit price to fill " << fabs(volume) << " BTC..." << std::endl;
+  *params.logFile << "<Gemini> Looking for a limit price to fill "
+                  << std::setprecision(6) << fabs(volume) << " BTC...\n";
   double tmpVol = 0.0;
-  double p;
+  double p = 0.0;
   double v;
   int i = 0;
-  while (tmpVol < fabs(volume) * params.orderBookFactor) {
-    p = atof(json_string_value(json_object_get(json_array_get(root, i), "price")));
-    v = atof(json_string_value(json_object_get(json_array_get(root, i), "amount")));
-    *params.logFile << "<Gemini> order book: " << v << "@$" << p << std::endl;
+  while (tmpVol < fabs(volume) * params.orderBookFactor)
+  {
+    p = atof(json_string_value(json_object_get(json_array_get(bidask, i), "price")));
+    v = atof(json_string_value(json_object_get(json_array_get(bidask, i), "amount")));
+    *params.logFile << "<Gemini> order book: "
+                    << std::setprecision(6) << v << "@$"
+                    << std::setprecision(2) << p << std::endl;
     tmpVol += v;
     i++;
   }
-  double limPrice = 0.0;
-  limPrice = atof(json_string_value(json_object_get(json_array_get(root, i-1), "price")));
-  json_decref(root);
-  return limPrice;
+
+  return p;
 }
 
 json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options) {
@@ -141,8 +147,7 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
   oss.clear();
   oss.str("");
   // build the signature
-  unsigned char* digest;
-  digest = HMAC(EVP_sha384(), params.geminiSecret.c_str(), strlen(params.geminiSecret.c_str()), (unsigned char*)tmpPayload.c_str(), strlen(tmpPayload.c_str()), NULL, NULL);
+  uint8_t *digest = HMAC(EVP_sha384(), params.geminiSecret.c_str(), params.geminiSecret.size(), (uint8_t*)tmpPayload.c_str(), tmpPayload.size(), NULL, NULL);
   char mdString[SHA384_DIGEST_LENGTH+100];   // FIXME +100
   for (int i = 0; i < SHA384_DIGEST_LENGTH; ++i) {
     sprintf(&mdString[i*2], "%02x", (unsigned int)digest[i]);
@@ -201,4 +206,3 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
 }
 
 }
-

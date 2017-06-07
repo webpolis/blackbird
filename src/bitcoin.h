@@ -1,12 +1,14 @@
 #ifndef BITCOIN_H
 #define BITCOIN_H
 
+#include "quote_t.h"
 #include <string>
 
-
-// contains all the information for a given exchange
-class Bitcoin
-{
+// Contains all the information for a given exchange, 
+// like fees and wether we can short on that exchange.
+// FIXME: short selling should depend on the currency.
+class Bitcoin {
+  
   private:
     unsigned id;
     std::string exchName;
@@ -17,7 +19,7 @@ class Bitcoin
 
   public:
     Bitcoin(unsigned id, std::string n, double f, bool h, bool m);
-    void updateData(double b, double a);
+    void updateData(quote_t quote);
     unsigned getId() const;
     double getAsk() const;
     double getBid() const;

@@ -1,13 +1,15 @@
 #ifndef ITBIT_H
 #define ITBIT_H
 
-#include <curl/curl.h>
+#include "quote_t.h"
 #include <string>
-#include "parameters.h"
+
+struct json_t;
+struct Parameters;
 
 namespace ItBit {
 
-double getQuote(Parameters& params, bool isBid);
+quote_t getQuote(Parameters& params);
 
 double getAvail(Parameters& params, std::string currency);
 
@@ -18,4 +20,3 @@ double getLimitPrice(Parameters& params, double volume, bool isBid);
 }
 
 #endif
-

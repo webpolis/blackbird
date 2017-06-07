@@ -3,15 +3,13 @@
 
 #include <string>
 
-enum
-{
+enum {
   upperhex,
   lowerhex
 };
 
 template <bool Caps = lowerhex, typename FwdIt>
-std::string hex_str(FwdIt first, FwdIt last)
-{
+std::string hex_str(FwdIt first, FwdIt last) {
   static_assert(sizeof(typename std::iterator_traits<FwdIt>::value_type) == 1,
                 "value_type must be 1 byte.");
   constexpr const char *bytemap = Caps ?
@@ -21,8 +19,7 @@ std::string hex_str(FwdIt first, FwdIt last)
   std::string result(std::distance(first, last) * 2, '0');
 
   auto pos = begin(result);
-  while (first != last)
-  {
+  while (first != last) {
     *pos++ = bytemap[ *first >> 4 & 0xF ];
     *pos++ = bytemap[ *first++ & 0xF ];
   }

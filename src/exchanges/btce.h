@@ -1,15 +1,18 @@
 #ifndef BTCE_H
 #define BTCE_H
 
-#include <curl/curl.h>
+#include "quote_t.h"
 #include <string>
-#include "parameters.h"
+
+struct Parameters;
 
 namespace BTCe {
 
-double getQuote(Parameters& params, bool isBid);
+quote_t getQuote(Parameters& params);
 
 double getAvail(Parameters& params, std::string currency);
+
+bool isOrderComplete(Parameters& params, std::string orderId);
 
 double getActivePos(Parameters& params);
 
@@ -18,4 +21,3 @@ double getLimitPrice(Parameters& params, double volume, bool isBid);
 }
 
 #endif
-

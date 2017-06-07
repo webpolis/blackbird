@@ -3,7 +3,7 @@
 override INC_DIR += -I ./src -I ./extern/sqlite3/include
 override LIB_DIR += -L .
 CFLAGS   := -std=c99
-CXXFLAGS := -Wall -pedantic -std=c++11
+CXXFLAGS := -Wall -pedantic -std=c++11 -Wno-missing-braces
 LDFLAGS  := 
 LDLIBS   := -lsqlite3 -lcrypto -ljansson -lcurl
 CC       := gcc

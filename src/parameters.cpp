@@ -1,14 +1,12 @@
 #include "parameters.h"
-#include "sqlite3.h"
+
 #include <iostream>
 #include <stdlib.h>
 
 
-Parameters::Parameters(std::string fileName)
-  : dbConn(nullptr, sqlite3_close)
-{
-
-  std::ifstream configFile(fileName.c_str());
+Parameters::Parameters(std::string fileName) {
+  
+  std::ifstream configFile(fileName);
   spreadEntry = getDouble(getParameter("SpreadEntry", configFile));
   spreadTarget = getDouble(getParameter("SpreadTarget", configFile));
   maxLength = getUnsigned(getParameter("MaxLength", configFile));
@@ -17,11 +15,13 @@ Parameters::Parameters(std::string fileName)
   trailingCount = getUnsigned(getParameter("TrailingSpreadCount", configFile));
   orderBookFactor = getDouble(getParameter("OrderBookFactor", configFile));
   demoMode = getBool(getParameter("DemoMode", configFile));
+  leg1 = getParameter("Leg1", configFile);
+  leg2 = getParameter("Leg2", configFile);
   verbose = getBool(getParameter("Verbose", configFile));
-  gapSec = getUnsigned(getParameter("GapSec", configFile));
+  interval = getUnsigned(getParameter("Interval", configFile));
   debugMaxIteration = getUnsigned(getParameter("DebugMaxIteration", configFile));
-  useFullCash = getBool(getParameter("UseFullCash", configFile));
-  cashForTesting = getDouble(getParameter("CashForTesting", configFile));
+  useFullExposure = getBool(getParameter("UseFullExposure", configFile));
+  testedExposure = getDouble(getParameter("TestedExposure", configFile));
   maxExposure = getDouble(getParameter("MaxExposure", configFile));
   useVolatility = getBool(getParameter("UseVolatility", configFile));
   volatilityPeriod = getUnsigned(getParameter("VolatilityPeriod", configFile));
@@ -52,6 +52,9 @@ Parameters::Parameters(std::string fileName)
   poloniexApi = getParameter("PoloniexApiKey", configFile);
   poloniexSecret = getParameter("PoloniexSecretKey", configFile);
   poloniexFees = getDouble(getParameter("PoloniexFees", configFile));
+  gdaxApi = getParameter("GDAXApiKey", configFile);
+  gdaxSecret = getParameter("GDAXSecretKey", configFile);
+  gdaxFees = getDouble(getParameter("GDAXFees", configFile));
 
   sendEmail = getBool(getParameter("SendEmail", configFile));
   senderAddress = getParameter("SenderAddress", configFile);
@@ -61,8 +64,6 @@ Parameters::Parameters(std::string fileName)
   receiverAddress = getParameter("ReceiverAddress", configFile);
 
   dbFile = getParameter("DBFile", configFile);
-
-  configFile.close();
 }
 
 void Parameters::addExchange(std::string n, double f, bool h, bool m) {
@@ -74,6 +75,10 @@ void Parameters::addExchange(std::string n, double f, bool h, bool m) {
 
 int Parameters::nbExch() const {
   return exchName.size();
+}
+
+std::string Parameters::tradedPair() const {
+  return leg1 + "/" + leg2;
 }
 
 std::string getParameter(std::string parameter, std::ifstream& configFile) {
@@ -98,8 +103,7 @@ std::string getParameter(std::string parameter, std::ifstream& configFile) {
   }
 }
 
-bool getBool(std::string value)
-{
+bool getBool(std::string value) {
   return value == "true";
 }
 

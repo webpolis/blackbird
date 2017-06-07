@@ -5,8 +5,8 @@
 #include <sstream>
 
 
-void sendEmail(const Result &res, Parameters &params)
-{
+void sendEmail(const Result &res, Parameters &params) {
+  
   char tdStyle[] =         "font-family:Georgia;font-size:11px;border-color:#A1A1A1;border-width:1px;border-style:solid;padding:2px;";
   char captionStyle[] =    "font-family:Georgia;font-size:13px;font-weight:normal;color:#0021BF;padding-bottom:6px;text-align:left;";
   char tableTitleStyle[] = "font-family:Georgia;font-variant:small-caps;font-size:13px;text-align:center;border-color:#A1A1A1;border-width:1px;border-style:solid;background-color:#EAEAEA;";
@@ -39,7 +39,7 @@ void sendEmail(const Result &res, Parameters &params)
   oss << "        <td style=\\\"" << tdStyle << "\\\">" << res.exchNameLong << "</td>";
   oss << "        <td style=\\\"" << tdStyle << "\\\">" << res.exchNameShort << "</td>";
   oss << "        <td style=\\\"" << tdStyle << "\\\">\\$" << res.exposure * 2.0 << "</td>";
-  oss << "        <td style=\\\"" << tdStyle << "\\\">\\$" << res.usdTotBalanceAfter - res.usdTotBalanceBefore << "</td>";
+  oss << "        <td style=\\\"" << tdStyle << "\\\">\\$" << res.leg2TotBalanceAfter - res.leg2TotBalanceBefore << "</td>";
 
   oss << "<td style=\\\"" << tdStyle;
   oss << (res.actualPerf() >= 0 ? "color:#000092;\\\">+" : "color:#920000;\\\">");

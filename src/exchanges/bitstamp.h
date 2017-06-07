@@ -1,19 +1,22 @@
 #ifndef BITSTAMP_H
 #define BITSTAMP_H
 
-#include <curl/curl.h>
+#include "quote_t.h"
+
 #include <string>
-#include "parameters.h"
+
+struct json_t;
+struct Parameters;
 
 namespace Bitstamp {
 
-double getQuote(Parameters& params, bool isBid);
+quote_t getQuote(Parameters& params);
 
 double getAvail(Parameters& params, std::string currency);
 
-int sendLongOrder(Parameters& params, std::string direction, double quantity, double price);
+std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price);
 
-bool isOrderComplete(Parameters& params, int orderId);
+bool isOrderComplete(Parameters& params, std::string orderId);
 
 double getActivePos(Parameters& params);
 
@@ -24,4 +27,3 @@ json_t* authRequest(Parameters& params, std::string url, std::string options);
 }
 
 #endif
-
