@@ -165,7 +165,7 @@ If all goes well this produces a Blackbird executable in the project directory.
 3. Spin up the entire stack with docker-compose (OSX/Linux):
 
   ```
-  docker-compose up -d
+  docker-compose up
   ```
 
 ### Contact
