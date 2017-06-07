@@ -154,7 +154,7 @@ If all goes well this produces a Blackbird executable in the project directory.
 
 #### Docker
 
-1. Download and install Docker [here](https://www.docker.com/).
+1. Download and install Docker (with Docker Compose) [here](https://www.docker.com/).
 
 2. Build the container:
 
@@ -162,10 +162,10 @@ If all goes well this produces a Blackbird executable in the project directory.
   docker build -t blackbird .
   ```
 
-3. Mount your configuration and run the container (OSX/Linux):
+3. Spin up the entire stack with docker-compose (OSX/Linux):
 
   ```
-  docker run -v $(pwd)/blackbird.conf:/blackbird/blackbird.conf -it blackbird /blackbird/blackbird
+  docker-compose up -d
   ```
 
 ### Contact

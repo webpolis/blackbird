@@ -1,6 +1,8 @@
 FROM ubuntu:16.04
 MAINTAINER Alex Gandy <alexgandy@gmail.com>
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN apt-get update \
   && apt-get install -yq --no-install-recommends \
   libssl-dev \
