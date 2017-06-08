@@ -13,8 +13,6 @@ macro(use_cxx11)
 endmacro(use_cxx11)
 use_cxx11()
 
-include_directories(${PROJECT_SOURCE_DIR}/src)
-
 file(GLOB SOURCES
     src/*.cpp
     src/exchanges/*.cpp
@@ -35,5 +33,11 @@ target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES})
 
 find_package(Jansson)
 
+target_include_directories (${PROJECT_NAME} PRIVATE
+                            ${PROJECT_SOURCE_DIR}/src
+                            ${SQLITE3_INCLUDE_DIR}
+                            ${CURL_INCLUDE_DIR}
+                            ${OPENSSL_INCLUDE_DIR}
+                            ${JANSSON_INCLUDE_DIR})
 target_link_libraries(${PROJECT_NAME} ${JANSSON_LIBRARIES})
 cotire(${PROJECT_NAME})
