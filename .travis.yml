@@ -13,5 +13,9 @@ before_install:
 install:
   - sudo apt-get install -y libjansson-dev libcurl4-openssl-dev sendemail
 
-script: make
+before_script:
+  - cmake --version
 
+script:
+  - cmake -B./build -H.
+  - cmake --build ./build -- VERBOSE=1
