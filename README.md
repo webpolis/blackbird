@@ -130,6 +130,12 @@ to sync the submodules.
 
 Once you have downloaded the source code, build Blackbird by typing:
 
+    mkdir build && cd build
+    cmake  -DCMAKE_BUILD_TYPE=Debug  ..
+
+or
+
+    cmake -DCMAKE_BUILD_TYPE=Release  ..
     make
 
 If all goes well this produces a Blackbird executable in the project directory.
@@ -143,6 +149,8 @@ If all goes well this produces a Blackbird executable in the project directory.
   mkdir blackbird
   cd blackbird
   git clone --recursive  git://github.com/butor/blackbird.git .
+  mkdir build && cd build
+  cmake -DCMAKE_BUILD_TYPE=Release  ..
   make
   ```
 
@@ -216,4 +224,3 @@ DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK.
    Bitstamp/Bitfinex:   -0.14% [target  0.80%, min -0.19%, max -0.14%]
    Gemini/Bitfinex:     -1.05% [target  0.80%, min -1.07%, max -1.05%]
 ```
-
