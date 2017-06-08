@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 project(blackbird)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
-
+include(cotire)
 macro(use_cxx11)
   if (CMAKE_VERSION VERSION_LESS "3.1")
     set (CMAKE_CXX_FLAGS "--std=c++11 ${CMAKE_CXX_FLAGS}")
@@ -36,3 +36,4 @@ target_link_libraries(${PROJECT_NAME} ${OPENSSL_LIBRARIES})
 find_package(Jansson)
 
 target_link_libraries(${PROJECT_NAME} ${JANSSON_LIBRARIES})
+cotire(${PROJECT_NAME})
