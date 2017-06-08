@@ -30,6 +30,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
                                       CXX_STANDARD_REQUIRED YES
                                       CXX_EXTENSIONS NO)
 
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR
+    ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+  target_compile_options(${PROJECT_NAME} PRIVATE -Wall -pedantic -Wno-missing-braces)
+endif()
 target_include_directories (${PROJECT_NAME} PRIVATE
                             ${PROJECT_SOURCE_DIR}/src
                             ${SQLITE3_INCLUDE_DIR}
