@@ -1,0 +1,9 @@
+version: '2'
+
+services:
+  blackbird:
+    build: .
+    volumes:
+      - ./blackbird.conf:/blackbird/blackbird.conf
+      - ./output:/blackbird/output/
+    command: /blackbird/blackbird

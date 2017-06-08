@@ -28,7 +28,7 @@
 
 
 // The 'typedef' declarations needed for the function arrays
-// These functions contain everything needed to communicate with 
+// These functions contain everything needed to communicate with
 // the exchanges, like getting the quotes or the active positions.
 // Each function is implemented in the files located in the 'exchanges' folder.
 typedef quote_t (*getQuoteType) (Parameters& params);
@@ -41,7 +41,7 @@ typedef double (*getLimitPriceType) (Parameters& params, double volume, bool isB
 
 // This structure contains the balance of both exchanges,
 // *before* and *after* an arbitrage trade.
-// This is used to compute the performance of the trade, 
+// This is used to compute the performance of the trade,
 // by comparing the balance before and after the trade.
 struct Balance {
   double leg1, leg2;
@@ -82,7 +82,7 @@ int main(int argc, char** argv) {
     std::cerr << "ERROR: cannot connect to the database \'" << params.dbFile << "\'\n" << std::endl;
     exit(EXIT_FAILURE);
   }
-  
+
   // We only trade BTC/USD and ETH/BTC for the moment
   if (params.tradedPair().compare("BTC/USD") != 0 && params.tradedPair().compare("ETH/BTC") != 0) {
     std::cout << "ERROR: Pair '" << params.tradedPair() <<"' is unknown. Valid pairs for now are BTC/USD and ETH/BTC\n" << std::endl;
@@ -94,7 +94,7 @@ int main(int argc, char** argv) {
     std::cout << "ERROR: ETH/BTC is only available in Demo mode\n" << std::endl;
     exit(EXIT_FAILURE);
   }
-  
+
   // Function arrays containing all the exchanges functions
   // using the 'typedef' declarations from above.
   getQuoteType getQuote[10];
@@ -105,7 +105,7 @@ int main(int argc, char** argv) {
   getActivePosType getActivePos[10];
   getLimitPriceType getLimitPrice[10];
   std::string dbTableName[10];
-  
+
 
   // Adds the exchange functions to the arrays for all the defined exchanges
   // Poloniex is only used if the traded pair is ETH/BTC as they don't
@@ -243,13 +243,13 @@ int main(int argc, char** argv) {
   }
   // Creates the CSV file that will collect the trade results
   std::string currDateTime = printDateTimeFileName();
-  std::string csvFileName = "blackbird_result_" + currDateTime + ".csv";
+  std::string csvFileName = "output/blackbird_result_" + currDateTime + ".csv";
   std::ofstream csvFile(csvFileName, std::ofstream::trunc);
   csvFile << "TRADE_ID,EXCHANGE_LONG,EXHANGE_SHORT,ENTRY_TIME,EXIT_TIME,DURATION,"
           << "TOTAL_EXPOSURE,BALANCE_BEFORE,BALANCE_AFTER,RETURN"
           << std::endl;
   // Creates the log file where all events will be saved
-  std::string logFileName = "blackbird_log_" + currDateTime + ".log";
+  std::string logFileName = "output/blackbird_log_" + currDateTime + ".log";
   std::ofstream logFile(logFileName, std::ofstream::trunc);
   logFile.imbue(mylocale);
   logFile.precision(2);
@@ -266,10 +266,10 @@ int main(int argc, char** argv) {
   if (params.demoMode) {
     logFile << "Demo mode: trades won't be generated\n" << std::endl;
   }
-  
+
   // Shows which pair we are trading (e.g. BTC/USD)
   logFile << "Pair traded: " << params.tradedPair() << "\n" << std::endl;
-  
+
   std::cout << "Log file generated: " << logFileName << "\nBlackbird is running... (pid " << getpid() << ")\n" << std::endl;
   int numExch = params.nbExch();
   // The btcVec vector contains details about every exchange,
@@ -288,7 +288,7 @@ int main(int argc, char** argv) {
           << std::setprecision(2)
           << "   Spread Entry:  " << params.spreadEntry * 100.0 << "%\n"
           << "   Spread Target: " << params.spreadTarget * 100.0  << "%\n";
-          
+
   // SpreadEntry and SpreadTarget have to be positive,
   // Otherwise we will loose money on every trade.
   if (params.spreadEntry <= 0.0) {
@@ -602,7 +602,7 @@ int main(int argc, char** argv) {
           sleep_for(millisecs(5000));
           bool isLongOrderComplete = isOrderComplete[res.idExchLong](params, longOrderId);
           bool isShortOrderComplete = isOrderComplete[res.idExchShort](params, shortOrderId);
-          // Loops until both orders are completed 
+          // Loops until both orders are completed
           while (!isLongOrderComplete || !isShortOrderComplete) {
             sleep_for(millisecs(3000));
             if (!isLongOrderComplete) {
