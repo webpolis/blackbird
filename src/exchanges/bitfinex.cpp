@@ -36,7 +36,18 @@ static json_t* checkResponse(std::ostream &logFile, json_t *root)
 quote_t getQuote(Parameters &params)
 {
   auto &exchange = queryHandle(params);
-  unique_json root { exchange.getRequest("/v1/ticker/btcusd") };
+
+  // Added to handle ethbtc on bitfinex
+  std::string url;
+  if (params.tradedPair().compare("BTC/USD") == 0) {
+    url = "/v1/ticker/btcusd";
+  } else if (params.tradedPair().compare("ETH/BTC") == 0) {
+    url = "/v1/ticker/ethbtc";
+  }
+  unique_json root { exchange.getRequest(url) };
+
+//  following line was old code (no ethbtc); replaced by 7 lines above.
+//  unique_json root { exchange.getRequest("/v1/ticker/btcusd") };
 
   const char *quote = json_string_value(json_object_get(root.get(), "bid"));
   double bidValue = quote ? std::stod(quote) : 0.0;
