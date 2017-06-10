@@ -29,19 +29,19 @@ std::string fmtDateTime(const time_t &t) {
  * Also see SO question:
  *  http://stackoverflow.com/q/28835198/234175
  */
-static constexpr char csvfmt[] = "%Y-%m-%d_%H:%M:%S";
+extern const char csvfmt[] = "%Y-%m-%d_%H:%M:%S";
 const decltype(&fmtDateTime<csvfmt>) printDateTimeCsv = &fmtDateTime<csvfmt>;
 
-static constexpr char dbfmt[] = "%Y-%m-%d %H:%M:%S";
+extern const char dbfmt[] = "%Y-%m-%d %H:%M:%S";
 const decltype(&fmtDateTime<dbfmt>) printDateTimeDb = &fmtDateTime<dbfmt>;
 
-static constexpr char filenamefmt[] = "%Y%m%d_%H%M%S";
+extern const char filenamefmt[] = "%Y%m%d_%H%M%S";
 
 std::string printDateTimeFileName() {
   return fmtDateTime<filenamefmt>(time(NULL));
 }
 
-static constexpr char defaultfmt[] = "%m/%d/%Y %H:%M:%S";
+extern const char defaultfmt[] = "%m/%d/%Y %H:%M:%S";
 
 std::string printDateTime(time_t t) {
   return fmtDateTime<defaultfmt>(t);
