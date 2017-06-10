@@ -9,7 +9,7 @@
 #include <iomanip>
 #include <vector>
 #include <array>
-#include <sys/time.h>
+#include <time.h>
 
 namespace Kraken {
 
@@ -143,10 +143,8 @@ json_t* authRequest(Parameters& params, std::string request, std::string options
 {
   using namespace std;
   // create nonce and POST data
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  unsigned long long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
-  string post_data = "nonce=" + to_string(nonce);
+  static uint64_t nonce = time(nullptr) * 4;
+  string post_data = "nonce=" + to_string(++nonce);
   if (!options.empty())
     post_data += "&" + options;
 

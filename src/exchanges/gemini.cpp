@@ -12,7 +12,7 @@
 #include <math.h>
 #include <sstream>
 #include <iomanip>
-#include <sys/time.h>
+#include <time.h>
 
 namespace Gemini {
 
@@ -129,9 +129,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
 }
 
 json_t* authRequest(Parameters& params, std::string url, std::string request, std::string options) {
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  unsigned long long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
+  static uint64_t nonce = time(nullptr) * 4;
+  ++nonce;
   // check if options parameter is empty
   std::ostringstream oss;
   if (options.empty()) {

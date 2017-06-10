@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <array>
 #include <math.h>
-#include <sys/time.h>
+#include <time.h>
 
 namespace Bitfinex {
 
@@ -166,12 +166,10 @@ json_t* authRequest(Parameters &params, std::string request, std::string options
 {
   using namespace std;
 
-  struct timeval tv;
-  gettimeofday(&tv, NULL);
-  unsigned long long nonce = (tv.tv_sec * 1000.0) + (tv.tv_usec * 0.001) + 0.5;
+  static uint64_t nonce = time(nullptr) * 4;
 
   string payload = "{\"request\":\"" + request +
-                   "\",\"nonce\":\"" + to_string(nonce);
+                   "\",\"nonce\":\"" + to_string(++nonce);
   if (options.empty())
   {
     payload += "\"}";
