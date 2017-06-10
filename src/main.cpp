@@ -15,6 +15,7 @@
 #include "exchanges/poloniex.h"
 #include "exchanges/gdax.h"
 #include "utils/send_email.h"
+#include "getpid.h"
 
 #include <curl/curl.h>
 #include <iostream>
@@ -22,7 +23,6 @@
 #include <iomanip>
 #include <chrono>
 #include <thread>
-#include <unistd.h>   // getpid
 #include <math.h>
 #include <algorithm>
 

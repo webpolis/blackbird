@@ -74,7 +74,7 @@ void Result::reset() {
 bool Result::loadPartialResult(std::string filename) {
 
   std::ifstream resFile(filename, std::ifstream::ate);
-  if(!resFile || resFile.tellg() == 0) return false;
+  if(!resFile || int(resFile.tellg()) == 0) return false;
 
   resFile.seekg(0);
   resFile >> id
