@@ -8,7 +8,8 @@
 #include "openssl/md5.h"
 #include <sstream>
 #include <iomanip>
-#include <unistd.h> // sleep
+#include <chrono>
+#include <thread>   // sleep_for
 #include <math.h>   // fabs
 
 namespace OKCoin {
@@ -170,9 +171,11 @@ json_t* authRequest(Parameters& params, std::string url, std::string signature, 
     curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
     resCurl = curl_easy_perform(params.curl);
 
+    using std::this_thread::sleep_for;
+    using secs = std::chrono::seconds;
     while (resCurl != CURLE_OK) {
       *params.logFile << "<OKCoin> Error with cURL. Retry in 2 sec..." << std::endl;
-      sleep(4.0);
+      sleep_for(secs(4));
       resCurl = curl_easy_perform(params.curl);
     }
     json_error_t error;
@@ -181,12 +184,12 @@ json_t* authRequest(Parameters& params, std::string url, std::string signature, 
       *params.logFile << "<OKCoin> Error with JSON:\n" << error.text << std::endl;
       *params.logFile << "<OKCoin> Buffer:\n" << readBuffer.c_str() << std::endl;
       *params.logFile << "<OKCoin> Retrying..." << std::endl;
-      sleep(4.0);
+      sleep_for(secs(4));
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
       while (resCurl != CURLE_OK) {
         *params.logFile << "<OKCoin> Error with cURL. Retry in 2 sec..." << std::endl;
-        sleep(4.0);
+        sleep_for(secs(4));
         readBuffer = "";
         resCurl = curl_easy_perform(params.curl);
       }

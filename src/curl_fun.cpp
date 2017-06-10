@@ -3,8 +3,8 @@
 
 #include "curl/curl.h"
 #include "jansson.h"
-
-#include <unistd.h>
+#include <chrono>
+#include <thread>
 
 
 size_t WriteCallback(void* contents, size_t size, size_t nmemb, void* userp) {
@@ -36,7 +36,7 @@ json_t* getJsonFromUrl(Parameters& params, std::string url, std::string postFiel
   goto curl_state;
 
 retry_state:
-  sleep(2.0);
+  std::this_thread::sleep_for(std::chrono::seconds(2));
   readBuffer.clear();
   curl_easy_setopt(params.curl, CURLOPT_DNS_CACHE_TIMEOUT, 0);
 

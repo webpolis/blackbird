@@ -7,7 +7,8 @@
 
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
-#include <unistd.h>
+#include <chrono>
+#include <thread>
 #include <math.h>
 #include <sstream>
 #include <iomanip>
@@ -45,7 +46,7 @@ quote_t getQuote(Parameters &params)
 double getAvail(Parameters& params, std::string currency) {
   unique_json root { authRequest(params, "https://api.gemini.com/v1/balances", "balances", "") };
   while (json_object_get(root.get(), "message") != NULL) {
-    sleep(1.0);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     *params.logFile << "<Gemini> Error with JSON: " << json_dumps(root.get(), 0) << ". Retrying..." << std::endl;
     root.reset(authRequest(params, "https://api.gemini.com/v1/balances", "balances", ""));
   }
@@ -174,9 +175,11 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
     resCurl = curl_easy_perform(params.curl);
     json_t *root;
     json_error_t error;
+    using std::this_thread::sleep_for;
+    using secs = std::chrono::seconds;
     while (resCurl != CURLE_OK) {
       *params.logFile << "<Gemini> Error with cURL. Retry in 2 sec..." << std::endl;
-      sleep(2.0);
+      sleep_for(secs(2));
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
     }
@@ -185,12 +188,12 @@ json_t* authRequest(Parameters& params, std::string url, std::string request, st
       *params.logFile << "<Gemini> Error with JSON:\n" << error.text << std::endl;
       *params.logFile << "<Gemini> Buffer:\n" << readBuffer.c_str() << std::endl;
       *params.logFile << "<Gemini> Retrying..." << std::endl;
-      sleep(2.0);
+      sleep_for(secs(2));
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
       while (resCurl != CURLE_OK) {
         *params.logFile << "<Gemini> Error with cURL. Retry in 2 sec..." << std::endl;
-        sleep(2.0);
+        sleep_for(secs(2));
         readBuffer = "";
         resCurl = curl_easy_perform(params.curl);
       }

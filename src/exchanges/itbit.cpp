@@ -4,7 +4,6 @@
 #include "utils/restapi.h"
 #include "unique_json.hpp"
 
-#include <unistd.h>
 
 namespace ItBit {
 

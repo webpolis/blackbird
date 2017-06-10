@@ -7,7 +7,8 @@
 
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
-#include <unistd.h>
+#include <chrono>
+#include <thread>
 #include <math.h>
 #include <sstream>
 #include <iomanip>
@@ -42,7 +43,7 @@ double getAvail(Parameters& params, std::string currency)
   unique_json root { authRequest(params, "https://www.bitstamp.net/api/balance/", "") };
   while (json_object_get(root.get(), "message") != NULL)
   {
-    sleep(1.0);
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     *params.logFile << "<Bitstamp> Error with JSON: " << json_dumps(root.get(), 0) << ". Retrying..." << std::endl;
     root.reset(authRequest(params, "https://www.bitstamp.net/api/balance/", ""));
   }
@@ -160,11 +161,13 @@ json_t* authRequest(Parameters& params, std::string url, std::string options)
     curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
     curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
     CURLcode resCurl = curl_easy_perform(params.curl);
+    using std::this_thread::sleep_for;
+    using secs = std::chrono::seconds;
 
     while (resCurl != CURLE_OK)
     {
       *params.logFile << "<Bitstamp> Error with cURL. Retry in 2 sec..." << std::endl;
-      sleep(2.0);
+      sleep_for(secs(2));
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
     }
@@ -175,13 +178,13 @@ json_t* authRequest(Parameters& params, std::string url, std::string options)
       *params.logFile << "<Bitstamp> Error with JSON:\n" << error.text << '\n'
                       << "<Bitstamp> Buffer:\n" << readBuffer << '\n'
                       << "<Bitstamp> Retrying..." << std::endl;
-      sleep(2.0);
+      sleep_for(secs(2));
       readBuffer = "";
       resCurl = curl_easy_perform(params.curl);
       while (resCurl != CURLE_OK)
       {
         *params.logFile << "<Bitstamp> Error with cURL. Retry in 2 sec..." << std::endl;
-        sleep(2.0);
+        sleep_for(secs(2));
         readBuffer = "";
         resCurl = curl_easy_perform(params.curl);
       }

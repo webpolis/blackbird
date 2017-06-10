@@ -7,7 +7,6 @@
 
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
-#include <unistd.h>
 #include <sstream>
 #include <iomanip>
 #include <array>
