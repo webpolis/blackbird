@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iomanip>
 #include <iterator>
+#include <algorithm>
 #include <numeric>
 #include <cmath>
 

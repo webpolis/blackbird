@@ -114,7 +114,7 @@ bool isOrderComplete(Parameters& params, std::string orderId)
   oss << "api_key=" << params.okcoinApi << "&order_id=" << orderId << "&symbol=btc_usd";
   std::string content = oss.str();
   unique_json root { authRequest(params, "https://www.okcoin.com/api/v1/order_info.do", signature, content) };
-  int status = json_integer_value(json_object_get(json_array_get(json_object_get(root.get(), "orders"), 0), "status"));
+  auto status = json_integer_value(json_object_get(json_array_get(json_object_get(root.get(), "orders"), 0), "status"));
 
   return status == 2;
 }

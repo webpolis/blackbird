@@ -16,9 +16,12 @@ file(GLOB SOURCES
     src/utils/*.cpp)
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-if (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU" OR
-    ${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
+    "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   target_compile_options(${PROJECT_NAME} PRIVATE -Wall -pedantic -Wno-missing-braces)
+endif()
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+  target_compile_definitions(${PROJECT_NAME} PRIVATE NOMINMAX _CRT_SECURE_NO_WARNINGS)
 endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES
                                       CXX_STANDARD 11
