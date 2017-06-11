@@ -174,32 +174,32 @@ bool checkExit(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& par
     return true;
   }
   if (res.spreadOut == 0.0) return false;
-
-  if (res.spreadOut <= res.exitTarget) {
-    double newTrailValue = res.spreadOut + params.trailingLim;
-    if (res.trailing[longId][shortId] == 1.0) {
-      res.trailing[longId][shortId] = std::min(newTrailValue, res.exitTarget);
-    } else {
-      if (newTrailValue <= res.trailing[longId][shortId]) {
-        res.trailing[longId][shortId] = newTrailValue;
-        res.trailingWaitCount[longId][shortId] = 0;
-      }
-      if (res.spreadOut > res.trailing[longId][shortId]) {
-        if (res.trailingWaitCount[longId][shortId] < params.trailingCount) {
-          res.trailingWaitCount[longId][shortId]++;
-        } else {
-          res.priceLongOut  = priceLong;
-          res.priceShortOut = priceShort;
-          res.trailingWaitCount[longId][shortId] = 0;
-          return true;
-        }
-      } else {
-        res.trailingWaitCount[longId][shortId] = 0;
-      }
-    }
-  } else {
+  if (res.spreadOut > res.exitTarget) {
     res.trailing[longId][shortId] = 1.0;
     res.trailingWaitCount[longId][shortId] = 0;
+    return false;
   }
-  return false;
+
+  double newTrailValue = res.spreadOut + params.trailingLim;
+  if (res.trailing[longId][shortId] == 1.0) {
+    res.trailing[longId][shortId] = std::min(newTrailValue, res.exitTarget);
+    return false;
+  }
+  if (newTrailValue <= res.trailing[longId][shortId]) {
+    res.trailing[longId][shortId] = newTrailValue;
+    res.trailingWaitCount[longId][shortId] = 0;
+  }
+  if (res.spreadOut <= res.trailing[longId][shortId]) {
+    res.trailingWaitCount[longId][shortId] = 0;
+    return false;
+  }
+  if (res.trailingWaitCount[longId][shortId] < params.trailingCount) {
+    res.trailingWaitCount[longId][shortId]++;
+    return false;
+  }
+
+  res.priceLongOut  = priceLong;
+  res.priceShortOut = priceShort;
+  res.trailingWaitCount[longId][shortId] = 0;
+  return true;
 }
