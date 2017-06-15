@@ -73,6 +73,10 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | <a href="https://btc-e.com" target="_blank">BTC-e</a> | ✓ |  |  |
 | <a href="https://www.itbit.com" target="_blank">itBit</a> | ✓ |  |  |
 
+If `DemoMode=true`, all the exchanges are shown in the log file.
+
+If `DemoMode=false`, only the exchanges for which the credentials exist in _blackbird.conf_ are used.
+
 #### Credentials
 
 For each of your exchange accounts you need to create the API authentication keys. This is usually done in the _Settings_ section of your accounts.
