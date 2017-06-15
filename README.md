@@ -64,6 +64,8 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | <a href="https://gemini.com" target="_blank">Gemini</a> | ✓ |  | ✓ | |
 | <a href="https://www.kraken.com" target="_blank">Kraken</a> | ✓ |  | | Validation in progress |
 
+_NOTE_: In Demo mode, it is correct that all the exchanges are shown. The latency is less a problem there, because no trading occurs in Demo mode. However, when you switch DemoMode to false, only the exchanges for which you have put the credentials in blackbird.conf are shown.
+
 #### Potential Exchanges
 
 | Exchange | Long | Short | Note |
