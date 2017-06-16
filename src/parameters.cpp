@@ -2,11 +2,16 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <assert.h>
 
 
 Parameters::Parameters(std::string fileName) {
-  
   std::ifstream configFile(fileName);
+  if (!configFile.is_open()) {
+    std::cout << "ERROR: " << fileName << " cannot be open.\n";
+    exit(EXIT_FAILURE);
+  }
+
   spreadEntry = getDouble(getParameter("SpreadEntry", configFile));
   spreadTarget = getDouble(getParameter("SpreadTarget", configFile));
   maxLength = getUnsigned(getParameter("MaxLength", configFile));
@@ -82,25 +87,22 @@ std::string Parameters::tradedPair() const {
 }
 
 std::string getParameter(std::string parameter, std::ifstream& configFile) {
+  assert (configFile);
   std::string line;
   configFile.clear();
   configFile.seekg(0);
-  if (configFile.is_open()) {
-    while (getline(configFile, line)) {
-      if (line.length() > 0 && line.at(0) != '#') {
-        std::string key = line.substr(0, line.find('='));
-        std::string value = line.substr(line.find('=') + 1, line.length());
-        if (key == parameter) {
-          return value;
-        }
+
+  while (getline(configFile, line)) {
+    if (line.length() > 0 && line.at(0) != '#') {
+      std::string key = line.substr(0, line.find('='));
+      std::string value = line.substr(line.find('=') + 1, line.length());
+      if (key == parameter) {
+        return value;
       }
     }
-    std::cout << "ERROR: parameter '" << parameter << "' not found. Your configuration file might be too old.\n" << std::endl;
-    exit(EXIT_FAILURE);
-  } else {
-    std::cout << "ERROR: file cannot be open.\n" << std::endl;
-    exit(EXIT_FAILURE);
   }
+  std::cout << "ERROR: parameter '" << parameter << "' not found. Your configuration file might be too old.\n" << std::endl;
+  exit(EXIT_FAILURE);
 }
 
 bool getBool(std::string value) {
