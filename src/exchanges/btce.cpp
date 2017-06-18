@@ -101,7 +101,9 @@ json_t* adjustResponse(json_t *root)
 json_t* authRequest(Parameters &params, const char *request, const std::string &options)
 {
   using namespace std;
-  static uint64_t nonce = time(nullptr) * 4;
+  // BTCe requires nonce to be [1, 2^32 - 1)
+  constexpr auto MAXCALLS_PER_SEC = 3ull;
+  static auto nonce = static_cast<uint32_t> (time(nullptr) * MAXCALLS_PER_SEC);
   string post_body = "nonce="   + to_string(++nonce) +
                      "&method=" + request;
   if (!options.empty())
