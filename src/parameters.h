@@ -78,6 +78,11 @@ struct Parameters {
   std::string gdaxSecret;
   double gdaxFees;
   bool gdaxEnable;
+  std::string quadrigaApi;
+  std::string quadrigaSecret;
+  std::string quadrigaClientId;
+  double quadrigaFees;
+  bool quadrigaEnable;
 
   bool sendEmail;
   std::string senderAddress;

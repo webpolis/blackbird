@@ -69,6 +69,11 @@ Parameters::Parameters(std::string fileName) {
   gdaxSecret = getParameter("GDAXSecretKey", configFile);
   gdaxFees = getDouble(getParameter("GDAXFees", configFile));
   gdaxEnable = getBool(getParameter("GDAXEnable", configFile));
+  quadrigaApi = getParameter("QuadrigaApiKey", configFile);
+  quadrigaSecret = getParameter("QuadrigaSecretKey", configFile);
+  quadrigaFees = getDouble(getParameter("QuadrigaFees", configFile));
+  quadrigaClientId = getParameter("QuadrigaClientId", configFile);
+  quadrigaEnable = getBool(getParameter("QuadrigaEnable", configFile));
 
   sendEmail = getBool(getParameter("SendEmail", configFile));
   senderAddress = getParameter("SenderAddress", configFile);

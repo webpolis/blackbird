@@ -10,6 +10,7 @@
 #include "exchanges/bitstamp.h"
 #include "exchanges/gemini.h"
 #include "exchanges/kraken.h"
+#include "exchanges/quadrigacx.h"
 #include "exchanges/itbit.h"
 #include "exchanges/btce.h"
 #include "exchanges/poloniex.h"
@@ -241,6 +242,21 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = GDAX::getLimitPrice;
 
     dbTableName[index] = "gdax";
+    createTable(dbTableName[index], params);
+
+    index++;
+  }
+  if (params.quadrigaEnable &&
+         (params.quadrigaApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
+    params.addExchange("QuadrigaCX", params.quadrigaFees, false, true);
+    getQuote[index] = QuadrigaCX::getQuote;
+    getAvail[index] = QuadrigaCX::getAvail;
+    sendLongOrder[index] = QuadrigaCX::sendLongOrder;
+    isOrderComplete[index] = QuadrigaCX::isOrderComplete;
+    getActivePos[index] = QuadrigaCX::getActivePos;
+    getLimitPrice[index] = QuadrigaCX::getLimitPrice;
+
+    dbTableName[index] = "quadriga";
     createTable(dbTableName[index], params);
 
     index++;
