@@ -214,7 +214,9 @@ void getBorrowInfo(Parameters& params)
   oss << "api_key=" << params.okcoinApi << "&symbol=btc_usd";
   std::string content = oss.str();
   unique_json root { authRequest(params, "https://www.okcoin.com/api/v1/borrows_info.do", signature, content) };
-  *params.logFile << "<OKCoin> Borrow info:\n" << json_dumps(root.get(), 0) << std::endl;
+  auto dump = json_dumps(root.get(), 0);
+  *params.logFile << "<OKCoin> Borrow info:\n" << dump << std::endl;
+  free(dump);
 }
 
 int borrowBtc(Parameters& params, double amount)
@@ -227,10 +229,11 @@ int borrowBtc(Parameters& params, double amount)
   oss << "api_key=" << params.okcoinApi << "&symbol=btc_usd&days=fifteen&amount=" << 1 << "&rate=0.0001";
   std::string content = oss.str();
   unique_json root { authRequest(params, "https://www.okcoin.com/api/v1/borrow_money.do", signature, content) };
+  auto dump = json_dumps(root.get(), 0);
   *params.logFile << "<OKCoin> Borrow "
                   << std::setprecision(6) << amount
-                  << " BTC:\n" << json_dumps(root.get(), 0) << std::endl;
-
+                  << " BTC:\n" << dump << std::endl;
+  free(dump);
   bool isBorrowAccepted = json_is_true(json_object_get(root.get(), "result"));
   return isBorrowAccepted ?
          json_integer_value(json_object_get(root.get(), "borrow_id")) :
@@ -247,7 +250,9 @@ void repayBtc(Parameters& params, int borrowId)
   oss << "api_key=" << params.okcoinApi << "&borrow_id=" << borrowId;
   std::string content = oss.str();
   unique_json root { authRequest(params, "https://www.okcoin.com/api/v1/repayment.do", signature, content) };
-  *params.logFile << "<OKCoin> Repay borrowed BTC:\n" << json_dumps(root.get(), 0) << std::endl;
+  auto dump = json_dumps(root.get(), 0);
+  *params.logFile << "<OKCoin> Repay borrowed BTC:\n" << dump << std::endl;
+  free(dump);
 }
 
 }

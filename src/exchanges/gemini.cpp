@@ -47,7 +47,9 @@ double getAvail(Parameters& params, std::string currency) {
   unique_json root { authRequest(params, "https://api.gemini.com/v1/balances", "balances", "") };
   while (json_object_get(root.get(), "message") != NULL) {
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    *params.logFile << "<Gemini> Error with JSON: " << json_dumps(root.get(), 0) << ". Retrying..." << std::endl;
+    auto dump = json_dumps(root.get(), 0);
+    *params.logFile << "<Gemini> Error with JSON: " << dump << ". Retrying..." << std::endl;
+    free(dump);
     root.reset(authRequest(params, "https://api.gemini.com/v1/balances", "balances", ""));
   }
   // go through the list
