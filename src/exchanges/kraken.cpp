@@ -127,18 +127,22 @@ double getLimitPrice(Parameters &params, double volume, bool isBid)
   branch = json_object_get(branch, isBid ? "bids" : "asks");
 
   // loop on volume
-  double tmpVol = 0.0;
+  double totVol = 0.0;
+  double currPrice = 0;
+  double currVol = 0;
   unsigned int i;
   // [[<price>, <volume>, <timestamp>], [<price>, <volume>, <timestamp>], ...]
   for(i = 0; i < json_array_size(branch); i++)
   {
     // volumes are added up until the requested volume is reached
-    tmpVol += atof(json_string_value(json_array_get(json_array_get(branch, i), 1)));
-    if(tmpVol >=  volume * params.orderBookFactor)
+    currVol = atof(json_string_value(json_array_get(json_array_get(branch, i), 1)));
+    currPrice = atof(json_string_value(json_array_get(json_array_get(branch, i), 0)));
+    totVol += currVol;
+    if(totVol >=  volume * params.orderBookFactor)
         break;
   }
 
-  return atof(json_string_value(json_array_get(json_array_get(branch, i), 0)));
+  return currPrice;
 }
 
 json_t* authRequest(Parameters& params, std::string request, std::string options)
