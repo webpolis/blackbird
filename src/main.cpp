@@ -113,7 +113,8 @@ int main(int argc, char** argv) {
   // TODO: should be in a separated function, and there probably is a better
   // way to implement that.
   int index = 0;
-  if (params.bitfinexApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0)) {
+  if (params.bitfinexEnable &&
+     (params.bitfinexApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
     params.addExchange("Bitfinex", params.bitfinexFees, true, true);
     getQuote[index] = Bitfinex::getQuote;
     getAvail[index] = Bitfinex::getAvail;
@@ -128,7 +129,8 @@ int main(int argc, char** argv) {
 
     index++;
   }
-  if (params.okcoinApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0)) {
+  if (params.okcoinEnable &&
+     (params.okcoinApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
     params.addExchange("OKCoin", params.okcoinFees, false, true);
     getQuote[index] = OKCoin::getQuote;
     getAvail[index] = OKCoin::getAvail;
@@ -143,7 +145,8 @@ int main(int argc, char** argv) {
 
     index++;
   }
-  if (params.bitstampClientId.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0)) {
+  if (params.bitstampEnable &&
+     (params.bitstampClientId.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
     params.addExchange("Bitstamp", params.bitstampFees, false, true);
     getQuote[index] = Bitstamp::getQuote;
     getAvail[index] = Bitstamp::getAvail;
@@ -157,7 +160,8 @@ int main(int argc, char** argv) {
 
     index++;
   }
-  if (params.geminiApi.empty() == false || params.demoMode == true) {
+  if (params.geminiEnable &&
+     (params.geminiApi.empty() == false || params.demoMode == true)) {
     params.addExchange("Gemini", params.geminiFees, false, true);
     getQuote[index] = Gemini::getQuote;
     getAvail[index] = Gemini::getAvail;
@@ -171,7 +175,8 @@ int main(int argc, char** argv) {
 
     index++;
   }
-  if (params.krakenApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0)) {
+  if (params.krakenEnable &&
+     (params.krakenApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
     params.addExchange("Kraken", params.krakenFees, false, true);
     getQuote[index] = Kraken::getQuote;
     getAvail[index] = Kraken::getAvail;
@@ -185,7 +190,8 @@ int main(int argc, char** argv) {
 
     index++;
   }
-  if (params.itbitApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0)) {
+  if (params.itbitEnable &&
+     (params.itbitApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
     params.addExchange("ItBit", params.itbitFees, false, false);
     getQuote[index] = ItBit::getQuote;
     getAvail[index] = ItBit::getAvail;
@@ -197,7 +203,8 @@ int main(int argc, char** argv) {
 
     index++;
   }
-  if (params.btceApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0)) {
+  if (params.btceEnable &&
+     (params.btceApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
     params.addExchange("BTC-e", params.btceFees, false, false);
     getQuote[index] = BTCe::getQuote;
     getAvail[index] = BTCe::getAvail;
@@ -209,7 +216,8 @@ int main(int argc, char** argv) {
 
     index++;
   }
-  if (params.poloniexApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("ETH/BTC") == 0)) {
+  if (params.poloniexEnable &&
+     (params.poloniexApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("ETH/BTC") == 0))) {
     params.addExchange("Poloniex", params.poloniexFees, true, false);
     getQuote[index] = Poloniex::getQuote;
     getAvail[index] = Poloniex::getAvail;
@@ -224,7 +232,8 @@ int main(int argc, char** argv) {
 
     index++;
   }
-  if (params.gdaxApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0)) {
+  if (params.gdaxEnable &&
+     (params.gdaxApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
     params.addExchange("GDAX", params.gdaxFees, false, false);
     getQuote[index] = GDAX::getQuote;
     getAvail[index] = GDAX::getAvail;
