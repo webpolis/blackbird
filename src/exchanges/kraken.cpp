@@ -97,7 +97,9 @@ bool isOrderComplete(Parameters& params, std::string orderId) {
     *params.logFile << "<Kraken> No order exists" << std::endl;
     return true;
   }
-  *params.logFile << json_dumps(res, 0) << std::endl;
+  auto dump = json_dumps(res, 0);
+  *params.logFile << dump << std::endl;
+  free(dump);
   res = json_object_get(res, orderId.c_str());
   // open orders exist but specific order not found: return true
   if (json_object_size(res) == 0) {

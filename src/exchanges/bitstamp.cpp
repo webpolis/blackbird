@@ -44,7 +44,9 @@ double getAvail(Parameters& params, std::string currency)
   while (json_object_get(root.get(), "message") != NULL)
   {
     std::this_thread::sleep_for(std::chrono::seconds(1));
-    *params.logFile << "<Bitstamp> Error with JSON: " << json_dumps(root.get(), 0) << ". Retrying..." << std::endl;
+    auto dump = json_dumps(root.get(), 0);
+    *params.logFile << "<Bitstamp> Error with JSON: " << dump << ". Retrying..." << std::endl;
+    free(dump);
     root.reset(authRequest(params, "https://www.bitstamp.net/api/balance/", ""));
   }
   double availability = 0.0;
@@ -86,7 +88,9 @@ std::string sendLongOrder(Parameters& params, std::string direction, double quan
   auto orderId = std::to_string(json_integer_value(json_object_get(root.get(), "id")));
   if (orderId == "0")
   {
-    *params.logFile << "<Bitstamp> Order ID = 0. Message: " << json_dumps(root.get(), 0) << '\n';
+    auto dump = json_dumps(root.get(), 0);
+    *params.logFile << "<Bitstamp> Order ID = 0. Message: " << dump << '\n';
+    free(dump);
   }
   *params.logFile << "<Bitstamp> Done (order ID: " << orderId << ")\n" << std::endl;
 
