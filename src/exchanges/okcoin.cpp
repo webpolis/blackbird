@@ -124,7 +124,7 @@ double getActivePos(Parameters& params) { return getAvail(params, "btc"); }
 double getLimitPrice(Parameters& params, double volume, bool isBid)
 {
   auto &exchange = queryHandle(params);
-  unique_json root { exchange.getRequest("/api/v1/depth.do") };
+  unique_json root { exchange.getRequest("/api/v1/depth.do?symbol=btc_usd") };
   auto bidask = json_object_get(root.get(), isBid ? "bids" : "asks");
 
   // loop on volume
