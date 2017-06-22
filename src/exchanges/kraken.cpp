@@ -128,43 +128,44 @@ double getLimitPrice(Parameters &params, double volume, bool isBid)
 
   // loop on volume
   double tmpVol = 0.0;
-  int i = 0;
+  unsigned int i;
   // [[<price>, <volume>, <timestamp>], [<price>, <volume>, <timestamp>], ...]
-  while (tmpVol < volume) {
+  for(i = 0; i < json_array_size(branch); i++)
+  {
     // volumes are added up until the requested volume is reached
     tmpVol += atof(json_string_value(json_array_get(json_array_get(branch, i), 1)));
-    i++;
+    if(tmpVol >=  volume * params.orderBookFactor)
+        break;
   }
 
-  return atof(json_string_value(json_array_get(json_array_get(branch, i-1), 0)));
+  return atof(json_string_value(json_array_get(json_array_get(branch, i), 0)));
 }
 
 json_t* authRequest(Parameters& params, std::string request, std::string options)
 {
-  using namespace std;
   // create nonce and POST data
   static uint64_t nonce = time(nullptr) * 4;
-  string post_data = "nonce=" + to_string(++nonce);
+  std::string post_data = "nonce=" + std::to_string(++nonce);
   if (!options.empty())
     post_data += "&" + options;
 
   // Message signature using HMAC-SHA512 of (URI path + SHA256(nonce + POST data))
   // and base64 decoded secret API key
   auto sig_size = request.size() + SHA256_DIGEST_LENGTH;
-  vector<uint8_t> sig_data(sig_size);
-  copy(begin(request), end(request), begin(sig_data));
+  std::vector<uint8_t> sig_data(sig_size);
+  copy(std::begin(request), std::end(request), std::begin(sig_data));
 
-  string payload_for_signature = to_string(nonce) + post_data;
+  std::string payload_for_signature = std::to_string(nonce) + post_data;
   SHA256((uint8_t *)payload_for_signature.c_str(), payload_for_signature.size(),
          &sig_data[ sig_size - SHA256_DIGEST_LENGTH ]);
 
-  string decoded_key = base64_decode(params.krakenSecret);
+  std::string decoded_key = base64_decode(params.krakenSecret);
   uint8_t *hmac_digest = HMAC(EVP_sha512(),
                               decoded_key.c_str(), decoded_key.length(),
                               sig_data.data(), sig_data.size(), NULL, NULL);
-  string api_sign_header = base64_encode(hmac_digest, SHA512_DIGEST_LENGTH);
+  std::string api_sign_header = base64_encode(hmac_digest, SHA512_DIGEST_LENGTH);
   // cURL header
-  array<string, 2> headers
+  std::array<std::string, 2> headers
   {
     "API-KEY:"  + params.krakenApi,
     "API-Sign:" + api_sign_header,
@@ -173,7 +174,7 @@ json_t* authRequest(Parameters& params, std::string request, std::string options
   // cURL request
   auto &exchange = queryHandle(params);
   return exchange.postRequest(request,
-                              make_slist(begin(headers), end(headers)),
+                              make_slist(std::begin(headers), std::end(headers)),
                               post_data);
 }
 
