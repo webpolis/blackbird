@@ -22,10 +22,6 @@ double getActivePos(Parameters& params);
 
 double getLimitPrice(Parameters& params, double volume, bool isBid);
 
-json_t* authRequest(Parameters& params, std::string request, json_t * options = nullptr);
-
-std::string getSignature(Parameters& params, const uint64_t  nonce);
-
 void testQuadriga();
 }
 
