@@ -7,7 +7,7 @@
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
 #include <array>
-#include <time.h>
+#include <ctime>
 #include <assert.h>
 
 namespace BTCe {

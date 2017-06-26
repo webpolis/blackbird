@@ -11,7 +11,7 @@
 #include <iomanip>
 #include <array>
 #include <cmath>
-#include <time.h>
+#include <ctime>
 
 namespace Bitfinex {
 

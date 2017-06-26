@@ -9,7 +9,7 @@
 #include <iomanip>
 #include <vector>
 #include <array>
-#include <time.h>
+#include <ctime>
 
 namespace Kraken {
 
