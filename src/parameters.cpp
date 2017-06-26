@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <stdlib.h>
-#include <assert.h>
+#include <cassert>
 
 
 Parameters::Parameters(std::string fileName) {

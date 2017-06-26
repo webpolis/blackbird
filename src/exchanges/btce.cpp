@@ -8,7 +8,7 @@
 #include "openssl/hmac.h"
 #include <array>
 #include <ctime>
-#include <assert.h>
+#include <cassert>
 
 namespace BTCe {
 

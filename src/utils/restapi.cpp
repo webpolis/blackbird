@@ -1,7 +1,7 @@
 #include "restapi.h"
 
 #include "jansson.h"
-#include <assert.h>
+#include <cassert>
 #include <chrono>
 #include <thread> // sleep
 
