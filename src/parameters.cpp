@@ -1,7 +1,7 @@
 #include "parameters.h"
 
 #include <iostream>
-#include <stdlib.h>
+#include <cstdlib>
 #include <cassert>
 
 
