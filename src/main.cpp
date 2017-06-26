@@ -23,7 +23,7 @@
 #include <iomanip>
 #include <chrono>
 #include <thread>
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 
 

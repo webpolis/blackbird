@@ -10,7 +10,7 @@
 #include <sstream>
 #include <iomanip>
 #include <array>
-#include <math.h>
+#include <cmath>
 #include <time.h>
 
 namespace Bitfinex {
