@@ -9,7 +9,7 @@
 #include <array>
 #include <algorithm>
 #include <ctime>
-#include <ctype.h>
+#include <cctype>
 
 namespace Poloniex {
 
