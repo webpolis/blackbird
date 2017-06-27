@@ -9,10 +9,10 @@
 #include "openssl/hmac.h"
 #include <chrono>
 #include <thread>
-#include <math.h>
+#include <cmath>
 #include <sstream>
 #include <iomanip>
-#include <time.h>
+#include <ctime>
 #include <iomanip>
 
 namespace Bitstamp {

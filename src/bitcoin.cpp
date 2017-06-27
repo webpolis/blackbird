@@ -1,5 +1,5 @@
 #include "bitcoin.h"
-#include <math.h>
+#include <cmath>
 
 Bitcoin::Bitcoin(unsigned i, std::string n, double f, bool h, bool m) {
   id = i;

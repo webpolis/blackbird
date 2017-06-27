@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <chrono>
 #include <thread>   // sleep_for
-#include <math.h>   // fabs
+#include <cmath>    // fabs
 
 namespace OKCoin {
 

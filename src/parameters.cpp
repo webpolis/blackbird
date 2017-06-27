@@ -1,8 +1,8 @@
 #include "parameters.h"
 
 #include <iostream>
-#include <stdlib.h>
-#include <assert.h>
+#include <cstdlib>
+#include <cassert>
 
 
 static std::string findConfigFile(std::string fileName) {

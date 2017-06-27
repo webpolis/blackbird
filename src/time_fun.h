@@ -2,7 +2,7 @@
 #define TIME_FUN_H
 
 #include <string>
-#include <time.h>
+#include <ctime>
 
 time_t getTime_t(int y, int m, int d, int h, int n, int s);
 

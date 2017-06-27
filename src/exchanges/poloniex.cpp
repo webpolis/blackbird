@@ -8,8 +8,8 @@
 #include "openssl/hmac.h"
 #include <array>
 #include <algorithm>
-#include <time.h>
-#include <ctype.h>
+#include <ctime>
+#include <cctype>
 
 namespace Poloniex {
 
