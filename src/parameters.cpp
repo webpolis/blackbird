@@ -5,8 +5,67 @@
 #include <assert.h>
 
 
+static std::string findConfigFile(std::string fileName) {
+  // local directory
+  {
+    std::ifstream configFile(fileName);
+
+    // Keep the first match
+    if (configFile.good()) {
+      return fileName;
+    }
+  }
+
+  // Unix user settings directory
+  {
+    char *home = getenv("HOME");
+    
+    if (home) {
+      std::string prefix = std::string(home) + "/.config";
+      std::string fullpath = prefix + "/" + fileName;
+      std::ifstream configFile(fullpath);
+
+      // Keep the first match
+      if (configFile.good()) {
+        return fullpath;
+      }
+    }
+  }
+
+  // Windows user settings directory
+  {
+    char *appdata = getenv("APPDATA");
+
+    if (appdata) {
+      std::string prefix = std::string(appdata);
+      std::string fullpath = prefix + "/" + fileName;
+      std::ifstream configFile(fullpath);
+
+      // Keep the first match
+      if (configFile.good()) {
+        return fullpath;
+      }
+    }
+  }
+
+  // Unix system settings directory
+  {
+    std::string fullpath = "/etc/" + fileName;
+    std::ifstream configFile(fullpath);
+
+    // Keep the first match
+    if (configFile.good()) {
+      return fullpath;
+    }
+  }
+
+  // We have to return something, even though we already know this will
+  // fail
+  return fileName;
+}
+
 Parameters::Parameters(std::string fileName) {
-  std::ifstream configFile(fileName);
+  std::ifstream configFile(findConfigFile(fileName));
   if (!configFile.is_open()) {
     std::cout << "ERROR: " << fileName << " cannot be open.\n";
     exit(EXIT_FAILURE);
