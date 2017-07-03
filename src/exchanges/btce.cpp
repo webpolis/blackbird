@@ -7,6 +7,8 @@
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
 #include <array>
+#include <sstream>
+#include <iomanip>
 #include <ctime>
 #include <cassert>
 
@@ -56,6 +58,26 @@ double getAvail(Parameters &params, std::string currency)
   return json_number_value(funds);
 }
 
+std::string sendLongOrder(Parameters &params, std::string direction, double quantity, double price)
+{
+  *params.logFile << "<BTC-e> Trying to send a \"" << direction << "\" limit order: "
+                  << std::fixed
+                  << std::setprecision(6) << quantity << "@$"
+                  << std::setprecision(2) << price << "...\n";
+  std::ostringstream options;
+  options << "pair=btc_usd"
+          << "&type="   << direction
+          << "&amount=" << std::fixed << quantity;
+  // BTCe's 'Trade' method requires rate to be limited to 3 decimals
+  // otherwise it'll barf an error message about incorrect fields
+  options << "&rate="   << std::setprecision(3) << price;
+  unique_json root { authRequest(params, "Trade", options.str()) };
+
+  auto orderid = json_integer_value(json_object_get(root.get(), "order_id"));
+  *params.logFile << "<BTC-e> Done (order ID: " << orderid << ")\n" << std::endl;
+  return std::to_string(orderid);
+}
+
 bool isOrderComplete(Parameters& params, std::string orderId)
 {
   if (orderId == "0") return true;
@@ -64,9 +86,12 @@ bool isOrderComplete(Parameters& params, std::string orderId)
   return json_object_get(root.get(), orderId.c_str()) == nullptr;
 }
 
-double getActivePos(Parameters& params) {
-  // TODO
-  return 0.0;
+double getActivePos(Parameters& params)
+{
+  // TODO:
+  // this implementation is more of a placeholder copied from other exchanges;
+  // may not be reliable.
+  return getAvail(params, "btc");
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
