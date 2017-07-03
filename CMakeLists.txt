@@ -37,4 +37,6 @@ target_link_libraries(${PROJECT_NAME} ${CURL_LIBRARIES}
                                       ${JANSSON_LIBRARIES}
                                       ${OPENSSL_LIBRARIES}
                                       ${SQLITE3_LIBRARIES})
+install(TARGETS ${PROJECT_NAME}
+        RUNTIME DESTINATION ${CMAKE_BINARY_DIR}/..)
 cotire(${PROJECT_NAME})
