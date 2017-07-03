@@ -134,13 +134,12 @@ to sync the submodules.
 
 Once you have downloaded the source code, build Blackbird by typing:
 
-    mkdir build && cd build
-    cmake  -DCMAKE_BUILD_TYPE=Debug  ..
+    cmake -B./build -H. -DCMAKE_BUILD_TYPE=Debug
 
 or
 
-    cmake -DCMAKE_BUILD_TYPE=Release  ..
-    make
+    cmake -B./build -H. -DCMAKE_BUILD_TYPE=Release
+    cmake --build ./build -- install
 
 If all goes well this produces a Blackbird executable in the project directory.
 
@@ -153,9 +152,8 @@ If all goes well this produces a Blackbird executable in the project directory.
   mkdir blackbird
   cd blackbird
   git clone --recursive  git://github.com/butor/blackbird.git .
-  mkdir build && cd build
-  cmake -DCMAKE_BUILD_TYPE=Release  ..
-  make
+  cmake -B./build -H. -DCMAKE_BUILD_TYPE=Release
+  cmake --build ./build -- install
   ```
 
 2. Run the software, by typing:
