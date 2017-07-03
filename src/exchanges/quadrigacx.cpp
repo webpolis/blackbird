@@ -154,13 +154,13 @@ double getLimitPrice(Parameters &params, double volume, bool isBid)
 
 static json_t* authRequest(Parameters& params, std::string request, json_t * options)
 {
-  uint64_t nonce = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+  json_int_t nonce = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 
   //post data is json
   unique_json payload {json_object()};
   auto root = payload.get();
   json_object_set_new(root, "key", json_string(params.quadrigaApi.c_str()));
-  json_object_set_new(root, "nonce", json_integer(json_int_t(nonce)));
+  json_object_set_new(root, "nonce", json_integer(nonce));
   json_object_set_new(root, "signature", json_string(getSignature(params, nonce).c_str()));
 
   if(options != nullptr){
