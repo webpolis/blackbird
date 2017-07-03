@@ -72,6 +72,7 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | <a href="https://www.gdax.com" target="_blank">GDAX</a> | ✓ | ✓ |  |
 | <a href="https://btc-e.com" target="_blank">BTC-e</a> | ✓ |  |  |
 | <a href="https://www.itbit.com" target="_blank">itBit</a> | ✓ |  |  |
+| <a href="https://www.quadrigacx.com" target="_blank">QuadrigaCX</a> | ✓ |  |  |
 
 If `DemoMode=true`, all the exchanges are shown in the log file.
 
