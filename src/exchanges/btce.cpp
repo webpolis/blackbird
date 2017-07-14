@@ -10,6 +10,7 @@
 #include <sstream>
 #include <iomanip>
 #include <ctime>
+#include <cmath>    // fabs
 #include <cassert>
 
 namespace BTCe {
@@ -94,9 +95,23 @@ double getActivePos(Parameters& params)
   return getAvail(params, "btc");
 }
 
-double getLimitPrice(Parameters& params, double volume, bool isBid) {
-  // TODO
-  return 0.0;
+double getLimitPrice(Parameters& params, double volume, bool isBid)
+{
+  auto &exchange = queryHandle(params);
+  unique_json root { exchange.getRequest("/api/3/depth/btc_usd") };
+  auto bidask = json_object_get(json_object_get(root.get(), "btc_usd"), isBid ? "bids" : "asks");
+  double price = 0.0, sumvol = 0.0;
+  for (size_t i = 0, n = json_array_size(bidask); i < n; ++i)
+  {
+    auto currnode = json_array_get(bidask, i);
+    price = json_number_value(json_array_get(currnode, 0));
+    sumvol += json_number_value(json_array_get(currnode, 1));
+    *params.logFile << "<BTC-e> order book: "
+                    << std::setprecision(6) << sumvol << "@$"
+                    << std::setprecision(2) << price << std::endl;
+    if (sumvol >= std::fabs(volume) * params.orderBookFactor) break;
+  }
+  return price;
 }
 
 /*

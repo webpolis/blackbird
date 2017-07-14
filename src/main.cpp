@@ -206,9 +206,11 @@ int main(int argc, char** argv) {
   }
   if (params.btceEnable &&
      (params.btceApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
-    params.addExchange("BTC-e", params.btceFees, false, false);
+    params.addExchange("BTC-e", params.btceFees, false, true);
     getQuote[index] = BTCe::getQuote;
     getAvail[index] = BTCe::getAvail;
+    sendLongOrder[index] = BTCe::sendLongOrder;
+    isOrderComplete[index] = BTCe::isOrderComplete;
     getActivePos[index] = BTCe::getActivePos;
     getLimitPrice[index] = BTCe::getLimitPrice;
 
