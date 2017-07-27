@@ -1,9 +1,9 @@
 #include "bitstamp.h"
 #include "parameters.h"
-#include "curl_fun.h"
 #include "utils/restapi.h"
 #include "utils/base64.h"
 #include "unique_json.hpp"
+#include "hex_str.hpp"
 
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
@@ -17,11 +17,28 @@
 
 namespace Bitstamp {
 
+static json_t* authRequest(Parameters &, std::string, std::string);
+
 static RestApi& queryHandle(Parameters &params)
 {
   static RestApi query ("https://www.bitstamp.net",
                         params.cacert.c_str(), *params.logFile);
   return query;
+}
+
+static json_t* checkResponse(std::ostream &logFile, json_t *root)
+{
+  auto errstatus = json_object_get(root, "error");
+  if (errstatus)
+  {
+    // Bitstamp errors could sometimes be strings or objects containing error string
+    auto errmsg = json_dumps(errstatus, JSON_ENCODE_ANY);
+    logFile << "<Bitstamp> Error with response: "
+            << errmsg << '\n';
+    free(errmsg);
+  }
+
+  return root;
 }
 
 quote_t getQuote(Parameters& params)
@@ -40,14 +57,14 @@ quote_t getQuote(Parameters& params)
 
 double getAvail(Parameters& params, std::string currency)
 {
-  unique_json root { authRequest(params, "https://www.bitstamp.net/api/balance/", "") };
+  unique_json root { authRequest(params, "/api/balance/", "") };
   while (json_object_get(root.get(), "message") != NULL)
   {
     std::this_thread::sleep_for(std::chrono::seconds(1));
     auto dump = json_dumps(root.get(), 0);
     *params.logFile << "<Bitstamp> Error with JSON: " << dump << ". Retrying..." << std::endl;
     free(dump);
-    root.reset(authRequest(params, "https://www.bitstamp.net/api/balance/", ""));
+    root.reset(authRequest(params, "/api/balance/", ""));
   }
   double availability = 0.0;
   const char* returnedText = NULL;
@@ -77,11 +94,9 @@ std::string sendLongOrder(Parameters& params, std::string direction, double quan
   *params.logFile << "<Bitstamp> Trying to send a \"" << direction << "\" limit order: "
                   << std::setprecision(6) << quantity << "@$"
                   << std::setprecision(2) << price << "...\n";
+  std::string url = "/api/" + direction + '/';
+
   std::ostringstream oss;
-  oss << "https://www.bitstamp.net/api/" << direction << "/";
-  std::string url = oss.str();
-  oss.clear();
-  oss.str("");
   oss << "amount=" << quantity << "&price=" << std::fixed << std::setprecision(2) << price;
   std::string options = oss.str();
   unique_json root { authRequest(params, url, options) };
@@ -102,9 +117,9 @@ bool isOrderComplete(Parameters& params, std::string orderId)
   if (orderId == "0") return true;
 
   auto options = "id=" + orderId;
-  unique_json root { authRequest(params, "https://www.bitstamp.net/api/order_status/", options) };
-  std::string status = json_string_value(json_object_get(root.get(), "status"));
-  return status == "Finished";
+  unique_json root { authRequest(params, "/api/order_status/", options) };
+  auto status = json_string_value(json_object_get(root.get(), "status"));
+  return status && status == std::string("Finished");
 }
 
 double getActivePos(Parameters& params) { return getAvail(params, "btc"); }
@@ -135,71 +150,26 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
   return p;
 }
 
-json_t* authRequest(Parameters& params, std::string url, std::string options)
+json_t* authRequest(Parameters &params, std::string request, std::string options)
 {
   static uint64_t nonce = time(nullptr) * 4;
-  std::ostringstream oss;
-  oss << ++nonce << params.bitstampClientId << params.bitstampApi;
-  unsigned char* digest;
-  digest = HMAC(EVP_sha256(), params.bitstampSecret.c_str(), params.bitstampSecret.size(), (unsigned char*)oss.str().data(), oss.str().size(), NULL, NULL);
-  char mdString[SHA256_DIGEST_LENGTH+100];  // FIXME +100
-  for (int i = 0; i < SHA256_DIGEST_LENGTH; ++i)
-  {
-    sprintf(&mdString[i*2], "%02X", (unsigned int)digest[i]);
-  }
-  oss.clear();
-  oss.str("");
-  oss << "key=" << params.bitstampApi << "&signature=" << mdString << "&nonce=" << nonce << "&" << options;
-  std::string postParams = oss.str().c_str();
+  auto msg = std::to_string(++nonce) + params.bitstampClientId + params.bitstampApi;
+  uint8_t *digest = HMAC (EVP_sha256(),
+                          params.bitstampSecret.c_str(), params.bitstampSecret.size(),
+                          reinterpret_cast<const uint8_t *>(msg.data()), msg.size(),
+                          nullptr, nullptr);
 
-  if (params.curl)
+  std::string postParams = "key=" + params.bitstampApi +
+                           "&signature=" + hex_str<upperhex>(digest, digest + SHA256_DIGEST_LENGTH) +
+                           "&nonce=" + std::to_string(nonce);
+  if (!options.empty())
   {
-    std::string readBuffer;
-    curl_easy_setopt(params.curl, CURLOPT_POST,1L);
-    curl_easy_setopt(params.curl, CURLOPT_POSTFIELDS, postParams.c_str());
-    curl_easy_setopt(params.curl, CURLOPT_SSL_VERIFYPEER, 0L);
-    curl_easy_setopt(params.curl, CURLOPT_WRITEFUNCTION, WriteCallback);
-    curl_easy_setopt(params.curl, CURLOPT_WRITEDATA, &readBuffer);
-    curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
-    curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
-    CURLcode resCurl = curl_easy_perform(params.curl);
-    using std::this_thread::sleep_for;
-    using secs = std::chrono::seconds;
+    postParams += "&";
+    postParams += options;
+  }
 
-    while (resCurl != CURLE_OK)
-    {
-      *params.logFile << "<Bitstamp> Error with cURL. Retry in 2 sec..." << std::endl;
-      sleep_for(secs(2));
-      readBuffer = "";
-      resCurl = curl_easy_perform(params.curl);
-    }
-    json_error_t error;
-    json_t *root = json_loads(readBuffer.c_str(), 0, &error);
-    while (!root)
-    {
-      *params.logFile << "<Bitstamp> Error with JSON:\n" << error.text << '\n'
-                      << "<Bitstamp> Buffer:\n" << readBuffer << '\n'
-                      << "<Bitstamp> Retrying..." << std::endl;
-      sleep_for(secs(2));
-      readBuffer = "";
-      resCurl = curl_easy_perform(params.curl);
-      while (resCurl != CURLE_OK)
-      {
-        *params.logFile << "<Bitstamp> Error with cURL. Retry in 2 sec..." << std::endl;
-        sleep_for(secs(2));
-        readBuffer = "";
-        resCurl = curl_easy_perform(params.curl);
-      }
-      root = json_loads(readBuffer.c_str(), 0, &error);
-    }
-    curl_easy_reset(params.curl);
-    return root;
-  }
-  else
-  {
-    *params.logFile << "<Bitstamp> Error with cURL init." << std::endl;
-    return NULL;
-  }
+  auto &exchange = queryHandle(params);
+  return checkResponse(*params.logFile, exchange.postRequest(request, postParams));
 }
 
 }
