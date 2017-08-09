@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
 
   // We only trade BTC/USD and ETH/BTC for the moment
   if (params.tradedPair().compare("BTC/USD") != 0 && params.tradedPair().compare("ETH/BTC") != 0) {
-    std::cout << "ERROR: Pair '" << params.tradedPair() <<"' is unknown. Valid pairs for now are BTC/USD and ETH/BTC\n" << std::endl;
+    std::cout << "ERROR: Pair \'" << params.tradedPair() <<"\' is unknown. Valid pairs for now are BTC/USD and ETH/BTC\n" << std::endl;
     exit(EXIT_FAILURE);
   }
 
