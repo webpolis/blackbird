@@ -33,7 +33,8 @@ static json_t* checkResponse(std::ostream &logFile, json_t *root)
 }
 
 
-// We only get ETH/BTC as there is no USD on Poloniex
+// We use ETH/BTC as there is no USD on Poloniex
+// TODO We could show BTC/USDT
 quote_t getQuote(Parameters &params)
 {
   auto &exchange = queryHandle(params);

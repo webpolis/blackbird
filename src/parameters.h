@@ -99,8 +99,6 @@ struct Parameters {
   void addExchange(std::string n, double f, bool h, bool m);
 
   int nbExch() const;
-  
-  std::string tradedPair() const;
 };
 
 // Copies the parameters from the configuration file

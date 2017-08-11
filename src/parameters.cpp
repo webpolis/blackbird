@@ -155,10 +155,6 @@ int Parameters::nbExch() const {
   return exchName.size();
 }
 
-std::string Parameters::tradedPair() const {
-  return leg1 + "/" + leg2;
-}
-
 std::string getParameter(std::string parameter, std::ifstream& configFile) {
   assert (configFile);
   std::string line;

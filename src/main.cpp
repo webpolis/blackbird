@@ -84,15 +84,9 @@ int main(int argc, char** argv) {
     exit(EXIT_FAILURE);
   }
 
-  // We only trade BTC/USD and ETH/BTC for the moment
-  if (params.tradedPair().compare("BTC/USD") != 0 && params.tradedPair().compare("ETH/BTC") != 0) {
-    std::cout << "ERROR: Pair \'" << params.tradedPair() <<"\' is unknown. Valid pairs for now are BTC/USD and ETH/BTC\n" << std::endl;
-    exit(EXIT_FAILURE);
-  }
-
-  // ETH/BTC is not fully implemented yet, but the spreads are shown in Demo mode
-  if (params.tradedPair().compare("ETH/BTC") == 0 && params.demoMode == false) {
-    std::cout << "ERROR: ETH/BTC is only available in Demo mode\n" << std::endl;
+  // We only trade BTC/USD for the moment
+  if (params.leg1.compare("BTC") != 0 || params.leg2.compare("USD") != 0) {
+    std::cout << "ERROR: Valid currency pair is only BTC/USD for now.\n" << std::endl;
     exit(EXIT_FAILURE);
   }
 
@@ -109,13 +103,9 @@ int main(int argc, char** argv) {
 
 
   // Adds the exchange functions to the arrays for all the defined exchanges
-  // Poloniex is only used if the traded pair is ETH/BTC as they don't
-  // deal with USD.
-  // TODO: should be in a separated function, and there probably is a better
-  // way to implement that.
   int index = 0;
   if (params.bitfinexEnable &&
-     (params.bitfinexApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
+     (params.bitfinexApi.empty() == false || params.demoMode == true)) {
     params.addExchange("Bitfinex", params.bitfinexFees, true, true);
     getQuote[index] = Bitfinex::getQuote;
     getAvail[index] = Bitfinex::getAvail;
@@ -131,7 +121,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.okcoinEnable &&
-     (params.okcoinApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
+     (params.okcoinApi.empty() == false || params.demoMode == true)) {
     params.addExchange("OKCoin", params.okcoinFees, false, true);
     getQuote[index] = OKCoin::getQuote;
     getAvail[index] = OKCoin::getAvail;
@@ -147,7 +137,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.bitstampEnable &&
-     (params.bitstampClientId.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
+     (params.bitstampClientId.empty() == false || params.demoMode == true)) {
     params.addExchange("Bitstamp", params.bitstampFees, false, true);
     getQuote[index] = Bitstamp::getQuote;
     getAvail[index] = Bitstamp::getAvail;
@@ -177,7 +167,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.krakenEnable &&
-     (params.krakenApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
+     (params.krakenApi.empty() == false || params.demoMode == true)) {
     params.addExchange("Kraken", params.krakenFees, false, true);
     getQuote[index] = Kraken::getQuote;
     getAvail[index] = Kraken::getAvail;
@@ -192,7 +182,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.itbitEnable &&
-     (params.itbitApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
+     (params.itbitApi.empty() == false || params.demoMode == true)) {
     params.addExchange("ItBit", params.itbitFees, false, false);
     getQuote[index] = ItBit::getQuote;
     getAvail[index] = ItBit::getAvail;
@@ -205,7 +195,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.btceEnable &&
-     (params.btceApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
+     (params.btceApi.empty() == false || params.demoMode == true)) {
     params.addExchange("BTC-e", params.btceFees, false, true);
     getQuote[index] = BTCe::getQuote;
     getAvail[index] = BTCe::getAvail;
@@ -220,7 +210,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.poloniexEnable &&
-     (params.poloniexApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("ETH/BTC") == 0))) {
+     (params.poloniexApi.empty() == false || params.demoMode == true)) {
     params.addExchange("Poloniex", params.poloniexFees, true, false);
     getQuote[index] = Poloniex::getQuote;
     getAvail[index] = Poloniex::getAvail;
@@ -236,7 +226,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.gdaxEnable &&
-     (params.gdaxApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
+     (params.gdaxApi.empty() == false || params.demoMode == true)) {
     params.addExchange("GDAX", params.gdaxFees, false, false);
     getQuote[index] = GDAX::getQuote;
     getAvail[index] = GDAX::getAvail;
@@ -249,7 +239,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.quadrigaEnable &&
-         (params.quadrigaApi.empty() == false || (params.demoMode == true && params.tradedPair().compare("BTC/USD") == 0))) {
+         (params.quadrigaApi.empty() == false || params.demoMode == true)) {
     params.addExchange("QuadrigaCX", params.quadrigaFees, false, true);
     getQuote[index] = QuadrigaCX::getQuote;
     getAvail[index] = QuadrigaCX::getAvail;
@@ -294,8 +284,8 @@ int main(int argc, char** argv) {
     logFile << "Demo mode: trades won't be generated\n" << std::endl;
   }
 
-  // Shows which pair we are trading (e.g. BTC/USD)
-  logFile << "Pair traded: " << params.tradedPair() << "\n" << std::endl;
+  // Shows which pair we are trading (BTC/USD only for the moment)
+  logFile << "Pair traded: " << params.leg1 << "/" << params.leg2 << "\n" << std::endl;
 
   std::cout << "Log file generated: " << logFileName << "\nBlackbird is running... (pid " << getpid() << ")\n" << std::endl;
   int numExch = params.nbExch();
@@ -443,11 +433,8 @@ int main(int argc, char** argv) {
       // Shows the bid/ask information in the log file
       if (params.verbose) {
         logFile << "   " << params.exchName[i] << ": \t"
-                << std::setprecision(4)
+                << std::setprecision(2)
                 << bid << " / " << ask << std::endl;
-                // TODO: precision should be:
-                // 2 for USD
-                // 4 for cryptocurrencies
       }
       // Updates the Bitcoin vector with the latest bid/ask data
       btcVec[i].updateData(quote);
