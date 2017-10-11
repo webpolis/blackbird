@@ -25,6 +25,8 @@ static RestApi& queryHandle(Parameters &params)
 static json_t* checkResponse(std::ostream &logFile, json_t *root)
 {
   auto msg = json_object_get(root, "message");
+  if (!msg) msg = json_object_get(root, "error");
+
   if (msg)
     logFile << "<Bitfinex> Error with response: "
             << json_string_value(msg) << '\n';
