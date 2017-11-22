@@ -6,4 +6,4 @@ services:
     volumes:
       - ./blackbird.conf:/blackbird/blackbird.conf
       - ./output:/blackbird/output/
-    command: /blackbird/blackbird
+    command: /blackbird/start_blackbird.sh

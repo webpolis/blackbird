@@ -179,6 +179,22 @@ If all goes well this produces a Blackbird executable in the project directory.
   docker-compose up
   ```
 
+#### Understanding and debugging the software
+
+Step-through debugging is a helpful method to understand how any software application works.  Various scripts and metadata files are included alongside the source code to facilitate building the application so you can use GDB and VisualStudio Code to debug the application while it executes in a Docker container.
+
+Once you have successfully launched Blackbird following the instructions in the "Docker" section, you need to do the following:
+
+1. <a href="https://code.visualstudio.com" target="_blank">Download and install Visual Studio Code</a>
+
+2. <a href="https://code.visualstudio.com/docs/languages/cpp" target="_blank">Setup the C/C++ extension for Visual Studio Code</a>
+
+3. You need to have GDB installed on your machine (this is described in the "Debugging" section of <a href="https://code.visualstudio.com/docs/languages/cpp" target="_blank">Setup the C/C++ extension for Visual Studio Code</a>).  
+
+4. From VS Code, File > Open Workspace... and select the "blackbird" workspace (this is in the root directory of your blackbird clone; the one you created this during "Download source code" step) 
+
+5. Press F5 to start the debugger.  This will build and launch the Docker container, Blackbird w/ debug symbols, and a GDB Server running Blackbird on the Docker container.  Since there is a delay between when the Docker container gets launched and the GDB Server is running, you may need to start the debugger a few times before it attaches to the GDB server.  (If you can figure out how to create a "pause" between when the container launches and VS Code attempts to attached to GDB Server, that will fix it).
+
 ### Contact
 
 * If you found a bug, please open a new <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _bug_
