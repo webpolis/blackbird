@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  blackbird:
+    build:
+      context: .
+      dockerfile: Dockerfile.debug
+    privileged: true
+    ports: ["9091:9091"]
+    volumes: 
+      - .:/blackbird
+    environment:
+      DEBUG: 'true'
+  
