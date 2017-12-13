@@ -167,13 +167,24 @@ If all goes well this produces a Blackbird executable in the project directory.
 
 1. Download and install Docker (with Docker Compose) [here](https://www.docker.com/).
 
-2. Build the container:
+2. Download the source from github with
+  ```
+  mkdir blackbird
+  cd blackbird
+  git clone --recursive  git://github.com/butor/blackbird.git .
+  ```
+Alternatively, if you already have the existing source tree use:
+  ```
+  git submodule update --init
+  ```
+
+3. Build the container:
 
   ```
   docker build -t blackbird .
   ```
 
-3. Spin up the entire stack with docker-compose (OSX/Linux):
+4. Spin up the entire stack with docker-compose (OSX/Linux):
 
   ```
   docker-compose up
