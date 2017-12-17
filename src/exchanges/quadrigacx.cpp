@@ -72,8 +72,6 @@ std::string sendLongOrder(Parameters& params, std::string direction, double quan
   *params.logFile << "<QuadrigaCX> Trying to send a \"" << direction << "\" limit order: "
                   << std::setprecision(8) << quantity << "@$"
                   << std::setprecision(2) << price << "...\n";
-  //std::string pricelimit = std::to_string(price);
-  //std::string volume = std::to_string(quantity);
   
   std::ostringstream oss;
   // Quadriga don't accept amount longer that 8 digits after decimal point
