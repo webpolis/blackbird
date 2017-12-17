@@ -83,6 +83,10 @@ struct Parameters {
   std::string quadrigaClientId;
   double quadrigaFees;
   bool quadrigaEnable;
+  std::string exmoApi;
+  std::string exmoSecret;
+  double exmoFees;
+  bool exmoEnable;
 
   bool sendEmail;
   std::string senderAddress;
