@@ -159,9 +159,9 @@ json_t* authRequest(Parameters &params, const char *request, std::string options
   auto ret = exchange.postRequest(req,
                                   make_slist(begin(headers), end(headers)));
   // debug
-  auto dump = json_dumps(ret, 0);
-  *params.logFile << "<Exmo> Debug, Server Return Message: " << dump << std::endl << std::endl;
-  free(dump);
+  //auto dump = json_dumps(ret, 0);
+  //*params.logFile << "<Exmo> Debug, Server Return Message: " << dump << std::endl << std::endl;
+  //free(dump);
   
   return ret;
 }
