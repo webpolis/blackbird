@@ -85,21 +85,31 @@ bool isOrderComplete(Parameters& params, std::string orderId) {
   string pair = "btc_usd"; // TODO remove when multi currency support
   transform(pair.begin(), pair.end(), pair.begin(), ::toupper);
   
-  unique_json root { authRequest(params, "/user_open_orders") };
-  string order_id = to_string(json_integer_value(json_object_get(json_object_get(root.get(), pair.c_str()), "order_id")));
+  unique_json rootOrd { authRequest(params, "/user_open_orders") };
   
-  if (orderId.compare(order_id) == 0) 
-    return false;
-  else {
-    unique_json root { authRequest(params, "/user_trades") };
-    string order_id = to_string(json_integer_value(json_object_get(json_object_get(root.get(), pair.c_str()), "order_id")));
-    if (orderId.compare(order_id) == 0) 
-      return true;
+  int orders  = json_array_size(json_object_get(rootOrd.get(), pair.c_str()));
+  string order_id;
+
+  for (int i=0; i<orders; i++){
+    order_id = json_string_value(json_object_get(json_array_get(json_object_get(rootOrd.get(), pair.c_str()), i), "order_id"));
+    if (orderId.compare(order_id) == 0)
+      return false;
   }
-  auto dump = json_dumps(root.get(), 0);
-  *params.logFile << "<Exmo> Failed, Message: " << dump << endl;
-  free(dump);
-  return false;
+  
+  string options;
+  options  = "pair=" + pair;
+  options  += "&limit=1";
+
+  unique_json rootTr { authRequest(params, "/user_trades", options) };
+  order_id = to_string(json_integer_value(json_object_get(json_array_get(json_object_get(rootTr.get(), pair.c_str()), 0), "order_id")));
+  if (orderId.compare(order_id) == 0) 
+    return true;
+  else {
+    auto dump = json_dumps(rootTr.get(), 0);
+    *params.logFile << "<Exmo> Failed, Server Return Message: " << dump << endl;
+    free(dump);
+    return false;
+  }
 }
 
 
@@ -198,15 +208,15 @@ void testExmo() {
   //cout << orderId << endl;
   //cout << "Buy order is complete: " << isOrderComplete(params, orderId) << endl;
 
-  cout << "Sending sell order - TXID: " ;
-  orderId = sendLongOrder(params, "sell", 0.5, 338);
-  if (orderId == "0") {
-    cout << "failed" << endl;
-  }
-  else {
-    cout << orderId << endl;
-    cout << "Sell order is complete: " << isOrderComplete(params, orderId) << endl;
-  }
+  //cout << "Sending sell order - TXID: " ;
+  //orderId = sendLongOrder(params, "sell", 0.5, 338);
+  //if (orderId == "0") {
+  //  cout << "failed" << endl;
+  //}
+  //else {
+  //  cout << orderId << endl;
+    cout << "Sell order is complete: " << isOrderComplete(params, "404591373") << endl;
+  //}
 }
 
 }
