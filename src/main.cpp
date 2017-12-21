@@ -54,10 +54,6 @@ struct Balance {
 // 'main' function.
 // Blackbird doesn't require any arguments for now.
 int main(int argc, char** argv) {
-  // Test Exchange functions
-  //Exmo::testExmo();
-  //return 0;
-
   std::cout << "Blackbird Bitcoin Arbitrage" << std::endl;
   std::cout << "DISCLAIMER: USE THE SOFTWARE AT YOUR OWN RISK\n" << std::endl;
   // Replaces the C++ global locale with the user-preferred locale

@@ -55,7 +55,7 @@ double getAvail(Parameters& params, std::string currency)
 std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
   using namespace std;
   string pair = "btc_usd"; // TODO remove when multi currency support
-  *params.logFile << "<Exmo> Trying to send a " << pair << " " << direction << "limit order: " << quantity << "@" << price << endl;
+  *params.logFile << "<Exmo> Trying to send a " << pair << " " << direction << " limit order: " << quantity << "@" << price << endl;
   transform(pair.begin(), pair.end(), pair.begin(), ::toupper);
 
   string options;
