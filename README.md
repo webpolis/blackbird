@@ -190,6 +190,28 @@ Alternatively, if you already have the existing source tree use:
   docker-compose up
   ```
 
+#### Mac OS X
+
+1. Install [Homebrew](https://brew.sh/)
+
+2. Run the following commands:
+
+  ```
+  xcode-select --install
+  brew install cmake openssl jansson curl sqlite3 sendemail
+  mkdir blackbird
+  cd blackbird
+  git clone --recursive  git://github.com/butor/blackbird.git .
+  cmake -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -B./build -H. -DCMAKE_BUILD_TYPE=Release
+  cmake --build ./build -- install
+  ```
+
+3. Run the software, by typing:
+
+  ```
+  ./blackbird
+  ```
+
 #### Understanding and debugging the software
 
 Step-through debugging is a helpful method to understand how any software application works.  Various scripts and metadata files are included alongside the source code to facilitate building the application so you can use GDB and VisualStudio Code to debug the application while it executes in a Docker container.
