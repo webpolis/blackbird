@@ -146,6 +146,9 @@ Once you have downloaded the source code, build Blackbird by typing:
 or
 
     cmake -B./build -H. -DCMAKE_BUILD_TYPE=Release
+    
+then
+    
     cmake --build ./build -- install
 
 If all goes well this produces a Blackbird executable in the project directory.
