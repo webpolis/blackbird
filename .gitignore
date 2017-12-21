@@ -3,7 +3,6 @@
 *.o
 *.a
 blackbird
-blackbird.conf
 blackbird.db
 sqlite3
 core
