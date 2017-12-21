@@ -133,6 +133,10 @@ Parameters::Parameters(std::string fileName) {
   quadrigaFees = getDouble(getParameter("QuadrigaFees", configFile));
   quadrigaClientId = getParameter("QuadrigaClientId", configFile);
   quadrigaEnable = getBool(getParameter("QuadrigaEnable", configFile));
+  exmoApi = getParameter("ExmoApiKey", configFile);
+  exmoSecret = getParameter("ExmoSecretKey", configFile);
+  exmoFees = getDouble(getParameter("ExmoFees", configFile));
+  exmoEnable = getBool(getParameter("ExmoEnable", configFile));
 
   sendEmail = getBool(getParameter("SendEmail", configFile));
   senderAddress = getParameter("SenderAddress", configFile);

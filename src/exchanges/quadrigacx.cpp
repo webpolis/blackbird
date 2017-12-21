@@ -70,27 +70,32 @@ std::string sendLongOrder(Parameters& params, std::string direction, double quan
     return "0";
   }
   *params.logFile << "<QuadrigaCX> Trying to send a \"" << direction << "\" limit order: "
-                  << std::setprecision(6) << quantity << " @ $"
+                  << std::setprecision(8) << quantity << "@$"
                   << std::setprecision(2) << price << "...\n";
-  std::string pricelimit = std::to_string(price);
-  std::string volume = std::to_string(quantity);
+  
+  std::ostringstream oss;
+  // Quadriga don't accept amount longer that 8 digits after decimal point
+  // Its a workaround, would be better to trim only digits after decimal point. 
+  oss << std::fixed << std::setprecision(8) << quantity;
+  std::string amount = oss.str();
 
   unique_json options {json_object()};
   json_object_set_new(options.get(), "book", json_string("btc_usd"));
-  json_object_set_new(options.get(), "amount", json_real(quantity));
+  json_object_set_new(options.get(), "amount", json_string(amount.c_str()));
   json_object_set_new(options.get(), "price", json_real(price));
 
   unique_json root { authRequest(params, ("/v2/" + direction), options.get()) };
-  json_t *res = json_object_get(root.get(), "id");
-  if (json_is_object(res) == 0) {
-    auto dump = json_dumps(root.get(), 0) ;
-    *params.logFile << "<QuadrigaCX> order failed: " << dump << std::endl;
+  std::string orderId = json_string_value(json_object_get(root.get(), "id"));
+  if (orderId.empty()) {
+    auto dump = json_dumps(root.get(), 0);
+    *params.logFile << "<QuadrigaCX> Failed, Message: " << dump << std::endl;
     free(dump);
-    return "Order Failed";
+    return "0";
   }
-  std::string txid = json_string_value(res);
-  *params.logFile << "<QuadrigaCX> Done (transaction ID: " << txid << ")\n" << std::endl;
-  return txid;
+  else {
+    *params.logFile << "<QuadrigaCX> Done, order ID: " << orderId << std::endl;
+    return orderId;
+  } 
 }
 
 

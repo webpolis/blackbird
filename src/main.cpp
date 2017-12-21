@@ -15,6 +15,7 @@
 #include "exchanges/btce.h"
 #include "exchanges/poloniex.h"
 #include "exchanges/gdax.h"
+#include "exchanges/exmo.h"
 #include "utils/send_email.h"
 #include "getpid.h"
 
@@ -92,14 +93,14 @@ int main(int argc, char** argv) {
 
   // Function arrays containing all the exchanges functions
   // using the 'typedef' declarations from above.
-  getQuoteType getQuote[10];
-  getAvailType getAvail[10];
-  sendOrderType sendLongOrder[10];
-  sendOrderType sendShortOrder[10];
-  isOrderCompleteType isOrderComplete[10];
-  getActivePosType getActivePos[10];
-  getLimitPriceType getLimitPrice[10];
-  std::string dbTableName[10];
+  getQuoteType getQuote[11];
+  getAvailType getAvail[11];
+  sendOrderType sendLongOrder[11];
+  sendOrderType sendShortOrder[11];
+  isOrderCompleteType isOrderComplete[11];
+  getActivePosType getActivePos[11];
+  getLimitPriceType getLimitPrice[11];
+  std::string dbTableName[11];
 
 
   // Adds the exchange functions to the arrays for all the defined exchanges
@@ -249,6 +250,21 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = QuadrigaCX::getLimitPrice;
 
     dbTableName[index] = "quadriga";
+    createTable(dbTableName[index], params);
+
+    index++;
+  }
+  if (params.exmoEnable &&
+         (params.exmoApi.empty() == false || params.demoMode == true)) {
+    params.addExchange("Exmo", params.exmoFees, false, true);
+    getQuote[index] = Exmo::getQuote;
+    getAvail[index] = Exmo::getAvail;
+    sendLongOrder[index] = Exmo::sendLongOrder;
+    isOrderComplete[index] = Exmo::isOrderComplete;
+    getActivePos[index] = Exmo::getActivePos;
+    getLimitPrice[index] = Exmo::getLimitPrice;
+
+    dbTableName[index] = "exmo";
     createTable(dbTableName[index], params);
 
     index++;
