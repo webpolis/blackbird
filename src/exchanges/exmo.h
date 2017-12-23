@@ -4,6 +4,7 @@
 #include "quote_t.h"
 #include <string>
 #include <sstream>
+#include <algorithm>
 
 struct json_t;
 struct Parameters;
