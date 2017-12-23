@@ -137,6 +137,11 @@ Parameters::Parameters(std::string fileName) {
   exmoSecret = getParameter("ExmoSecretKey", configFile);
   exmoFees = getDouble(getParameter("ExmoFees", configFile));
   exmoEnable = getBool(getParameter("ExmoEnable", configFile));
+  cexioClientId = getParameter("CexioClientId", configFile);
+  cexioApi = getParameter("CexioApiKey", configFile);
+  cexioSecret = getParameter("CexioSecretKey", configFile);
+  cexioFees = getDouble(getParameter("CexioFees", configFile));
+  cexioEnable = getBool(getParameter("CexioEnable", configFile));
 
   sendEmail = getBool(getParameter("SendEmail", configFile));
   senderAddress = getParameter("SenderAddress", configFile);

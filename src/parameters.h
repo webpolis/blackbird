@@ -87,6 +87,11 @@ struct Parameters {
   std::string exmoSecret;
   double exmoFees;
   bool exmoEnable;
+  std::string cexioClientId;
+  std::string cexioApi;
+  std::string cexioSecret;
+  double cexioFees;
+  bool cexioEnable;
 
   bool sendEmail;
   std::string senderAddress;
