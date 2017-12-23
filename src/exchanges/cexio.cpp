@@ -47,19 +47,20 @@ quote_t getQuote(Parameters &params)
   return std::make_pair(bidValue, askValue);
 }
 
-/*
 double getAvail(Parameters& params, std::string currency)
 {
   double available = 0.0;
+  const char* returnedText = NULL;
   transform(currency.begin(), currency.end(), currency.begin(), ::toupper);
-  const char * curr_ = currency.c_str();
+  //const char * curr_ = currency.c_str();
   
-  unique_json root { authRequest(params, "/user_info") };
-  const char * avail_str = json_string_value(json_object_get(json_object_get(root.get(), "balances"), curr_));
-  available = avail_str ? atof(avail_str) : 0.0;
+  unique_json root { authRequest(params, "/balance","") };
+  //const char * avail_str = json_string_value(json_object_get(json_object_get(root.get(), "balances"), curr_));
+  returnedText = json_string_value(json_object_get(root.get(), "available"));
+  available = returnedText ? atof(returnedText) : 0.0;
   return available;
 }
-
+/*
 // TODO multi currency support
 //std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price, std::string pair) {
 std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
@@ -154,17 +155,17 @@ double getLimitPrice(Parameters &params, double volume, bool isBid)
   return currPrice;
 }
 
-
+*/
 json_t* authRequest(Parameters &params, std::string request, std::string options)
 {
   static uint64_t nonce = time(nullptr) * 4;
-  auto msg = std::to_string(++nonce) + params.bitstampClientId + params.bitstampApi;
+  auto msg = std::to_string(++nonce) + params.cexioClientId + params.cexioApi;
   uint8_t *digest = HMAC (EVP_sha256(),
-                          params.bitstampSecret.c_str(), params.bitstampSecret.size(),
+                          params.cexioSecret.c_str(), params.cexioSecret.size(),
                           reinterpret_cast<const uint8_t *>(msg.data()), msg.size(),
                           nullptr, nullptr);
 
-  std::string postParams = "key=" + params.bitstampApi +
+  std::string postParams = "key=" + params.cexioApi +
                            "&signature=" + hex_str<upperhex>(digest, digest + SHA256_DIGEST_LENGTH) +
                            "&nonce=" + std::to_string(nonce);
   if (!options.empty())
@@ -176,14 +177,14 @@ json_t* authRequest(Parameters &params, std::string request, std::string options
   auto &exchange = queryHandle(params);
   return checkResponse(*params.logFile, exchange.postRequest(request, postParams));
 }
-
+/*
 void testCexio() {
 
   using namespace std;
   Parameters params("blackbird.conf");
-  //params.exmoSecret = "";
-  //params.exmoClientId = "";
-  //params.exmoApi = "";
+  //params.cexioSecret = "";
+  //params.cexioClientId = "";
+  //params.cexioApi = "";
   params.logFile = new ofstream("./test.log" , ofstream::trunc);
 
   string orderId;

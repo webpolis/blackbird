@@ -12,7 +12,7 @@ namespace Cexio {
 
 quote_t getQuote(Parameters& params);
 
-// double getAvail(Parameters& params, std::string currency);
+double getAvail(Parameters& params, std::string currency);
 
 // std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price);
 // // TODO multi currency support

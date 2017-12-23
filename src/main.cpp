@@ -274,8 +274,8 @@ int main(int argc, char** argv) {
          (params.cexioApi.empty() == false || params.demoMode == true)) {
     params.addExchange("Cexio", params.cexioFees, false, true);
     getQuote[index] = Cexio::getQuote;
-    /*
     getAvail[index] = Cexio::getAvail;
+    /*
     sendLongOrder[index] = Cexio::sendLongOrder;
     isOrderComplete[index] = Cexio::isOrderComplete;
     getActivePos[index] = Cexio::getActivePos;
