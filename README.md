@@ -127,7 +127,7 @@ libsqlite3-dev (available as a Blackbird submodule)
 sendemail
 ```
 
-Download the source from github with:
+Download the source from GitHub with:
 
     mkdir blackbird
     cd blackbird
@@ -176,7 +176,7 @@ If all goes well this produces a Blackbird executable in the project directory.
 
 1. Download and install Docker (with Docker Compose) [here](https://www.docker.com/).
 
-2. Download the source from github with
+2. Download the source from GitHub with
   ```
   mkdir blackbird
   cd blackbird
