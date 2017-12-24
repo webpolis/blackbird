@@ -235,7 +235,7 @@ Once you have successfully launched Blackbird following the instructions in the 
 
 4. From VS Code, File > Open Workspace... and select the "blackbird" workspace (this is in the root directory of your blackbird clone; the one you created this during "Download source code" step) 
 
-5. Press F5 to start the debugger.  This will build and launch the Docker container, Blackbird w/ debug symbols, and a GDB Server running Blackbird on the Docker container.  Since there is a delay between when the Docker container gets launched and the GDB Server is running, you may need to start the debugger a few times before it attaches to the GDB server.  (If you can figure out how to create a "pause" between when the container launches and VS Code attempts to attached to GDB Server, that will fix it).
+5. Press F5 to start the debugger.  This will build and launch the Docker container, Blackbird w/ debug symbols, and a GDB Server running Blackbird on the Docker container.  Since there is a delay between when the Docker container gets launched and the GDB Server is running, you may need to start the debugger a few times before it attaches to the GDB server.  (If you can figure out how to create a "pause" between when the container launches and VS Code attempts to attach to GDB Server, that will fix it).
 
 ### Contact
 
