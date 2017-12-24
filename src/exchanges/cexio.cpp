@@ -60,6 +60,7 @@ double getAvail(Parameters& params, std::string currency)
   available = returnedText ? atof(returnedText) : 0.0;
   return available;
 }
+
 /*
 // TODO multi currency support
 //std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price, std::string pair) {
