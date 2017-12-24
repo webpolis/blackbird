@@ -50,7 +50,7 @@ Please make sure that you understand the disclaimer above if you want to test Bl
 
 __IMPORTANT: all your BTC accounts must be empty before starting Blackbird. Make sure that you only have USD on your accounts and no BTC.__
 
-It is never entirely safe to just tell Blackbird to use, say, $25 per exchange. You also need to only have $25 available on each of your trading accounts as well as 0 BTC. In this case you are sure that even with a bug your maximum loss on an exchange won't be greater than $25 no matter what.
+It is never entirely safe to just tell Blackbird to use, say, $25 per exchange. You also need to only have $25 available on each of your trading accounts as well as 0 BTC. In this case, you are sure that even with a bug your maximum loss on an exchange won't be greater than $25 no matter what.
 
 Note: on Bitfinex, your money has to be available on the _Margin_ account.
 
@@ -86,7 +86,7 @@ If `DemoMode=false`, only the exchanges for which the credentials exist in _blac
 
 #### Credentials
 
-For each of your exchange accounts you need to create the API authentication keys. This is usually done in the _Settings_ section of your accounts.
+For each of your exchange accounts, you need to create the API authentication keys. This is usually done in the _Settings_ section of your accounts.
 
 Then, you need to add your API keys into the file _blackbird.conf_. You need at least two exchanges and one of them should allow short selling. __Never__ share this file as it will contain your personal exchange credentials!
 
@@ -97,19 +97,19 @@ Parameter | Default Value | Description
 | DemoMode | true | The demo mode will show the spreads but won't actually trade anything |
 | Leg1 | BTC | The first leg of the traded pair. This leg is hedged against market risk |
 | Leg2 | USD | The second leg of the traded pair. This leg is __not__ hedged against market risk |
-| UseFullExposure | false | When true, all the `Leg2` exposure available on your accounts will be used. Otherwise, the amount defined by `TestedExposure` will be used. Note: the cash used for a trade will be the minimum of the two exchanges, minus 1.00% as a small margin: if there is $1,000 on the first account and $1,100 on the second one, $990 will be used on each exchange, i.e. $1,000 - (1% * $1,000). The exposure is $1,980 |
+| UseFullExposure | false | When true, all the `Leg2` exposure available on your accounts will be used. Otherwise, the amount defined by `TestedExposure` will be used. Note: the cash used for a trade will be the minimum of the two exchanges, minus 1.00% as a small margin: if there is $1,000 on the first account and $1,100 on the second one, $990 will be used for each exchange, i.e. $1,000 - (1% * $1,000). The exposure is $1,980 |
 | TestedExposure | 25 | If UseFullExposure is false, that parameter defines the USD amount that will be used. The minimum has to be $10 otherwise some exchanges might reject the orders |
 | MaxExposure | 25,000 | Maximum exposure per exchange. If the limit is $25,000 then Blackbird won't send any order larger than that on each exchange |
-| MaxLength | 5,184,000 | The maximum length of a trade in number of iterations. If this value is reached then Blackbird will exit the market regardless of the spread. Warning: with this value the system can exit with a loss so It's recommended to use a large value. The default is 180 days with GapSec at 3 seconds |
+| MaxLength | 5,184,000 | The maximum length of a trade in number of iterations. If this value is reached then Blackbird will exit the market regardless of the spread. Warning: with this value, the system can exit with a loss so It's recommended to use a large value. The default is 180 days with GapSec at 3 seconds |
 | DebugMaxIteration | 3,200,000 | The maximum number of iteration. Once DebugMaxIteration is reached Blackbird is terminated with return=0. Useful for troubleshooting the software |
-| Verbose | true | Write the bid/ask and the spreads to the log file at every iteration. The log file size will be larger but it will show how Blackbird analyses the spreads |
-| Interval | 3 sec. | Time lapse in seconds of an iteration. By default the quotes download and the spreads analysis for all the exchanges are done every 3 seconds |
+| Verbose | true | Write the bid/ask and then spreads to the log file at every iteration. The log file size will be larger but it will show how Blackbird analyses the spreads |
+| Interval | 3 sec. | Timelapse in seconds of an iteration. By default, the quotes download and the spreads analysis for all the exchanges are done every 3 seconds |
 | SpreadEntry | 0.0080 | The spread threshold above which the trailing spreads are generated to capture an arbitrage opportunity |
 | SpreadTarget | 0.0050 | This is the targeted profit. It represents the net profit and takes the exchange fees into account. If SpreadEntry is at 0.80% and trades are generated at that level on two exchanges with 0.25% fees each, Blackbird will set the exit threshold at -0.70% (0.80% spread entry - 4x0.25% fees - 0.50% target = -0.70%) |
 | PriceDeltaLimit | 0.10 | The maximum difference between the target limit price and the computed limit price of an order. That is the price generated by looking at the current liquidity in the order books. If the difference is greater than PriceDeltaLimit then no trades will be generated because there is not enough liquidity (risk of slippage) |
-| TrailingSpreadLim | 0.0008 | The limit under which the trailing spread is generated. If the current spread is above SpreadTarget and at 0.70%, then by default the trailing spread will be generated at 0.62% |
+| TrailingSpreadLim | 0.0008 | The limit under which the trailing spread is generated. If the current spread is above SpreadTarget and at 0.70%, then by default, the trailing spread will be generated at 0.62% |
 | TrailingSpreadCount | 1 |  The number of times the spread must be between SpreadTarget and the trailing spread before sending the orders to the market |
-| OrderBookFactor | 3.0 | In order to be executed as fast as possible and avoid slippage, Blackbird checks the liquidity in the order books of the exchanges and makes sure there is at least 3.0 times the needed liquidity before executing the order |
+| OrderBookFactor | 3.0 | In order to be executed as fast as possible and avoid slippage, Blackbird checks the liquidity in the order books of the exchanges and makes sure there are at least 3.0 times the needed liquidity before executing the order |
 | UseVolatility | false |  If true, display the spreads volatility information in the log file. This is not used for the moment and only displayed as information |
 | VolatilityPeriod | 600 | The period length of the volatility in number of iterations. This is not used for the moment and only displayed as information |
 | SendEmail | false | When true, an e-mail will be sent every time an arbitrage trade is completed, with information such as the names of the exchanges and the trade return |
@@ -127,7 +127,7 @@ libsqlite3-dev (available as a Blackbird submodule)
 sendemail
 ```
 
-Download the source from github with:
+Download the source from GitHub with:
 
     mkdir blackbird
     cd blackbird
@@ -176,7 +176,7 @@ If all goes well this produces a Blackbird executable in the project directory.
 
 1. Download and install Docker (with Docker Compose) [here](https://www.docker.com/).
 
-2. Download the source from github with
+2. Download the source from GitHub with
   ```
   mkdir blackbird
   cd blackbird
@@ -235,7 +235,7 @@ Once you have successfully launched Blackbird following the instructions in the 
 
 4. From VS Code, File > Open Workspace... and select the "blackbird" workspace (this is in the root directory of your blackbird clone; the one you created this during "Download source code" step) 
 
-5. Press F5 to start the debugger.  This will build and launch the Docker container, Blackbird w/ debug symbols, and a GDB Server running Blackbird on the Docker container.  Since there is a delay between when the Docker container gets launched and the GDB Server is running, you may need to start the debugger a few times before it attaches to the GDB server.  (If you can figure out how to create a "pause" between when the container launches and VS Code attempts to attached to GDB Server, that will fix it).
+5. Press F5 to start the debugger.  This will build and launch the Docker container, Blackbird w/ debug symbols, and a GDB Server running Blackbird on the Docker container.  Since there is a delay between when the Docker container gets launched and the GDB Server is running, you may need to start the debugger a few times before it attaches to the GDB server.  (If you can figure out how to create a "pause" between when the container launches and VS Code attempts to attach to GDB Server, that will fix it).
 
 ### Contact
 
