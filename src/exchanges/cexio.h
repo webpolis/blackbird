@@ -14,17 +14,21 @@ quote_t getQuote(Parameters& params);
 
 double getAvail(Parameters& params, std::string currency);
 
-// std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price);
-// // TODO multi currency support
-// //std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price, std::string pair = "btc_usd");
+std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price);
 
-// bool isOrderComplete(Parameters& params, std::string orderId);
+std::string sendShortOrder(Parameters& params, std::string direction, double quantity, double price);
 
-// double getActivePos(Parameters& params);
+std::string sendOrder(Parameters& params, std::string direction, double quantity, double price);
 
-// double getLimitPrice(Parameters& params, double volume, bool isBid);
+/*
+bool isOrderComplete(Parameters& params, std::string orderId);
 
-// void testCexio();
+double getActivePos(Parameters& params);
+
+double getLimitPrice(Parameters& params, double volume, bool isBid);
+
+void testCexio();
+*/
 
 }
 

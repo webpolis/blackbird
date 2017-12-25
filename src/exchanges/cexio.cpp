@@ -11,6 +11,9 @@
 #include <array>
 #include <chrono>
 
+/********
+  TODO: Test auth and private functions once API key / secret is obtained.
+********/
 namespace Cexio {
 
 static json_t* authRequest(Parameters &, std::string, std::string);
@@ -60,35 +63,32 @@ double getAvail(Parameters& params, std::string currency)
   available = returnedText ? atof(returnedText) : 0.0;
   return available;
 }
-/*
-// TODO multi currency support
-//std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price, std::string pair) {
-std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
-  using namespace std;
-  string pair = "btc_usd"; // TODO remove when multi currency support
-  *params.logFile << "<Exmo> Trying to send a " << pair << " " << direction << " limit order: " << quantity << "@" << price << endl;
-  transform(pair.begin(), pair.end(), pair.begin(), ::toupper);
 
-  string options;
-  options  = "pair=" + pair;
-  options += "&quantity=" + to_string(quantity);
-  options += "&price=" + to_string(price);
-  options += "&type=" + direction;
+std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price)
+{
+  return sendOrder(params, direction, quantity, price);
+}
 
-  unique_json root { authRequest(params, "/order_create", options) };
-  string orderId = to_string(json_integer_value(json_object_get(root.get(), "order_id")));
-  if (orderId == "0") {
-    auto dump = json_dumps(root.get(), 0);
-    *params.logFile << "<Exmo> Failed, Message: " << dump << endl;
-    free(dump);
-  }
-  else {
-    *params.logFile << "<Exmo> Done, order ID: " << orderId << endl;
-  } 
+std::string sendShortOrder(Parameters& params, std::string direction, double quantity, double price)
+{
+  return sendOrder(params, direction, quantity, price);
+}
+
+std::string sendOrder(Parameters& params, std::string direction, double quantity, double price)
+{
+  *params.logFile << "<Cexio> Trying to send a \"" << direction << "\" limit order: "
+                  << std::setprecision(6) << quantity << "@$"
+                  << std::setprecision(2) << price << "...\n";
+  std::ostringstream oss;
+  oss << "\"type\":\"" << direction << "\", \"amount\":\"" << quantity << "\", \"price\":\"" << price;
+  std::string options = oss.str();
+  unique_json root { authRequest(params, "/place_order/BTC/USD", options) };
+  auto orderId = std::to_string(json_integer_value(json_object_get(root.get(), "order_id")));
+  *params.logFile << "<Cexio> Done (order ID: " << orderId << ")\n" << std::endl;
   return orderId;
 }
 
-
+/*
 // TODO multi currency support
 //bool isOrderComplete(Parameters& params, std::string orderId, std::string pair) 
 bool isOrderComplete(Parameters& params, std::string orderId) {

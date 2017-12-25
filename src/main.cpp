@@ -275,8 +275,9 @@ int main(int argc, char** argv) {
     params.addExchange("Cexio", params.cexioFees, false, true);
     getQuote[index] = Cexio::getQuote;
     getAvail[index] = Cexio::getAvail;
-    /*
     sendLongOrder[index] = Cexio::sendLongOrder;
+    /*
+    sendShortOrder[index] = Cexio::sendShortOrder;
     isOrderComplete[index] = Cexio::isOrderComplete;
     getActivePos[index] = Cexio::getActivePos;
     getLimitPrice[index] = Cexio::getLimitPrice;
