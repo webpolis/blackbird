@@ -24,7 +24,7 @@ At the first vertical line, the spread between the exchanges is high so Blackbir
 
 Unlike other Bitcoin arbitrage systems, Blackbird doesn't sell but actually _short sells_ Bitcoin on the short exchange. This feature offers two important advantages:
 
-1. The strategy is always market-neutral: the Bitcoin market's moves (up or down) don't impact the strategy returns. This removes a huge risk from the strategy. The Bitcoin market could suddenly lose twice its value that this won't make any difference in the strategy returns.
+1. The strategy is always market-neutral: the Bitcoin market's moves (up or down) don't impact the strategy returns. This removes a huge risk from the strategy. The Bitcoin market could suddenly lose half its value that this won't make any difference in the strategy returns.
 
 2. The strategy doesn't need to transfer funds (USD or BTC) between Bitcoin exchanges. The buy/sell and sell/buy trading activities are done in parallel on two different exchanges, independently. Advantage: no need to deal with transfer latency issues.
 
@@ -62,8 +62,9 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | <a href="https://www.okcoin.com" target="_blank">OKCoin</a> | ✓ |  | ✓ |their API now offers short selling: <a href="https://www.okcoin.com/about/rest_api.do" target="_blank">link here</a> |
 | <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a> | ✓ |  | ✓ | |
 | <a href="https://gemini.com" target="_blank">Gemini</a> | ✓ |  | ✓ | |
-| <a href="https://www.kraken.com" target="_blank">Kraken</a> | ✓ |  | | Validation in progress | 
-| <a href="https://exmo.com" target="_blank">EXMO</a> | ✓ |  | | New exchange from PR <a href="https://github.com/butor/blackbird/pull/336" target="_blank">#336</a> |
+| <a href="https://www.kraken.com" target="_blank">Kraken</a> | ✓ |  | | Validation in progress. <a href="https://blog.kraken.com/post/1413/update-on-system-performance-and-upgrade/" target="_blank"> System currently not reliable</a> | 
+| <a href="https://exmo.com" target="_blank">EXMO</a> | ✓ |  | | New exchange from PR <a href="https://github.com/butor/blackbird/pull/336" target="_blank">#336</a>. <b>Might be a <a href="https://bitcointalk.org/index.php?topic=1919799.0" target="_blank">scam</a></b> |
+| <a href="https://www.quadrigacx.com" target="_blank">QuadrigaCX</a> | ✓ |  |  |
 
 
 
@@ -77,7 +78,6 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | <a href="https://www.gdax.com" target="_blank">GDAX</a> | ✓ | ✓ |  |
 | <a href="https://btc-e.com" target="_blank">BTC-e</a> | ✓ |  |  |
 | <a href="https://www.itbit.com" target="_blank">itBit</a> | ✓ |  |  |
-| <a href="https://www.quadrigacx.com" target="_blank">QuadrigaCX</a> | ✓ |  |  |
 | <a href="https://cex.io/" target="_blank">CEX.IO</a> | ✓ | ✓ |  |
 
 If `DemoMode=true`, all the exchanges are shown in the log file.
