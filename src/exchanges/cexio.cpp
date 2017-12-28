@@ -97,43 +97,9 @@ bool isOrderComplete(Parameters& params, std::string orderId)
   auto remains = json_integer_value(json_object_get(root.get(), "remains"));
   if (remains==0){
     return true;
-  } else { return false;}
+  } else { return false; }
 }
 /*
-// TODO multi currency support
-//bool isOrderComplete(Parameters& params, std::string orderId, std::string pair) 
-bool isOrderComplete(Parameters& params, std::string orderId) {
-  using namespace std;
-  string pair = "btc_usd"; // TODO remove when multi currency support
-  transform(pair.begin(), pair.end(), pair.begin(), ::toupper);
-  
-  unique_json rootOrd { authRequest(params, "/user_open_orders") };
-  
-  int orders  = json_array_size(json_object_get(rootOrd.get(), pair.c_str()));
-  string order_id;
-
-  for (int i=0; i<orders; i++){
-    order_id = json_string_value(json_object_get(json_array_get(json_object_get(rootOrd.get(), pair.c_str()), i), "order_id"));
-    if (orderId.compare(order_id) == 0)
-      return false;
-  }
-  
-  string options;
-  options  = "pair=" + pair;
-  options  += "&limit=1";
-
-  unique_json rootTr { authRequest(params, "/user_trades", options) };
-  order_id = to_string(json_integer_value(json_object_get(json_array_get(json_object_get(rootTr.get(), pair.c_str()), 0), "order_id")));
-  if (orderId.compare(order_id) == 0) 
-    return true;
-  else {
-    auto dump = json_dumps(rootTr.get(), 0);
-    *params.logFile << "<Exmo> Failed, Server Return Message: " << dump << endl;
-    free(dump);
-    return false;
-  }
-}
-
 
 double getActivePos(Parameters& params) {
   return getAvail(params, "btc");
