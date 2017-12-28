@@ -88,6 +88,17 @@ std::string sendOrder(Parameters& params, std::string direction, double quantity
   return orderId;
 }
 
+bool isOrderComplete(Parameters& params, std::string orderId)
+{
+  if (orderId == "0") return true;
+
+  auto options =  "\"order_id\":" + orderId;
+  unique_json root { authRequest(params, "/get_order", options) };
+  auto remains = json_integer_value(json_object_get(root.get(), "remains"));
+  if (remains==0){
+    return true;
+  } else { return false;}
+}
 /*
 // TODO multi currency support
 //bool isOrderComplete(Parameters& params, std::string orderId, std::string pair) 

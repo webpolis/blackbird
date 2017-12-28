@@ -20,9 +20,9 @@ std::string sendShortOrder(Parameters& params, std::string direction, double qua
 
 std::string sendOrder(Parameters& params, std::string direction, double quantity, double price);
 
-/*
 bool isOrderComplete(Parameters& params, std::string orderId);
 
+/*
 double getActivePos(Parameters& params);
 
 double getLimitPrice(Parameters& params, double volume, bool isBid);
