@@ -95,17 +95,28 @@ bool isOrderComplete(Parameters& params, std::string orderId)
   auto options =  "\"order_id\":" + orderId;
   unique_json root { authRequest(params, "/get_order", options) };
   auto remains = json_integer_value(json_object_get(root.get(), "remains"));
-  if (remains==0){
+  if (remains==0){ // TO DO: Confirm that remains==0 means that order is complete
     return true;
   } else { return false; }
 }
-/*
 
 double getActivePos(Parameters& params) {
-  return getAvail(params, "btc");
+  unique_json root { authRequest(params, "/open_positions/BTC/USD", "") };
+  double position;
+  if (json_array_size(root.get()) == 0)
+  {
+    *params.logFile << "<Cexio> WARNING: BTC position not available, return 0.0" << std::endl;
+    position = 0.0;
+  }
+  else
+  {
+    //TO DO: Make sure that this works. It probably doesn't.
+    position = atof(json_string_value(json_object_get(json_array_get(root.get(), 0), "data.amount")));
+  }
+  return position;
 }
 
-
+/*
 double getLimitPrice(Parameters &params, double volume, bool isBid)
 {
   auto &exchange = queryHandle(params);
