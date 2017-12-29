@@ -279,9 +279,7 @@ int main(int argc, char** argv) {
     sendShortOrder[index] = Cexio::sendShortOrder;
     isOrderComplete[index] = Cexio::isOrderComplete;
     getActivePos[index] = Cexio::getActivePos;
-    /*
     getLimitPrice[index] = Cexio::getLimitPrice;
-    */
     dbTableName[index] = "cexio";
     createTable(dbTableName[index], params);
 

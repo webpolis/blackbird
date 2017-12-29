@@ -116,34 +116,35 @@ double getActivePos(Parameters& params) {
   return position;
 }
 
-/*
 double getLimitPrice(Parameters &params, double volume, bool isBid)
 {
   auto &exchange = queryHandle(params);
-  auto root = unique_json(exchange.getRequest("/order_book?pair=BTC_USD"));
-  auto branch = json_object_get(json_object_get(root.get(), "BTC_USD"), isBid ? "bid" : "ask");
+  unique_json root { exchange.getRequest("/order_book/BTC/USD") };
+  json_t *bidask  = json_object_get(root.get(), isBid ? "bids" : "asks");
+
+  *params.logFile << "<Cexio> Looking for a limit price to fill "
+                  << std::setprecision(6) << fabs(volume) << " BTC...\n";
+  double tmpVol = 0.0;
+  double p = 0.0;
+  double v;
 
   // loop on volume
-  double totVol = 0.0;
-  double currPrice = 0.0;
-  double currVol = 0.0;
-  unsigned int i = 0;
-  // [[<price>, <volume>], [<price>, <volume>], ...]
-  for(i = 0; i < (json_array_size(branch)); i++)
+  for (int i = 0, n = json_array_size(bidask); i < n; ++i)
   {
-    // volumes are added up until the requested volume is reached
-    currVol = atof(json_string_value(json_array_get(json_array_get(branch, i), 1)));
-    currPrice = atof(json_string_value(json_array_get(json_array_get(branch, i), 0)));
-    totVol += currVol;
-    if(totVol >= volume * params.orderBookFactor){
-        break;
-    }
+    //p = atof(json_string_value(json_object_get(json_array_get(bidask, i), 0)));
+    //v = atof(json_string_value(json_object_get(json_array_get(bidask, i), 1)));
+    p = atof(json_string_value(json_array_get(json_array_get(bidask, i), 0)));
+    v = atof(json_string_value(json_array_get(json_array_get(bidask, i), 1)));
+    *params.logFile << "<Cexio> order book: "
+                    << std::setprecision(6) << v << "@$"
+                    << std::setprecision(2) << p << std::endl;
+    tmpVol += v;
+    if (tmpVol >= fabs(volume) * params.orderBookFactor) break;
   }
 
-  return currPrice;
+  return p;
 }
 
-*/
 json_t* authRequest(Parameters &params, std::string request, std::string options)
 {
   static uint64_t nonce = time(nullptr) * 4;
