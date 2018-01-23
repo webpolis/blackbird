@@ -4,16 +4,16 @@
 #include "utils/base64.h"
 #include "unique_json.hpp"
 #include "hex_str.hpp"
-#include "utils/hmac_sha512.hpp"
+//#include "utils/hmac_sha512.hpp"
 
+#include "openssl/sha.h"
+#include "openssl/hmac.h"
 #include <vector>
 #include <iomanip>
 #include <array>
 #include <chrono>
+#include <cmath>
 
-/********
-  TODO: Test auth and private functions once API key / secret is obtained.
-********/
 namespace Cexio {
 
 static json_t* authRequest(Parameters &, std::string, std::string);
@@ -28,6 +28,7 @@ static RestApi& queryHandle(Parameters &params)
 static json_t* checkResponse(std::ostream &logFile, json_t *root)
 {
   auto errstatus = json_object_get(root, "error");
+
   if (errstatus)
   {
     auto errmsg = json_dumps(errstatus, JSON_ENCODE_ANY);
@@ -55,12 +56,16 @@ double getAvail(Parameters& params, std::string currency)
   double available = 0.0;
   const char* returnedText = NULL;
   transform(currency.begin(), currency.end(), currency.begin(), ::toupper);
-  //const char * curr_ = currency.c_str();
-  
+  const char * curr_ = currency.c_str();
+    
   unique_json root { authRequest(params, "/balance","") };
-  //const char * avail_str = json_string_value(json_object_get(json_object_get(root.get(), "balances"), curr_));
-  returnedText = json_string_value(json_object_get(root.get(), "available"));
-  available = returnedText ? atof(returnedText) : 0.0;
+
+  const char * avail_str = json_string_value(json_object_get(root.get(), curr_));
+  available = avail_str ? atof(avail_str) : 0.0;
+  //UNCOMMENT BELOW AND COMMENT 2 LINES ABOVE IF WANTING TO TRY THIS OTHER METHOD
+  //returnedText = json_string_value(json_object_get(root.get(), "BTC"));
+  //available = returnedText ? atof(returnedText) : 0.0;
+
   return available;
 }
 
@@ -157,6 +162,7 @@ json_t* authRequest(Parameters &params, std::string request, std::string options
   std::string postParams = "key=" + params.cexioApi +
                            "&signature=" + hex_str<upperhex>(digest, digest + SHA256_DIGEST_LENGTH) +
                            "&nonce=" + std::to_string(nonce);
+  
   if (!options.empty())
   {
     postParams += "&";
@@ -166,7 +172,7 @@ json_t* authRequest(Parameters &params, std::string request, std::string options
   auto &exchange = queryHandle(params);
   return checkResponse(*params.logFile, exchange.postRequest(request, postParams));
 }
-/*
+
 void testCexio() {
 
   using namespace std;
@@ -201,6 +207,6 @@ void testCexio() {
   //  cout << orderId << endl;
     cout << "Sell order is complete: " << isOrderComplete(params, "404591373") << endl;
   //}
-}
-*/
+  }
+
 }

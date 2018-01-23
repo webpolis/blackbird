@@ -26,7 +26,7 @@ double getActivePos(Parameters& params);
 
 double getLimitPrice(Parameters& params, double volume, bool isBid);
 
-//void testCexio();
+void testCexio();
 
 }
 
