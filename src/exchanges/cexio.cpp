@@ -4,7 +4,8 @@
 #include "utils/base64.h"
 #include "unique_json.hpp"
 #include "hex_str.hpp"
-//#include "utils/hmac_sha512.hpp"
+// #include "utils/hmac_sha512.hpp"
+#include "curl_fun.h"
 
 #include "openssl/sha.h"
 #include "openssl/hmac.h"
@@ -17,6 +18,7 @@
 namespace Cexio {
 
 static json_t* authRequest(Parameters &, std::string, std::string);
+// static json_t* authRequest(Parameters &, std::string, std::string URL_Options = "");
 
 static RestApi& queryHandle(Parameters &params)
 {
@@ -58,7 +60,7 @@ double getAvail(Parameters& params, std::string currency)
   transform(currency.begin(), currency.end(), currency.begin(), ::toupper);
   const char * curr_ = currency.c_str();
     
-  unique_json root { authRequest(params, "/balance","") };
+  unique_json root { authRequest(params, "/balance/","") };
 
   const char * avail_str = json_string_value(json_object_get(root.get(), curr_));
   available = avail_str ? atof(avail_str) : 0.0;
@@ -152,16 +154,17 @@ double getLimitPrice(Parameters &params, double volume, bool isBid)
 
 json_t* authRequest(Parameters &params, std::string request, std::string options)
 {
+  using namespace std;
   static uint64_t nonce = time(nullptr) * 4;
-  auto msg = std::to_string(++nonce) + params.cexioClientId + params.cexioApi;
+  auto msg = to_string(++nonce) + params.cexioClientId + params.cexioApi;
   uint8_t *digest = HMAC (EVP_sha256(),
                           params.cexioSecret.c_str(), params.cexioSecret.size(),
                           reinterpret_cast<const uint8_t *>(msg.data()), msg.size(),
                           nullptr, nullptr);
 
-  std::string postParams = "key=" + params.cexioApi +
+  string postParams = "key=" + params.cexioApi +
                            "&signature=" + hex_str<upperhex>(digest, digest + SHA256_DIGEST_LENGTH) +
-                           "&nonce=" + std::to_string(nonce);
+                           "&nonce=" + to_string(nonce);
   
   if (!options.empty())
   {
@@ -170,8 +173,76 @@ json_t* authRequest(Parameters &params, std::string request, std::string options
   }
 
   auto &exchange = queryHandle(params);
+  // *params.logFile << "<Cexio> PP: " << postParams << endl << endl;
+  // *params.logFile << "<Cexio> SIGN: " << headers[1] << endl << endl;
+  // *params.logFile << "<Cexio> NONCE: " << headers[2] << endl << endl;
   return checkResponse(*params.logFile, exchange.postRequest(request, postParams));
+  // return checkResponse(*params.logFile,exchange.postRequest(req, make_slist(begin(headers), end(headers))));
+
 }
+/*json_t* authRequest(Parameters& params, std::string request, std::string options) {
+  std::string url = "https://cex.io/api" + request;
+  static uint64_t nonce = time(nullptr) * 4;
+  auto msg = std::to_string(++nonce) + params.cexioClientId + params.cexioApi;
+  uint8_t *digest = HMAC (EVP_sha256(),
+                          params.cexioSecret.c_str(), params.cexioSecret.size(),
+                          reinterpret_cast<const uint8_t *>(msg.data()), msg.size(),
+                          nullptr, nullptr);
+  std::string postParams = "key=" + params.cexioApi +
+                           "&signature=" + hex_str<upperhex>(digest, digest + SHA256_DIGEST_LENGTH) +
+                           "&nonce=" + std::to_string(nonce);
+  if (!options.empty())
+  {
+    postParams += "&";
+    postParams += options;
+  }
+  // *params.logFile << "<Cexio> PP: " << url << std::endl << std::endl;
+ 
+  CURLcode resCurl;
+  if (params.curl) {
+    std::string readBuffer;
+    curl_easy_setopt(params.curl, CURLOPT_POST, 1L);
+    curl_easy_setopt(params.curl, CURLOPT_POSTFIELDS, postParams.c_str());
+    curl_easy_setopt(params.curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(params.curl, CURLOPT_WRITEFUNCTION, WriteCallback);
+    curl_easy_setopt(params.curl, CURLOPT_WRITEDATA, &readBuffer);
+    curl_easy_setopt(params.curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(params.curl, CURLOPT_CONNECTTIMEOUT, 10L);
+    resCurl = curl_easy_perform(params.curl);
+    json_t *root;
+    json_error_t error;
+    using std::this_thread::sleep_for;
+    using secs = std::chrono::seconds;
+    while (resCurl != CURLE_OK) {
+      *params.logFile << "<Cexio> Error with cURL. Retry in 2 sec..." << std::endl;
+      sleep_for(secs(2));
+      readBuffer = "";
+      resCurl = curl_easy_perform(params.curl);
+    }
+    root = json_loads(readBuffer.c_str(), 0, &error);
+    checkResponse(*params.logFile, root);
+    while (!root) {
+      *params.logFile << "<Cexio> Error with JSON:\n" << error.text << std::endl;
+      *params.logFile << "<Cexio> Buffer:\n" << readBuffer.c_str() << std::endl;
+      *params.logFile << "<Cexio> Retrying..." << std::endl;
+      sleep_for(secs(2));
+      readBuffer = "";
+      resCurl = curl_easy_perform(params.curl);
+      while (resCurl != CURLE_OK) {
+        *params.logFile << "<Cexio> Error with cURL. Retry in 2 sec..." << std::endl;
+        sleep_for(secs(2));
+        readBuffer = "";
+        resCurl = curl_easy_perform(params.curl);
+      }
+      root = json_loads(readBuffer.c_str(), 0, &error);
+    }
+    curl_easy_reset(params.curl);
+    return root;
+  } else {
+    *params.logFile << "<Cexio> Error with cURL init." << std::endl;
+    return NULL;
+  }
+}*/
 
 void testCexio() {
 
