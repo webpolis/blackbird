@@ -280,6 +280,7 @@ int main(int argc, char** argv) {
     isOrderComplete[index] = Cexio::isOrderComplete;
     getActivePos[index] = Cexio::getActivePos;
     getLimitPrice[index] = Cexio::getLimitPrice;
+
     dbTableName[index] = "cexio";
     createTable(dbTableName[index], params);
 
