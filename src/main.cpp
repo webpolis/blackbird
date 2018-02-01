@@ -169,7 +169,7 @@ int main(int argc, char** argv) {
   }
   if (params.krakenEnable &&
      (params.krakenApi.empty() == false || params.demoMode == true)) {
-    params.addExchange("Kraken", params.krakenFees, false, true);
+    params.addExchange("Kraken", params.krakenFees, true, true);
     getQuote[index] = Kraken::getQuote;
     getAvail[index] = Kraken::getAvail;
     sendLongOrder[index] = Kraken::sendLongOrder;
