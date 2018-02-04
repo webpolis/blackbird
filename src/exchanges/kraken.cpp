@@ -64,14 +64,6 @@ double getAvail(Parameters& params, std::string currency) {
   return available;
 }
 
-std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
-  return sendOrder(params, direction, quantity, price);
-}
-
-std::string sendShortOrder(Parameters& params, std::string direction, double quantity, double price) {
-  return sendOrder(params, direction, quantity, price);
-}
-
 std::string sendOrder(Parameters& params, std::string direction, double quantity, double price) {
   if (direction.compare("buy") != 0 && direction.compare("sell") != 0) {
     *params.logFile  << "<Kraken> Error: Neither \"buy\" nor \"sell\" selected" << std::endl;
