@@ -27,6 +27,8 @@ double getLimitPrice(Parameters& params, double volume, bool isBid);
 
 json_t* authRequest(Parameters& params, std::string request, std::string options = "");
 
+void testKraken();
+
 }
 
 #endif
