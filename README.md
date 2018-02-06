@@ -62,7 +62,7 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | <a href="https://www.okcoin.com" target="_blank">OKCoin</a> | ✓ |  | ✓ |their API now offers short selling: <a href="https://www.okcoin.com/about/rest_api.do" target="_blank">link here</a> |
 | <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a> | ✓ |  | ✓ | |
 | <a href="https://gemini.com" target="_blank">Gemini</a> | ✓ |  | ✓ | |
-| <a href="https://www.kraken.com" target="_blank">Kraken</a> | ✓ | ✓ | | Validation in progress. Shorting is currently in testing. <a href="https://blog.kraken.com/post/1413/update-on-system-performance-and-upgrade/" target="_blank"> System currently not reliable</a> | 
+| <a href="https://www.kraken.com" target="_blank">Kraken</a> | ✓ | ✓ | | Validation in progress. Shorting is currently in testing | 
 | <a href="https://exmo.com" target="_blank">EXMO</a> | ✓ |  | | New exchange from PR <a href="https://github.com/butor/blackbird/pull/336" target="_blank">#336</a>. <b>Might be a <a href="https://bitcointalk.org/index.php?topic=1919799.0" target="_blank">scam</a></b> |
 | <a href="https://www.quadrigacx.com" target="_blank">QuadrigaCX</a> | ✓ |  |  |
 
