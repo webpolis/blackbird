@@ -12,6 +12,7 @@
 #include <array>
 #include <chrono>
 #include <cmath>
+#include <algorithm>
 
 namespace Cexio {
 
@@ -53,10 +54,9 @@ quote_t getQuote(Parameters &params)
 double getAvail(Parameters& params, std::string currency)
 {
   double available = 0.0;
-  const char* returnedText = NULL;
-  transform(currency.begin(), currency.end(), currency.begin(), ::toupper);
+  std::transform(currency.begin(), currency.end(), currency.begin(), ::toupper);
   const char * curr_ = currency.c_str();
-    
+
   unique_json root { authRequest(params, "/balance/","") };
 
   const char * avail_str = json_string_value(json_object_get(json_object_get(root.get(), curr_), "available"));
