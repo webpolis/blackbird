@@ -17,6 +17,8 @@ std::string sendLongOrder(Parameters& params, std::string direction, double quan
 
 std::string sendShortOrder(Parameters& params, std::string direction, double quantity, double price);
 
+std::string sendOrder(Parameters& params, std::string direction, double quantity, double price);
+
 bool isOrderComplete(Parameters& params, std::string orderId);
 
 double getActivePos(Parameters& params);

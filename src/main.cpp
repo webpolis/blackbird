@@ -173,6 +173,7 @@ int main(int argc, char** argv) {
     getQuote[index] = Kraken::getQuote;
     getAvail[index] = Kraken::getAvail;
     sendLongOrder[index] = Kraken::sendLongOrder;
+    sendShortOrder[index] = Kraken::sendShortOrder;
     isOrderComplete[index] = Kraken::isOrderComplete;
     getActivePos[index] = Kraken::getActivePos;
     getLimitPrice[index] = Kraken::getLimitPrice;
