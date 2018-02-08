@@ -2,6 +2,13 @@
 #include "parameters.h"
 #include "utils/restapi.h"
 #include "unique_json.hpp"
+#include "utils/base64.h"
+#include "openssl/sha.h"
+#include "openssl/hmac.h"
+#include <iomanip>
+#include <vector>
+#include <array>
+#include <ctime>
 
 namespace GDAX {
 
@@ -15,8 +22,13 @@ static RestApi& queryHandle(Parameters &params)
 quote_t getQuote(Parameters &params)
 {
   auto &exchange = queryHandle(params);
-  unique_json root { exchange.getRequest("/products/BTC-USD/ticker") };
-
+  std::string pair;
+  pair = "/products/";
+  pair += params.leg1.c_str();
+  pair += "-";
+  pair += params.leg2.c_str();
+  pair += "/ticker";
+  unique_json root { exchange.getRequest(pair) };
   const char *bid, *ask;
   int unpack_fail = json_unpack(root.get(), "{s:s, s:s}", "bid", &bid, "ask", &ask);
   if (unpack_fail)
@@ -30,20 +42,173 @@ quote_t getQuote(Parameters &params)
 
 double getAvail(Parameters &params, std::string currency)
 {
-  // TODO
-  return 0.0;
+  unique_json root { authRequest(params, "GET", "/accounts") };
+  size_t arraySize = json_array_size(root.get());
+  double available = 0.0;
+  const char* currstr;
+  for (size_t i = 0; i < arraySize; i++) {
+    std::string tmpCurrency = json_string_value(json_object_get(json_array_get(root.get(), i), "currency"));
+    if (tmpCurrency.compare(currency.c_str()) == 0) {
+      currstr = json_string_value(json_object_get(json_array_get(root.get(), i), "available"));
+      if (currstr != NULL){
+        available = atof(currstr);
+      } else {
+        *params.logFile << "<GDAX> Error with currency string" << std::endl;
+        available = 0.0;
+      }
+    }
+  }
+  return available;
 }
 
 double getActivePos(Parameters &params)
 {
-  // TODO
-  return 0.0;
+  // TODO: this is not really a good way to get active positions
+  getAvail(params,"BTC");
 }
 
 double getLimitPrice(Parameters &params, double volume, bool isBid)
 {
-  // TODO
-  return 0.0;
+  auto &exchange  = queryHandle(params);
+  // TODO: Build a real URL with leg1 leg2 and auth post it
+  // FIXME: using level 2 order book - has aggregated data but should be sufficient for now.
+  unique_json root { exchange.getRequest("/products/BTC-USD/book?level=2") };
+  auto bidask  = json_object_get(root.get(),isBid ? "bids" : "asks");
+  *params.logFile << "<GDAX> Looking for a limit price to fill "
+                  << std::setprecision(8) << fabs(volume) << " Legx...\n";
+  double tmpVol = 0.0;
+  double p = 0.0;
+  double v;
+  int i = 0;
+  while (tmpVol < fabs(volume) * params.orderBookFactor)
+  {
+    p = atof(json_string_value(json_array_get(json_array_get(bidask,i),0)));
+    v = atof(json_string_value(json_array_get(json_array_get(bidask,i),1)));
+    *params.logFile << "<GDAX> order book: "
+                    << std::setprecision(8) << v << " @$"
+                    << std::setprecision(8) << p << std::endl;
+    tmpVol += v;
+    i++;
+  }
+  return p;
+}
+
+std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
+  if (direction.compare("buy") != 0 && direction.compare("sell") != 0) {
+    *params.logFile  << "<GDAX> Error: Neither \"buy\" nor \"sell\" selected" << std::endl;
+    return "0";
+  }
+  *params.logFile << "<GDAX> Trying to send a \"" << direction << "\" limit order: "
+                  << std::setprecision(8) << quantity << " @ $"
+                  << std::setprecision(8) << price << "...\n";
+  std::string pair = "BTC-USD";
+  std::string type = direction;
+  std::string pricelimit = std::to_string(price);
+  std::string volume = std::to_string(quantity);
+  // have to build a json of {"product_id": pair, "side": direction, "size":volume, "price": pricelimit}
+  //unique_json options {json_object()};
+  //json_object_set_new(options.get(), "product_id", json_string("btc-usd"));
+  //json_object_set_new(options.get(),"side",json_string(direction));
+  //json_object_set_new(options.get(),"size", json_string(volume));
+  //json_object_set_new(options.get(),"price",json_string(pricelimit));
+  std::string options = "{product_id:" + pair + ",side:" + direction + ",size:" + volume + ",price:" + pricelimit+"}";
+  unique_json root { authRequest(params, "POST",  "/orders", options) };
+  std::cout << json_string_value(json_object_get(root.get(),"message")) << std::endl;
+  auto txid = json_string_value(json_object_get(json_object_get(root.get(), "result"), "uuid"));
+
+  *params.logFile << "<GDAX> Done (transaction ID: " << txid << ")\n" << std::endl;
+  //return txid;
+  return "0";
+}
+
+json_t* authRequest(Parameters &params, std::string method, std::string request, std::string options)
+{
+  // create timestamp
+  
+  static uint64_t nonce = time(nullptr);
+  
+  // create data string
+  
+  std::string post_data = std::to_string(nonce) + method + request;
+  
+  if (!options.empty())
+    post_data += options;
+
+  // create decoded key
+
+  std::string decoded_key = base64_decode(params.gdaxSecret);
+  
+  // Message Signature using HMAC-SHA256 of (NONCE+ METHOD??? + PATH + body)
+  
+  uint8_t *hmac_digest = HMAC(EVP_sha256(),
+                              decoded_key.c_str(), decoded_key.length(),
+                              reinterpret_cast<const uint8_t *> (post_data.data()), post_data.size(), NULL, NULL);
+  
+  // encode the HMAC to base64
+  std::string api_sign_header = base64_encode(hmac_digest, SHA256_DIGEST_LENGTH);
+  
+  // cURL header
+  
+  std::array<std::string, 4> headers
+  {
+    "CB-ACCESS-KEY:" + params.gdaxApi,
+    "CB-ACCESS-SIGN:"  + api_sign_header,
+    "CB-ACCESS-TIMESTAMP:" + std::to_string(nonce),
+    "CB-ACCESS-PASSPHRASE:" + params.gdaxPhrase,
+  };
+
+  // cURL request
+  auto &exchange = queryHandle(params);
+
+  //TODO: this sucks please do something better
+  if (method.compare("GET")==0){
+    return exchange.getRequest(request, make_slist(std::begin(headers), std::end(headers)));
+  }
+  else if (method.compare("POST")==0){
+    return exchange.postRequest(request, make_slist(std::begin(headers), std::end(headers)), post_data);
+  }
+  else {
+    std::cout << "Error With Auth method. Exiting with code 0" << std::endl;
+    exit(0);
+  }
+}
+
+void testGDAX(){
+
+    Parameters params("bird.conf");
+    params.logFile = new std::ofstream("./test.log" , std::ofstream::trunc);
+
+    std::string orderId;
+
+    //std::cout << "Current value LEG1_LEG2 bid: " << getQuote(params).bid() << std::endl;
+    //std::cout << "Current value LEG1_LEG2 ask: " << getQuote(params).ask() << std::endl;
+    //std::cout << "Current balance BTC: " << getAvail(params, "BTC") << std::endl;
+    //std::cout << "Current balance USD: " << getAvail(params, "USD")<< std::endl;
+    //std::cout << "Current balance ETH: " << getAvail(params, "ETH")<< std::endl;
+    //std::cout << "Current balance BTC: " << getAvail(params, "BCH")<< std::endl;
+    //std::cout << "current bid limit price for 10 units: " << getLimitPrice(params, 10 , true) << std::endl;
+    //std::cout << "Current ask limit price for .09 units: " << getLimitPrice(params, 0.09, false) << std::endl;
+    //std::cout << "Sending buy order for 0.01 XMR @ $100 USD - TXID: " << std::endl;
+    //orderId = sendLongOrder(params, "buy", 0.01, 100);
+    //std::cout << orderId << std::endl;
+    ///// if you don't wait bittrex won't recognize order for iscomplete
+    //sleep(5);
+    //std::cout << "Buy Order is complete: " << isOrderComplete(params, orderId) << std::endl;
+
+    //std::cout << "Sending Short XMR order for 0.177 XMR @BID! USD: ";
+    //orderId = sendShortOrder(params,"sell",0.133, getLimitPrice(params,0.133,true));
+    //std::cout << orderId << std::endl;
+    //std::cout << "Closing Short XMR order for .09 - TXID: ";
+    //orderId = sendShortOrder(params, "buy", 0.046, getLimitPrice(params,0.046, false));
+    //std::cout << orderId  << std::endl;
+    // TODO: Test sell orders, really should work though.
+    //std::cout << orderId << std::endl;
+    //std::cout << "Buy order is complete: " << isOrderComplete(params, orderId) << std::endl;
+    //std::cout << "Sending sell order for 0.01 BTC @ 10000 USD - TXID: " << std::endl ;
+    //orderId = sendLongOrder(params, "sell", 0.01, 10000);
+    //std:: cout << orderId << std::endl;
+    //std::cout << "Sell order is complete: " << isOrderComplete(params, orderId) << std::endl;
+    //std::cout << "Active Position: " << getActivePos(params);
 }
 
 }
