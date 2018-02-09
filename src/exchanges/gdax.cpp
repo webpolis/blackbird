@@ -64,7 +64,7 @@ double getAvail(Parameters &params, std::string currency)
 double getActivePos(Parameters &params)
 {
   // TODO: this is not really a good way to get active positions
-  getAvail(params,"BTC");
+  return getAvail(params,"BTC");
 }
 
 double getLimitPrice(Parameters &params, double volume, bool isBid)
