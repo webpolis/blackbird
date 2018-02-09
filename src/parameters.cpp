@@ -126,6 +126,7 @@ Parameters::Parameters(std::string fileName) {
   poloniexEnable = getBool(getParameter("PoloniexEnable", configFile));
   gdaxApi = getParameter("GDAXApiKey", configFile);
   gdaxSecret = getParameter("GDAXSecretKey", configFile);
+  gdaxPhrase = getParameter("GDAXPhrase", configFile);
   gdaxFees = getDouble(getParameter("GDAXFees", configFile));
   gdaxEnable = getBool(getParameter("GDAXEnable", configFile));
   quadrigaApi = getParameter("QuadrigaApiKey", configFile);
