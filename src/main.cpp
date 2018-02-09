@@ -229,7 +229,7 @@ int main(int argc, char** argv) {
   }
   if (params.gdaxEnable &&
      (params.gdaxApi.empty() == false || params.demoMode == true)) {
-    params.addExchange("GDAX", params.gdaxFees, true, false);
+    params.addExchange("GDAX", params.gdaxFees, false, true);
     getQuote[index] = GDAX::getQuote;
     getAvail[index] = GDAX::getAvail;
     getActivePos[index] = GDAX::getActivePos;
