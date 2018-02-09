@@ -81,7 +81,7 @@ std::string sendOrder(Parameters& params, std::string direction, double quantity
   std::string ordertype = "limit";
   std::string pricelimit = std::to_string(price);
   std::string volume = std::to_string(quantity);
-  std::string options = "pair=" + pair + "&type=" + type + "&ordertype=" + ordertype + "&price=" + pricelimit + "&volume=" + volume;
+  std::string options = "pair=" + pair + "&type=" + type + "&ordertype=" + ordertype + "&price=" + pricelimit + "&volume=" + volume + "&trading_agreement=agree";
   unique_json root { authRequest(params, "/0/private/AddOrder", options) };
   json_t *res = json_object_get(root.get(), "result");
   if (json_is_object(res) == 0) {
@@ -109,7 +109,7 @@ std::string sendShortOrder(Parameters& params, std::string direction, double qua
   std::string volume = std::to_string(quantity);
   std::string leverage = "2";
   ordertype = "limit";
-  options = "pair=" + pair + "&type=" + type + "&ordertype=" + ordertype + "&price=" + pricelimit + "&volume=" + volume + "&leverage=" + leverage;
+  options = "pair=" + pair + "&type=" + type + "&ordertype=" + ordertype + "&price=" + pricelimit + "&volume=" + volume + "&leverage=" + leverage + "&trading_agreement=agree";
   unique_json root { authRequest(params, "/0/private/AddOrder", options) };
   json_t *res = json_object_get(root.get(), "result");
   if (json_is_object(res) == 0) {

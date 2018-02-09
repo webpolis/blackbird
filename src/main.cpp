@@ -16,6 +16,7 @@
 #include "exchanges/poloniex.h"
 #include "exchanges/gdax.h"
 #include "exchanges/exmo.h"
+#include "exchanges/cexio.h"
 #include "utils/send_email.h"
 #include "getpid.h"
 
@@ -267,6 +268,22 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = Exmo::getLimitPrice;
 
     dbTableName[index] = "exmo";
+    createTable(dbTableName[index], params);
+
+    index++;
+  }
+  if (params.cexioEnable &&
+         (params.cexioApi.empty() == false || params.demoMode == true)) {
+    params.addExchange("Cexio", params.cexioFees, false, true);
+    getQuote[index] = Cexio::getQuote;
+    getAvail[index] = Cexio::getAvail;
+    sendLongOrder[index] = Cexio::sendLongOrder;
+    sendShortOrder[index] = Cexio::sendShortOrder;
+    isOrderComplete[index] = Cexio::isOrderComplete;
+    getActivePos[index] = Cexio::getActivePos;
+    getLimitPrice[index] = Cexio::getLimitPrice;
+
+    dbTableName[index] = "cexio";
     createTable(dbTableName[index], params);
 
     index++;
