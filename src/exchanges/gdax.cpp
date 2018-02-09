@@ -104,7 +104,7 @@ std::string sendLongOrder(Parameters &params, std::string direction, double quan
   std::string pair = "BTC-USD";
   std::string type = direction;
   char buff[300];
-  snprintf(buff,300,"{\"size\":\"%.8f\",\"price\":\"%.8f\",\"side\":\"%s\",\"product_id\": \"%s\",\"post_only\": \"false\"}",quantity,price,type.c_str(),pair.c_str());
+  snprintf(buff,300,"{\"size\":\"%.8f\",\"price\":\"%.8f\",\"side\":\"%s\",\"product_id\": \"%s\"}",quantity,price,type.c_str(),pair.c_str());
   unique_json root { authRequest(params, "POST", "/orders", buff) };
   auto txid = json_string_value(json_object_get(root.get(),"id"));
 
@@ -133,11 +133,11 @@ json_t* authRequest(Parameters &params, std::string method, std::string request,
 {
   // create timestamp
   
-  static uint64_t nonce = time(nullptr);
-  
+  //static uint64_t nonce = time(nullptr);
+  std::string nonce = gettime();
   // create data string
   
-  std::string post_data = std::to_string(nonce) + method + request +options;
+  std::string post_data = nonce + method + request +options;
   
   //if (!options.empty())
   //  post_data += options;
@@ -161,7 +161,7 @@ json_t* authRequest(Parameters &params, std::string method, std::string request,
   {
     "CB-ACCESS-KEY:" + params.gdaxApi,
     "CB-ACCESS-SIGN:"  + api_sign_header,
-    "CB-ACCESS-TIMESTAMP:" + std::to_string(nonce),
+    "CB-ACCESS-TIMESTAMP:" + nonce,
     "CB-ACCESS-PASSPHRASE:" + params.gdaxPhrase,
     "Content-Type: application/json; charset=utf-8",
   };
@@ -181,7 +181,30 @@ json_t* authRequest(Parameters &params, std::string method, std::string request,
     exit(0);
   }
 }
+	std::string gettime (){
 
+	
+	 timeval curTime;
+	 gettimeofday(&curTime, NULL);
+	 int milli = curTime.tv_usec / 1000;
+	 char buffer [80];
+	 strftime(buffer, 80, "%Y-%m-%dT%H:%M:%S", gmtime(&curTime.tv_sec));
+	 char time_buffer2[200];
+	 snprintf(time_buffer2, 200, "%s.%d000Z", buffer,milli);
+	 snprintf(time_buffer2, 200, "%sZ", buffer);
+
+	 //return time_buffer2;
+	 
+	time_t result = time(NULL);
+	long long result2 = result;
+	char buff4[40];
+	snprintf(buff4,40,"%lld",result2);
+
+	char buff5[40];
+	snprintf(buff5,40,"%lld.%d000",result2,milli);
+	return buff5;
+		
+	}
 void testGDAX(){
 
     Parameters params("bird.conf");

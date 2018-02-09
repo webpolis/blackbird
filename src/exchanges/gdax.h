@@ -23,6 +23,8 @@ bool isOrderComplete(Parameters& params, std::string orderId);
 
 json_t* authRequest(Parameters& params, std::string method, std::string request,const std::string &options);
 
+std::string gettime();
+
 void testGDAX();
 
 }
