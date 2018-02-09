@@ -229,12 +229,13 @@ int main(int argc, char** argv) {
   }
   if (params.gdaxEnable &&
      (params.gdaxApi.empty() == false || params.demoMode == true)) {
-    params.addExchange("GDAX", params.gdaxFees, false, false);
+    params.addExchange("GDAX", params.gdaxFees, true, false);
     getQuote[index] = GDAX::getQuote;
     getAvail[index] = GDAX::getAvail;
     getActivePos[index] = GDAX::getActivePos;
     getLimitPrice[index] = GDAX::getLimitPrice;
-
+    sendLongOrder[index] = GDAX::sendLongOrder;
+    isOrderComplete[index] = GDAX::isOrderComplete;
     dbTableName[index] = "gdax";
     createTable(dbTableName[index], params);
 
