@@ -106,7 +106,6 @@ std::string sendLongOrder(Parameters &params, std::string direction, double quan
   char buff[300];
   snprintf(buff,300,"{\"size\":\"%.8f\",\"price\":\"%.8f\",\"side\":\"%s\",\"product_id\": \"%s\",\"post_only\": \"true\"}",quantity,price,type.c_str(),pair.c_str());
   unique_json root { authRequest(params, "POST", "/orders", buff) };
-  std::cout << json_string_value(json_object_get(root.get(),"message")) << std::endl;
   auto txid = json_string_value(json_object_get(root.get(),"id"));
 
   *params.logFile << "<GDAX> Done (transaction ID: " << txid << ")\n" << std::endl;
