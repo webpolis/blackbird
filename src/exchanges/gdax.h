@@ -19,7 +19,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid);
 
 std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price);
 
-json_t* authRequest(Parameters& params, std::string method, std::string request, std::string options = "");
+json_t* authRequest(Parameters& params, std::string method, std::string request,const std::string &options);
 
 void testGDAX();
 

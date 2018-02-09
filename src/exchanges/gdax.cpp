@@ -42,7 +42,7 @@ quote_t getQuote(Parameters &params)
 
 double getAvail(Parameters &params, std::string currency)
 {
-  unique_json root { authRequest(params, "GET", "/accounts") };
+  unique_json root { authRequest(params, "GET", "/accounts", "") };
   size_t arraySize = json_array_size(root.get());
   double available = 0.0;
   const char* currstr;
@@ -93,7 +93,7 @@ double getLimitPrice(Parameters &params, double volume, bool isBid)
   return p;
 }
 
-std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price) {
+std::string sendLongOrder(Parameters &params, std::string direction, double quantity, double price) {
   if (direction.compare("buy") != 0 && direction.compare("sell") != 0) {
     *params.logFile  << "<GDAX> Error: Neither \"buy\" nor \"sell\" selected" << std::endl;
     return "0";
@@ -103,25 +103,17 @@ std::string sendLongOrder(Parameters& params, std::string direction, double quan
                   << std::setprecision(8) << price << "...\n";
   std::string pair = "BTC-USD";
   std::string type = direction;
-  std::string pricelimit = std::to_string(price);
-  std::string volume = std::to_string(quantity);
-  // have to build a json of {"product_id": pair, "side": direction, "size":volume, "price": pricelimit}
-  //unique_json options {json_object()};
-  //json_object_set_new(options.get(), "product_id", json_string("btc-usd"));
-  //json_object_set_new(options.get(),"side",json_string(direction));
-  //json_object_set_new(options.get(),"size", json_string(volume));
-  //json_object_set_new(options.get(),"price",json_string(pricelimit));
-  std::string options = "{product_id:" + pair + ",side:" + direction + ",size:" + volume + ",price:" + pricelimit+"}";
-  unique_json root { authRequest(params, "POST",  "/orders", options) };
+  char buff[300];
+  snprintf(buff,300,"{\"size\":\"%.8f\",\"price\":\"%.8f\",\"side\":\"%s\",\"product_id\": \"%s\",\"post_only\": \"true\"}",quantity,price,type.c_str(),pair.c_str());
+  unique_json root { authRequest(params, "POST", "/orders", buff) };
   std::cout << json_string_value(json_object_get(root.get(),"message")) << std::endl;
-  auto txid = json_string_value(json_object_get(json_object_get(root.get(), "result"), "uuid"));
+  auto txid = json_string_value(json_object_get(root.get(),"id"));
 
   *params.logFile << "<GDAX> Done (transaction ID: " << txid << ")\n" << std::endl;
-  //return txid;
-  return "0";
+  return txid;
 }
 
-json_t* authRequest(Parameters &params, std::string method, std::string request, std::string options)
+json_t* authRequest(Parameters &params, std::string method, std::string request, const std::string &options)
 {
   // create timestamp
   
@@ -129,10 +121,10 @@ json_t* authRequest(Parameters &params, std::string method, std::string request,
   
   // create data string
   
-  std::string post_data = std::to_string(nonce) + method + request;
+  std::string post_data = std::to_string(nonce) + method + request +options;
   
-  if (!options.empty())
-    post_data += options;
+  //if (!options.empty())
+  //  post_data += options;
 
   // create decoded key
 
@@ -149,12 +141,13 @@ json_t* authRequest(Parameters &params, std::string method, std::string request,
   
   // cURL header
   
-  std::array<std::string, 4> headers
+  std::array<std::string, 5> headers
   {
     "CB-ACCESS-KEY:" + params.gdaxApi,
     "CB-ACCESS-SIGN:"  + api_sign_header,
     "CB-ACCESS-TIMESTAMP:" + std::to_string(nonce),
     "CB-ACCESS-PASSPHRASE:" + params.gdaxPhrase,
+    "Content-Type: application/json; charset=utf-8",
   };
 
   // cURL request
@@ -165,7 +158,7 @@ json_t* authRequest(Parameters &params, std::string method, std::string request,
     return exchange.getRequest(request, make_slist(std::begin(headers), std::end(headers)));
   }
   else if (method.compare("POST")==0){
-    return exchange.postRequest(request, make_slist(std::begin(headers), std::end(headers)), post_data);
+    return exchange.postRequest(request, make_slist(std::begin(headers), std::end(headers)), options);
   }
   else {
     std::cout << "Error With Auth method. Exiting with code 0" << std::endl;
