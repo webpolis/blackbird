@@ -104,7 +104,7 @@ std::string sendLongOrder(Parameters &params, std::string direction, double quan
   std::string pair = "BTC-USD";
   std::string type = direction;
   char buff[300];
-  snprintf(buff,300,"{\"size\":\"%.8f\",\"price\":\"%.8f\",\"side\":\"%s\",\"product_id\": \"%s\",\"post_only\": \"true\"}",quantity,price,type.c_str(),pair.c_str());
+  snprintf(buff,300,"{\"size\":\"%.8f\",\"price\":\"%.8f\",\"side\":\"%s\",\"product_id\": \"%s\",\"post_only\": \"false\"}",quantity,price,type.c_str(),pair.c_str());
   unique_json root { authRequest(params, "POST", "/orders", buff) };
   auto txid = json_string_value(json_object_get(root.get(),"id"));
 
