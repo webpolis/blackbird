@@ -7,3 +7,5 @@ blackbird.db
 sqlite3
 core
 build
+.DS_Store
+blackbird.db-journal
