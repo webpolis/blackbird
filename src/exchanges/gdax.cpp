@@ -112,6 +112,23 @@ std::string sendLongOrder(Parameters &params, std::string direction, double quan
   return txid;
 }
 
+bool isOrderComplete(Parameters& params, std::string orderId){
+  
+  unique_json root { authRequest(params, "GET", "/orders", "") };
+  size_t arraySize = json_array_size(root.get());
+  bool complete = true;
+  const char* idstr;
+  for (size_t i = 0; i < arraySize; i++) {
+    std::string tmpId = json_string_value(json_object_get(json_array_get(root.get(), i), "id"));
+    if (tmpId.compare(orderId.c_str()) == 0) {
+      idstr = json_string_value(json_object_get(json_array_get(root.get(), i), "status"));
+      *params.logFile << "<GDAX> Order still open (Status:" << idstr << ")" << std::endl;
+      complete = false;
+    }
+  }
+  return complete;
+}
+
 json_t* authRequest(Parameters &params, std::string method, std::string request, const std::string &options)
 {
   // create timestamp
