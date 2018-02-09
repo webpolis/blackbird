@@ -65,7 +65,7 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | <a href="https://www.kraken.com" target="_blank">Kraken</a> | ✓ | ✓ | | Validation in progress. Shorting is currently in testing. <a href="https://blog.kraken.com/post/1413/update-on-system-performance-and-upgrade/" target="_blank"> System currently not reliable</a> | 
 | <a href="https://exmo.com" target="_blank">EXMO</a> | ✓ |  | | New exchange from PR <a href="https://github.com/butor/blackbird/pull/336" target="_blank">#336</a>. <b>Might be a <a href="https://bitcointalk.org/index.php?topic=1919799.0" target="_blank">scam</a></b> |
 | <a href="https://www.quadrigacx.com" target="_blank">QuadrigaCX</a> | ✓ |  |  |
-
+| <a href="https://www.gdax.com" target ="-blank">GDAX</a> | ✓ |  |  | Validation in progress. Shorting is not currently supported. |
 
 
 
@@ -75,7 +75,6 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | Exchange | Long | Short | Note |
 | -------- |:----:|:-----:| ---- |
 | <a href="https://poloniex.com" target="_blank">Poloniex</a> | ✓ | ✓ | BTC/USD trading not supported, BTC/USDT margin trading not supported |
-| <a href="https://www.gdax.com" target="_blank">GDAX</a> | ✓ | ✓ |  |
 | <a href="https://btc-e.com" target="_blank">BTC-e</a> | ✓ |  |  |
 | <a href="https://www.itbit.com" target="_blank">itBit</a> | ✓ |  |  |
 | <a href="https://cex.io/" target="_blank">CEX.IO</a> | ✓ | ✓ |  |
