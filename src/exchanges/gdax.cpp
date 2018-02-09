@@ -220,25 +220,14 @@ void testGDAX(){
     //std::cout << "Current balance BTC: " << getAvail(params, "BCH")<< std::endl;
     //std::cout << "current bid limit price for 10 units: " << getLimitPrice(params, 10 , true) << std::endl;
     //std::cout << "Current ask limit price for .09 units: " << getLimitPrice(params, 0.09, false) << std::endl;
-    //std::cout << "Sending buy order for 0.01 XMR @ $100 USD - TXID: " << std::endl;
-    //orderId = sendLongOrder(params, "buy", 0.01, 100);
+    //std::cout << "Sending buy order for 0.005 BTC @ ASK! USD - TXID: " << std::endl;
+    //orderId = sendLongOrder(params, "buy", 0.005, getLimitPrice(params,.005,false));
     //std::cout << orderId << std::endl;
-    ///// if you don't wait bittrex won't recognize order for iscomplete
-    //sleep(5);
     //std::cout << "Buy Order is complete: " << isOrderComplete(params, orderId) << std::endl;
-
-    //std::cout << "Sending Short XMR order for 0.177 XMR @BID! USD: ";
-    //orderId = sendShortOrder(params,"sell",0.133, getLimitPrice(params,0.133,true));
+    
+    //std::cout << "Sending sell order for 0.02 BTC @ 10000 USD - TXID: " << std::endl;
+    //orderId = sendLongOrder(params, "sell", 0.02, 10000);
     //std::cout << orderId << std::endl;
-    //std::cout << "Closing Short XMR order for .09 - TXID: ";
-    //orderId = sendShortOrder(params, "buy", 0.046, getLimitPrice(params,0.046, false));
-    //std::cout << orderId  << std::endl;
-    // TODO: Test sell orders, really should work though.
-    //std::cout << orderId << std::endl;
-    //std::cout << "Buy order is complete: " << isOrderComplete(params, orderId) << std::endl;
-    //std::cout << "Sending sell order for 0.01 BTC @ 10000 USD - TXID: " << std::endl ;
-    //orderId = sendLongOrder(params, "sell", 0.01, 10000);
-    //std:: cout << orderId << std::endl;
     //std::cout << "Sell order is complete: " << isOrderComplete(params, orderId) << std::endl;
     //std::cout << "Active Position: " << getActivePos(params);
 }
