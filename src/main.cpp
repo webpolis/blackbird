@@ -17,6 +17,7 @@
 #include "exchanges/gdax.h"
 #include "exchanges/exmo.h"
 #include "exchanges/cexio.h"
+#include "exchanges/bittrex.h"
 #include "utils/send_email.h"
 #include "getpid.h"
 
