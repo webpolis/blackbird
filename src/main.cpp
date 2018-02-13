@@ -289,6 +289,22 @@ int main(int argc, char** argv) {
 
     index++;
   }
+  if (params.bittrexEnable &&
+      (params.bittrexApi.empty() == false || params.demoMode == true))
+  {
+    params.addExchange(index, "Bittrex", params.bittrexFees, false, true);
+    getQuote[index] = Bittrex::getQuote;
+    getAvail[index] = Bittrex::getAvail;
+    sendLongOrder[index] = Bittrex::sendLongOrder;
+    sendShortOrder[index] = Bittrex::sendShortOrder;
+    isOrderComplete[index] = Bittrex::isOrderComplete;
+    getActivePos[index] = Bittrex::getActivePos;
+    getLimitPrice[index] = Bittrex::getLimitPrice;
+    dbTableName[index] = "bittrex";
+    createTable(dbTableName[index], params);
+
+    index++;
+  }
   // We need at least two exchanges to run Blackbird
   if (index < 2) {
     std::cout << "ERROR: Blackbird needs at least two Bitcoin exchanges. Please edit the config.json file to add new exchanges\n" << std::endl;
