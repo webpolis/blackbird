@@ -152,7 +152,7 @@ bool isOrderComplete(Parameters& params, std::string orderId)
 }
 
 double getActivePos(Parameters& params) {
-    getAvail(params, "BTC");
+    return getAvail(params, "BTC");
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {

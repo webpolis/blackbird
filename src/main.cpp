@@ -292,7 +292,7 @@ int main(int argc, char** argv) {
   if (params.bittrexEnable &&
       (params.bittrexApi.empty() == false || params.demoMode == true))
   {
-    params.addExchange(index, "Bittrex", params.bittrexFees, false, true);
+    params.addExchange("Bittrex", params.bittrexFees, false, true);
     getQuote[index] = Bittrex::getQuote;
     getAvail[index] = Bittrex::getAvail;
     sendLongOrder[index] = Bittrex::sendLongOrder;
