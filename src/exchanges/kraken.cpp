@@ -17,8 +17,7 @@ namespace Kraken
 // Initialise internal variables
 static unique_json krakenTicker = nullptr;
 static bool krakenGotTicker = false;
-static unique_json krakenLimPrice = nullptr;
-static bool krakenGotLimPrice = false;
+
 
 static RestApi &queryHandle(Parameters &params)
 {
@@ -173,13 +172,8 @@ double getActivePos(Parameters &params)
 
 double getLimitPrice(Parameters &params, double volume, bool isBid)
 {
-  if (!krakenGotLimPrice)
-  {
-    auto &exchange = queryHandle(params);
-    krakenLimPrice.reset(exchange.getRequest("/0/public/Depth?pair=XXBTZUSD"));
-  }
-  krakenGotLimPrice = !krakenGotLimPrice;
-  auto root = krakenLimPrice.get();
+  auto &exchange = queryHandle(params);
+  unique_json root { exchange.getRequest("/0/public/Depth?pair=XXBTZUSD") };
   auto branch = json_object_get(json_object_get(root, "result"), "XXBTZUSD");
   branch = json_object_get(branch, isBid ? "bids" : "asks");
 
