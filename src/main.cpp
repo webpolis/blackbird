@@ -18,6 +18,7 @@
 #include "exchanges/exmo.h"
 #include "exchanges/cexio.h"
 #include "exchanges/bittrex.h"
+#include "exchanges/binance.h"
 #include "utils/send_email.h"
 #include "getpid.h"
 
@@ -95,14 +96,14 @@ int main(int argc, char** argv) {
 
   // Function arrays containing all the exchanges functions
   // using the 'typedef' declarations from above.
-  getQuoteType getQuote[11];
-  getAvailType getAvail[11];
-  sendOrderType sendLongOrder[11];
-  sendOrderType sendShortOrder[11];
-  isOrderCompleteType isOrderComplete[11];
-  getActivePosType getActivePos[11];
-  getLimitPriceType getLimitPrice[11];
-  std::string dbTableName[11];
+  getQuoteType getQuote[13];
+  getAvailType getAvail[13];
+  sendOrderType sendLongOrder[13];
+  sendOrderType sendShortOrder[13];
+  isOrderCompleteType isOrderComplete[13];
+  getActivePosType getActivePos[13];
+  getLimitPriceType getLimitPrice[13];
+  std::string dbTableName[13];
 
 
   // Adds the exchange functions to the arrays for all the defined exchanges
@@ -301,6 +302,22 @@ int main(int argc, char** argv) {
     getActivePos[index] = Bittrex::getActivePos;
     getLimitPrice[index] = Bittrex::getLimitPrice;
     dbTableName[index] = "bittrex";
+    createTable(dbTableName[index], params);
+
+    index++;
+  }
+  if (params.binanceEnable &&
+      (params.binanceApi.empty() == false || params.demoMode == true))
+  {
+    params.addExchange("Binance", params.binanceFees, false, true);
+    getQuote[index] = Binance::getQuote;
+    getAvail[index] = Binance::getAvail;
+    sendLongOrder[index] = Binance::sendLongOrder;
+    sendShortOrder[index] = Binance::sendShortOrder;
+    isOrderComplete[index] = Binance::isOrderComplete;
+    getActivePos[index] = Binance::getActivePos;
+    getLimitPrice[index] = Binance::getLimitPrice;
+    dbTableName[index] = "binance";
     createTable(dbTableName[index], params);
 
     index++;
