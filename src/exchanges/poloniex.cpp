@@ -94,26 +94,27 @@ bool isOrderComplete(Parameters& params, std::string orderId)
   return true;
 }
 
-double getActivePos(Parameters& params, std::string orderId) {
-  double activeSize = 0.0;
-  if (!orderId.empty()){
-    std::string options = "orderNumber=";
-    options += orderId;
-    unique_json root {authRequest(params, "returnOrderTrades", options) };
-    size_t arraySize = json_array_size(root.get());
-    double tmpFee = 0.0;
-    double tmpAmount = 0.0;
-    //polo returns weird things - we must loop through all the executed trades (for partial fills)
-    //the actual active size is then SUM(amount*(1-tmpFee)) fee seems to be expressed as a percent
-    for (size_t i = 0; i < arraySize; i++) {
-      tmpFee = atof(json_string_value(json_object_get(json_array_get(root.get(),i),"fee")));
-      tmpAmount = atof(json_string_value(json_object_get(json_array_get(root.get(),i),"amount")));
-      activeSize += tmpAmount*(1-tmpFee);
-    }
-  } else {
-    return getAvail(params, "BTC");
-  }
-  return activeSize;
+double getActivePos(Parameters& params) {
+  // TODO: When we add the new getActivePos style uncomment this
+  // double activeSize = 0.0;
+  // if (!orderId.empty()){
+  //   std::string options = "orderNumber=";
+  //   options += orderId;
+  //   unique_json root {authRequest(params, "returnOrderTrades", options) };
+  //   size_t arraySize = json_array_size(root.get());
+  //   double tmpFee = 0.0;
+  //   double tmpAmount = 0.0;
+  //   //polo returns weird things - we must loop through all the executed trades (for partial fills)
+  //   //the actual active size is then SUM(amount*(1-tmpFee)) fee seems to be expressed as a percent
+  //   for (size_t i = 0; i < arraySize; i++) {
+  //     tmpFee = atof(json_string_value(json_object_get(json_array_get(root.get(),i),"fee")));
+  //     tmpAmount = atof(json_string_value(json_object_get(json_array_get(root.get(),i),"amount")));
+  //     activeSize += tmpAmount*(1-tmpFee);
+  //   }
+  // }
+  // return activeSize;
+
+  return getAvail(params, "BTC");
 }
 
 double getLimitPrice(Parameters& params, double volume, bool isBid) {
