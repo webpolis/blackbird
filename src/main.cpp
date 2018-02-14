@@ -17,6 +17,7 @@
 #include "exchanges/gdax.h"
 #include "exchanges/exmo.h"
 #include "exchanges/cexio.h"
+#include "exchanges/bittrex.h"
 #include "utils/send_email.h"
 #include "getpid.h"
 
@@ -284,6 +285,22 @@ int main(int argc, char** argv) {
     getLimitPrice[index] = Cexio::getLimitPrice;
 
     dbTableName[index] = "cexio";
+    createTable(dbTableName[index], params);
+
+    index++;
+  }
+  if (params.bittrexEnable &&
+      (params.bittrexApi.empty() == false || params.demoMode == true))
+  {
+    params.addExchange("Bittrex", params.bittrexFees, false, true);
+    getQuote[index] = Bittrex::getQuote;
+    getAvail[index] = Bittrex::getAvail;
+    sendLongOrder[index] = Bittrex::sendLongOrder;
+    sendShortOrder[index] = Bittrex::sendShortOrder;
+    isOrderComplete[index] = Bittrex::isOrderComplete;
+    getActivePos[index] = Bittrex::getActivePos;
+    getLimitPrice[index] = Bittrex::getLimitPrice;
+    dbTableName[index] = "bittrex";
     createTable(dbTableName[index], params);
 
     index++;

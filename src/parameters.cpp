@@ -143,6 +143,10 @@ Parameters::Parameters(std::string fileName) {
   cexioSecret = getParameter("CexioSecretKey", configFile);
   cexioFees = getDouble(getParameter("CexioFees", configFile));
   cexioEnable = getBool(getParameter("CexioEnable", configFile));
+  bittrexApi = getParameter("BittrexApiKey", configFile);
+  bittrexSecret = getParameter("BittrexSecretKey", configFile);
+  bittrexFees = getDouble(getParameter("BittrexFees", configFile));
+  bittrexEnable = getBool(getParameter("BittrexEnable", configFile));
 
   sendEmail = getBool(getParameter("SendEmail", configFile));
   senderAddress = getParameter("SenderAddress", configFile);

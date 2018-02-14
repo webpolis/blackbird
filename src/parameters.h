@@ -93,6 +93,10 @@ struct Parameters {
   std::string cexioSecret;
   double cexioFees;
   bool cexioEnable;
+  std::string bittrexApi;
+  std::string bittrexSecret;
+  double bittrexFees;
+  bool bittrexEnable;
 
   bool sendEmail;
   std::string senderAddress;
