@@ -96,14 +96,14 @@ int main(int argc, char** argv) {
 
   // Function arrays containing all the exchanges functions
   // using the 'typedef' declarations from above.
-  getQuoteType getQuote[11];
-  getAvailType getAvail[11];
-  sendOrderType sendLongOrder[11];
-  sendOrderType sendShortOrder[11];
-  isOrderCompleteType isOrderComplete[11];
-  getActivePosType getActivePos[11];
-  getLimitPriceType getLimitPrice[11];
-  std::string dbTableName[11];
+  getQuoteType getQuote[13];
+  getAvailType getAvail[13];
+  sendOrderType sendLongOrder[13];
+  sendOrderType sendShortOrder[13];
+  isOrderCompleteType isOrderComplete[13];
+  getActivePosType getActivePos[13];
+  getLimitPriceType getLimitPrice[13];
+  std::string dbTableName[13];
 
 
   // Adds the exchange functions to the arrays for all the defined exchanges
