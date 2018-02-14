@@ -9,3 +9,4 @@ core
 build
 .DS_Store
 blackbird.db-journal
+test.conf
