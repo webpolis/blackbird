@@ -28,11 +28,11 @@ struct Result {
   double spreadOut;
   double exitTarget;
   // FIXME: the arrays should have a dynamic size
-  double minSpread[10][10];
-  double maxSpread[10][10];
-  double trailing[10][10];
-  unsigned trailingWaitCount[10][10];
-  std::list<double> volatility[10][10];
+  double minSpread[13][13];
+  double maxSpread[13][13];
+  double trailing[13][13];
+  unsigned trailingWaitCount[13][13];
+  std::list<double> volatility[13][13];
   double leg2TotBalanceBefore;
   double leg2TotBalanceAfter;
 
