@@ -18,6 +18,7 @@
 #include "exchanges/exmo.h"
 #include "exchanges/cexio.h"
 #include "exchanges/bittrex.h"
+#include "exchanges/binance.h"
 #include "utils/send_email.h"
 #include "getpid.h"
 
@@ -301,6 +302,22 @@ int main(int argc, char** argv) {
     getActivePos[index] = Bittrex::getActivePos;
     getLimitPrice[index] = Bittrex::getLimitPrice;
     dbTableName[index] = "bittrex";
+    createTable(dbTableName[index], params);
+
+    index++;
+  }
+  if (params.binanceEnable &&
+      (params.binanceApi.empty() == false || params.demoMode == true))
+  {
+    params.addExchange("Binance", params.binanceFees, false, true);
+    getQuote[index] = Binance::getQuote;
+    getAvail[index] = Binance::getAvail;
+    sendLongOrder[index] = Binance::sendLongOrder;
+    sendShortOrder[index] = Binance::sendShortOrder;
+    isOrderComplete[index] = Binance::isOrderComplete;
+    getActivePos[index] = Binance::getActivePos;
+    getLimitPrice[index] = Binance::getLimitPrice;
+    dbTableName[index] = "binance";
     createTable(dbTableName[index], params);
 
     index++;
