@@ -79,6 +79,7 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | <a href="https://btc-e.com" target="_blank">BTC-e</a> | ✓ |  |  |
 | <a href="https://www.itbit.com" target="_blank">itBit</a> | ✓ |  |  |
 | <a href="https://bittrex.com" target="_blank">Bittrex</a> | ✓ |  | Implementation in progress, BTC/USD not supported (coming soon.) |
+| <a href="https://binance.com" target="_blank">Binance</a> | ✓ |  | Implementation in progress, BTC/USD not supported |
 
 If `DemoMode=true`, all the exchanges are shown in the log file.
 
