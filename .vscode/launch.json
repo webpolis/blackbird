@@ -25,6 +25,25 @@
               "MIMode": "gdb"
             }
             ,"preLaunchTask": "launch debug container"
-        }
+        },
+        {
+          "name": "(gdb) Launch",
+          "type": "cppdbg",
+          "request": "launch",
+          "program": "${workspaceFolder}/blackbird",
+          "args": [],
+          "stopAtEntry": true,
+          "cwd": "${workspaceFolder}",
+          "environment": [],
+          "externalConsole": true,
+          "MIMode": "gdb",
+          "setupCommands": [
+            {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+            }
+          ]
+        },
     ]
 }
