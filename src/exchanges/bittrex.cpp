@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <ctime>
 #include <cctype>
+#include <iomanip>
+#include <sstream>
 
 namespace Bittrex {
 static json_t* authRequest(Parameters &, std::string, std::string);

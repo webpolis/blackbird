@@ -11,6 +11,7 @@
 #include <ctime>
 #include <cctype>
 #include <cstdlib>
+#include <iomanip>
 
 namespace Binance
 {
