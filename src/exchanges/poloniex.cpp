@@ -10,6 +10,7 @@
 #include <algorithm>
 #include <ctime>
 #include <cctype>
+#include <iomanip>
 
 namespace Poloniex {
 
