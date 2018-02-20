@@ -1,4 +1,4 @@
-#include "btce.h"
+#include "wex.h"
 #include "parameters.h"
 #include "utils/restapi.h"
 #include "unique_json.hpp"
@@ -13,7 +13,7 @@
 #include <cmath>    // fabs
 #include <cassert>
 
-namespace BTCe {
+namespace WEX {
 
 static json_t* authRequest(Parameters &, const char *, const std::string & = "");
 static json_t* adjustResponse(json_t *);
@@ -32,7 +32,7 @@ static json_t* checkResponse(std::ostream &logFile, json_t *root)
   if (json_integer_value(success) == 0)
   {
     auto errmsg = json_object_get(root, "error");
-    logFile << "<BTC-e> Error with response: "
+    logFile << "<WEX> Error with response: "
             << json_string_value(errmsg) << '\n';
   }
 
@@ -61,7 +61,7 @@ double getAvail(Parameters &params, std::string currency)
 
 std::string sendLongOrder(Parameters &params, std::string direction, double quantity, double price)
 {
-  *params.logFile << "<BTC-e> Trying to send a \"" << direction << "\" limit order: "
+  *params.logFile << "<WEX> Trying to send a \"" << direction << "\" limit order: "
                   << std::fixed
                   << std::setprecision(6) << quantity << "@$"
                   << std::setprecision(2) << price << "...\n";
@@ -69,13 +69,13 @@ std::string sendLongOrder(Parameters &params, std::string direction, double quan
   options << "pair=btc_usd"
           << "&type="   << direction
           << "&amount=" << std::fixed << quantity;
-  // BTCe's 'Trade' method requires rate to be limited to 3 decimals
+  // WEX's 'Trade' method requires rate to be limited to 3 decimals
   // otherwise it'll barf an error message about incorrect fields
   options << "&rate="   << std::setprecision(3) << price;
   unique_json root { authRequest(params, "Trade", options.str()) };
 
   auto orderid = json_integer_value(json_object_get(root.get(), "order_id"));
-  *params.logFile << "<BTC-e> Done (order ID: " << orderid << ")\n" << std::endl;
+  *params.logFile << "<WEX> Done (order ID: " << orderid << ")\n" << std::endl;
   return std::to_string(orderid);
 }
 
@@ -106,7 +106,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
     auto currnode = json_array_get(bidask, i);
     price = json_number_value(json_array_get(currnode, 0));
     sumvol += json_number_value(json_array_get(currnode, 1));
-    *params.logFile << "<BTC-e> order book: "
+    *params.logFile << "<WEX> order book: "
                     << std::setprecision(6) << sumvol << "@$"
                     << std::setprecision(2) << price << std::endl;
     if (sumvol >= std::fabs(volume) * params.orderBookFactor) break;
@@ -115,7 +115,7 @@ double getLimitPrice(Parameters& params, double volume, bool isBid)
 }
 
 /*
- * This is here to handle annoying inconsistences in btce's api.
+ * This is here to handle annoying inconsistences in wex's api.
  * For example, if there are no open orders, the 'ActiveOrders'
  * method returns an *error* instead of an empty object/array.
  * This function turns that error into an empty object for sake
@@ -141,7 +141,7 @@ json_t* adjustResponse(json_t *root)
 json_t* authRequest(Parameters &params, const char *request, const std::string &options)
 {
   using namespace std;
-  // BTCe requires nonce to be [1, 2^32 - 1)
+  // WEX requires nonce to be [1, 2^32 - 1)
   constexpr auto MAXCALLS_PER_SEC = 3ull;
   static auto nonce = static_cast<uint32_t> (time(nullptr) * MAXCALLS_PER_SEC);
   string post_body = "nonce="   + to_string(++nonce) +
@@ -153,13 +153,13 @@ json_t* authRequest(Parameters &params, const char *request, const std::string &
   }
 
   uint8_t *sign = HMAC (EVP_sha512(),
-                        params.btceSecret.data(), params.btceSecret.size(),
+                        params.wexSecret.data(), params.wexSecret.size(),
                         reinterpret_cast<const uint8_t *>(post_body.data()), post_body.size(),
                         nullptr, nullptr);
   auto &exchange = queryHandle(params);
   array<string, 2> headers
   {
-    "Key:"  + params.btceApi,
+    "Key:"  + params.wexApi,
     "Sign:" + hex_str(sign, sign + SHA512_DIGEST_LENGTH),
   };
   auto result = exchange.postRequest ("/tapi",

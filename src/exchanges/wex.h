@@ -1,12 +1,12 @@
-#ifndef BTCE_H
-#define BTCE_H
+#ifndef WEX_H
+#define WEX_H
 
 #include "quote_t.h"
 #include <string>
 
 struct Parameters;
 
-namespace BTCe {
+namespace WEX {
 
 quote_t getQuote(Parameters& params);
 
