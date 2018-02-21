@@ -76,7 +76,7 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | -------- |:----:|:-----:| ---- |
 | <a href="https://poloniex.com" target="_blank">Poloniex</a> | ✓ | ✓ | BTC/USD trading not supported, BTC/USDT margin trading not supported |
 | <a href="https://cex.io/" target="_blank">CEX.IO</a> | ✓ | ✓ | Implementation in progress |
-| <a href="https://btc-e.com" target="_blank">BTC-e</a> | ✓ |  |  |
+| <a href="https://wex.nz" target="_blank">WEX</a> | ✓ |  |  |
 | <a href="https://www.itbit.com" target="_blank">itBit</a> | ✓ |  |  |
 | <a href="https://bittrex.com" target="_blank">Bittrex</a> | ✓ |  | Implementation in progress, BTC/USD not supported (coming soon.) |
 | <a href="https://binance.com" target="_blank">Binance</a> | ✓ |  | Implementation in progress, BTC/USD not supported |

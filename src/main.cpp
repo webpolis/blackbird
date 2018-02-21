@@ -12,7 +12,7 @@
 #include "exchanges/kraken.h"
 #include "exchanges/quadrigacx.h"
 #include "exchanges/itbit.h"
-#include "exchanges/btce.h"
+#include "exchanges/wex.h"
 #include "exchanges/poloniex.h"
 #include "exchanges/gdax.h"
 #include "exchanges/exmo.h"
@@ -199,17 +199,17 @@ int main(int argc, char** argv) {
 
     index++;
   }
-  if (params.btceEnable &&
-     (params.btceApi.empty() == false || params.demoMode == true)) {
-    params.addExchange("BTC-e", params.btceFees, false, true);
-    getQuote[index] = BTCe::getQuote;
-    getAvail[index] = BTCe::getAvail;
-    sendLongOrder[index] = BTCe::sendLongOrder;
-    isOrderComplete[index] = BTCe::isOrderComplete;
-    getActivePos[index] = BTCe::getActivePos;
-    getLimitPrice[index] = BTCe::getLimitPrice;
+  if (params.wexEnable &&
+     (params.wexApi.empty() == false || params.demoMode == true)) {
+    params.addExchange("WEX", params.wexFees, false, true);
+    getQuote[index] = WEX::getQuote;
+    getAvail[index] = WEX::getAvail;
+    sendLongOrder[index] = WEX::sendLongOrder;
+    isOrderComplete[index] = WEX::isOrderComplete;
+    getActivePos[index] = WEX::getActivePos;
+    getLimitPrice[index] = WEX::getLimitPrice;
 
-    dbTableName[index] = "btce";
+    dbTableName[index] = "wex";
     createTable(dbTableName[index], params);
 
     index++;
