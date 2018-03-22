@@ -18,6 +18,8 @@ namespace Cexio {
 
 static json_t* authRequest(Parameters &, std::string, std::string);
 
+static bool g_bShort= false;
+
 static RestApi& queryHandle(Parameters &params)
 {
   static RestApi query ("https://cex.io/api",
@@ -67,13 +69,105 @@ double getAvail(Parameters& params, std::string currency)
 
 std::string sendLongOrder(Parameters& params, std::string direction, double quantity, double price)
 {
-  return sendOrder(params, direction, quantity, price);
+    g_bShort = false;
+    return sendOrder(params, direction, quantity, price);
+
 }
 
 std::string sendShortOrder(Parameters& params, std::string direction, double quantity, double price)
 {
-  return sendOrder(params, direction, quantity, price);
+  //return sendOrder(params, direction, quantity, price);
+
+  g_bShort = true;
+
+  if(direction.compare("sell") == 0)
+  {
+     return openPosition(params, direction, quantity, price);
+
+  }else if(direction.compare("buy")== 0){
+
+    return closePosition(params);
+
+  }
+
+   return "0";
 }
+
+
+std::string openPosition(Parameters& params, std::string direction, double quantity, double price)
+{
+   using namespace std;
+   string pair = "btc_usd";
+   string orderId = "";
+   *params.logFile << "<Cexio> Trying to open a " << pair << " " << direction << " position: " << quantity << "@" << price << endl;
+
+   ostringstream oss;
+   string ptype = "";
+   
+   if(direction.compare("sell") == 0)
+   {
+      ptype = "short";
+
+   }else if(direction.compare("buy")== 0){
+     ptype = "long";
+   }
+   
+
+   oss << "symbol=" << "BTC" << "&amount=" <<  setprecision(8) << quantity << "&msymbol=" << "USD" << "&leverage=" 
+    << "3" << "&ptype=" << ptype << "&anySlipppage=" << "true" << "&eoprice=" <<  setprecision(8) << price << "&stopLossPrice=" << "35000";
+
+   string options = oss.str();
+
+   unique_json root {authRequest(params,"open_position/BTC/USD/",options)};
+   auto error = json_string_value(json_object_get(root.get(),"error"));
+   if(error){
+
+        orderId = "0";
+
+    }else{
+
+        orderId = json_string_value(json_object_get(root.get(),"id"));
+        *params.logFile << "<Cexio>Open Position Done (positon ID): " << orderId << ")\n" << endl;
+
+    }
+
+    return orderId;
+}
+
+std::string closePosition(Parameters& params)
+{
+
+ using namespace std;
+ string orderId = "";
+ unique_json root {authRequest(params,"/open_positions/BTC/USD/","")};
+ size_t arraySize = json_array_size(json_object_get(root.get(),"data"));
+ auto data = json_object_get(root.get(),"data");
+ for(size_t i=0; i< arraySize;i++){
+ 
+     std::string tmpId = json_string_value(json_object_get(json_array_get(data,i),"id"));
+     ostringstream oss;
+     oss << "id=" << tmpId;
+     string options = oss.str();
+     
+     unique_json root1 {authRequest(params,"close_position/BTC/USD/",options)};
+     auto error = json_string_value(json_object_get(root1.get(),"error"));
+     if(error){
+           orderId ="0";
+
+     }else{
+
+         orderId = json_string_value(json_object_get(root1.get(),"id"));
+       
+     }
+
+ }
+
+return orderId;
+
+
+}
+
+
 
 std::string sendOrder(Parameters& params, std::string direction, double quantity, double price)
 {
@@ -102,22 +196,47 @@ std::string sendOrder(Parameters& params, std::string direction, double quantity
 
 bool isOrderComplete(Parameters& params, std::string orderId)
 {
-  using namespace std;
 
-  bool tmp = true;
-  unique_json root { authRequest(params, "/open_orders/","") };
-  size_t arraySize = json_array_size(root.get());
-  for (size_t i = 0; i < arraySize; ++i){
-    string tmpid = json_string_value(json_object_get(json_array_get(root.get(),i),"id"));
-    if (tmpid.compare(orderId.c_str())==0){
-      *params.logFile << "<Cexio> Order Still open (ID: " << orderId << " )" << " Remaining: " 
-      << json_string_value(json_object_get(json_array_get(root.get(),i),"pending"))
-      << endl;
-      return tmp = false;
-    }
+
+  using namespace std;
+  if (orderId == "0") return false;
+
+
+  auto oId = stol(orderId);
+  ostringstream oss;
+  oss << "id=" << oId;
+  string options = oss.str();
+
+ if(g_bShort)
+ {
+   unique_json root { authRequest(params, "/get_position/", options) };
+   auto slremains = atof(json_string_value(json_object_get(root.get(), "slremains")));
+  if (slremains==0){
+    return true;
+  } else { 
+    auto dump = json_dumps(root.get(), 0);
+    *params.logFile << "<Cexio> Position Order Not Complete: " << dump << ")\n" << endl;
+    free(dump);
+    // cout << "REMAINS:" << remains << endl;
+    return false; 
   }
-  if (tmp == true){ *params.logFile << "<Cexio> Order Complete (ID: " << orderId << " )" << endl;}
-  return tmp;
+
+ }else{
+
+  unique_json root { authRequest(params, "/get_order/", options) };
+  auto remains = atof(json_string_value(json_object_get(root.get(), "remains")));
+  if (remains==0){
+    return true;
+  } else { 
+    auto dump = json_dumps(root.get(), 0);
+    *params.logFile << "<Cexio> Order Not Complete: " << dump << ")\n" << endl;
+    free(dump);
+    // cout << "REMAINS:" << remains << endl;
+    return false; 
+  }
+
+ }
+  
 }
 
 double getActivePos(Parameters& params) { return getAvail(params, "btc"); }
