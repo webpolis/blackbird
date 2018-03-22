@@ -20,6 +20,11 @@ std::string sendShortOrder(Parameters& params, std::string direction, double qua
 
 std::string sendOrder(Parameters& params, std::string direction, double quantity, double price);
 
+std::string openPosition(Parameters& params,std::string direction, double quantity, double price);
+
+std::string closePosition(Parameters& params);
+
+
 bool isOrderComplete(Parameters& params, std::string orderId);
 
 double getActivePos(Parameters& params);
