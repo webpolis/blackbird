@@ -26,7 +26,7 @@ struct Parameters {
   double trailingLim;
   unsigned trailingCount;
   double orderBookFactor;
-  bool demoMode;
+  bool isDemoMode;
   std::string leg1;
   std::string leg2;
   bool verbose;

@@ -74,7 +74,7 @@ bool checkEntry(Bitcoin* btcLong, Bitcoin* btcShort, Result& res, Parameters& pa
     }
     // If one of the exchanges (or both) hasn't been implemented,
     // we mention in the log file that this spread is for info only.
-    if ((!btcLong->getIsImplemented() || !btcShort->getIsImplemented()) && !params.demoMode)
+    if ((!btcLong->getIsImplemented() || !btcShort->getIsImplemented()) && !params.isDemoMode)
       *params.logFile << "   info only";
 
     *params.logFile << std::endl;

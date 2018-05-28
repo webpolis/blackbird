@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
   // Loads all the parameters
   Parameters params("blackbird.conf");
   // Does some verifications about the parameters
-  if (!params.demoMode) {
+  if (!params.isDemoMode) {
     if (!params.useFullExposure) {
       if (params.testedExposure < 10.0 && params.leg2.compare("USD") == 0) {
         // TODO do the same check for other currencies. Is there a limi?
@@ -109,7 +109,7 @@ int main(int argc, char** argv) {
   // Adds the exchange functions to the arrays for all the defined exchanges
   int index = 0;
   if (params.bitfinexEnable &&
-     (params.bitfinexApi.empty() == false || params.demoMode == true)) {
+     (params.bitfinexApi.empty() == false || params.isDemoMode)) {
     params.addExchange("Bitfinex", params.bitfinexFees, true, true);
     getQuote[index] = Bitfinex::getQuote;
     getAvail[index] = Bitfinex::getAvail;
@@ -125,7 +125,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.okcoinEnable &&
-     (params.okcoinApi.empty() == false || params.demoMode == true)) {
+     (params.okcoinApi.empty() == false || params.isDemoMode)) {
     params.addExchange("OKCoin", params.okcoinFees, false, true);
     getQuote[index] = OKCoin::getQuote;
     getAvail[index] = OKCoin::getAvail;
@@ -141,7 +141,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.bitstampEnable &&
-     (params.bitstampClientId.empty() == false || params.demoMode == true)) {
+     (params.bitstampClientId.empty() == false || params.isDemoMode)) {
     params.addExchange("Bitstamp", params.bitstampFees, false, true);
     getQuote[index] = Bitstamp::getQuote;
     getAvail[index] = Bitstamp::getAvail;
@@ -156,7 +156,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.geminiEnable &&
-     (params.geminiApi.empty() == false || params.demoMode == true)) {
+     (params.geminiApi.empty() == false || params.isDemoMode)) {
     params.addExchange("Gemini", params.geminiFees, false, true);
     getQuote[index] = Gemini::getQuote;
     getAvail[index] = Gemini::getAvail;
@@ -171,7 +171,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.krakenEnable &&
-     (params.krakenApi.empty() == false || params.demoMode == true)) {
+     (params.krakenApi.empty() == false || params.isDemoMode)) {
     params.addExchange("Kraken", params.krakenFees, false, true);
     getQuote[index] = Kraken::getQuote;
     getAvail[index] = Kraken::getAvail;
@@ -187,7 +187,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.itbitEnable &&
-     (params.itbitApi.empty() == false || params.demoMode == true)) {
+     (params.itbitApi.empty() == false || params.isDemoMode)) {
     params.addExchange("ItBit", params.itbitFees, false, false);
     getQuote[index] = ItBit::getQuote;
     getAvail[index] = ItBit::getAvail;
@@ -200,7 +200,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.wexEnable &&
-     (params.wexApi.empty() == false || params.demoMode == true)) {
+     (params.wexApi.empty() == false || params.isDemoMode)) {
     params.addExchange("WEX", params.wexFees, false, true);
     getQuote[index] = WEX::getQuote;
     getAvail[index] = WEX::getAvail;
@@ -215,7 +215,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.poloniexEnable &&
-     (params.poloniexApi.empty() == false || params.demoMode == true)) {
+     (params.poloniexApi.empty() == false || params.isDemoMode)) {
     params.addExchange("Poloniex", params.poloniexFees, true, false);
     getQuote[index] = Poloniex::getQuote;
     getAvail[index] = Poloniex::getAvail;
@@ -231,7 +231,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.gdaxEnable &&
-     (params.gdaxApi.empty() == false || params.demoMode == true)) {
+     (params.gdaxApi.empty() == false || params.isDemoMode)) {
     params.addExchange("GDAX", params.gdaxFees, false, true);
     getQuote[index] = GDAX::getQuote;
     getAvail[index] = GDAX::getAvail;
@@ -245,7 +245,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.quadrigaEnable &&
-         (params.quadrigaApi.empty() == false || params.demoMode == true)) {
+         (params.quadrigaApi.empty() == false || params.isDemoMode)) {
     params.addExchange("QuadrigaCX", params.quadrigaFees, false, true);
     getQuote[index] = QuadrigaCX::getQuote;
     getAvail[index] = QuadrigaCX::getAvail;
@@ -260,7 +260,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.exmoEnable &&
-         (params.exmoApi.empty() == false || params.demoMode == true)) {
+         (params.exmoApi.empty() == false || params.isDemoMode)) {
     params.addExchange("Exmo", params.exmoFees, false, true);
     getQuote[index] = Exmo::getQuote;
     getAvail[index] = Exmo::getAvail;
@@ -275,7 +275,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.cexioEnable &&
-         (params.cexioApi.empty() == false || params.demoMode == true)) {
+         (params.cexioApi.empty() == false || params.isDemoMode)) {
     params.addExchange("Cexio", params.cexioFees, false, true);
     getQuote[index] = Cexio::getQuote;
     getAvail[index] = Cexio::getAvail;
@@ -291,7 +291,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.bittrexEnable &&
-      (params.bittrexApi.empty() == false || params.demoMode == true))
+      (params.bittrexApi.empty() == false || params.isDemoMode))
   {
     params.addExchange("Bittrex", params.bittrexFees, false, true);
     getQuote[index] = Bittrex::getQuote;
@@ -307,7 +307,7 @@ int main(int argc, char** argv) {
     index++;
   }
   if (params.binanceEnable &&
-      (params.binanceApi.empty() == false || params.demoMode == true))
+      (params.binanceApi.empty() == false || params.isDemoMode))
   {
     params.addExchange("Binance", params.binanceFees, false, true);
     getQuote[index] = Binance::getQuote;
@@ -349,7 +349,7 @@ int main(int argc, char** argv) {
 
   logFile << "Connected to database \'" << params.dbFile << "\'\n" << std::endl;
 
-  if (params.demoMode) {
+  if (params.isDemoMode) {
     logFile << "Demo mode: trades won't be generated\n" << std::endl;
   }
 
@@ -388,7 +388,7 @@ int main(int argc, char** argv) {
   // Gets the the balances from every exchange
   // This is only done when not in Demo mode.
   std::vector<Balance> balance(numExch);
-  if (!params.demoMode)
+  if (!params.isDemoMode)
     std::transform(getAvail, getAvail + numExch,
                    begin(balance),
                    [&params]( decltype(*getAvail) apply )
@@ -408,7 +408,7 @@ int main(int argc, char** argv) {
   // Writes the current balances into the log file
   for (int i = 0; i < numExch; ++i) {
     logFile << "   " << params.exchName[i] << ":\t";
-    if (params.demoMode) {
+    if (params.isDemoMode) {
       logFile << "n/a (demo mode)" << std::endl;
     } else if (!params.isImplemented[i]) {
       logFile << "n/a (API not implemented)" << std::endl;
@@ -423,7 +423,7 @@ int main(int argc, char** argv) {
   }
   logFile << std::endl;
   logFile << "[ Cash exposure ]\n";
-  if (params.demoMode) {
+  if (params.isDemoMode) {
     logFile << "   No cash - Demo mode\n";
   } else {
     if (params.useFullExposure) {
@@ -541,7 +541,7 @@ int main(int argc, char** argv) {
             if (checkEntry(&btcVec[i], &btcVec[j], res, params)) {
               // An entry opportunity has been found!
               res.exposure = std::min(balance[res.idExchLong].leg2, balance[res.idExchShort].leg2);
-              if (params.demoMode) {
+              if (params.isDemoMode) {
                 logFile << "INFO: Opportunity found but no trade will be generated (Demo mode)" << std::endl;
                 break;
               }

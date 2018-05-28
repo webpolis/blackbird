@@ -132,25 +132,23 @@ bool isOrderComplete(Parameters& params, std::string orderId)
   auto res = json_object_get(root.get(), "result");
   // loop through the array to check orders
   std::string uuid;
-  bool tmp = true;
-  int i = 0;
   int size = json_array_size (res);
   if (json_array_size(res) == 0) {
     *params.logFile << "<Bittrex> No orders exist" << std::endl;
     return true;
   }
-  while (i < size){
+  bool isOrderStillOpen = true;
+  for(int i = 0; i < size; i++){
     uuid = json_string_value(json_object_get(json_array_get(res,i),"OrderUuid"));
     if (uuid.compare(orderId.c_str())==0){
       *params.logFile << "<Bittrex> Order " << orderId << " still exists" << std::endl;
-      tmp = false;
+      isOrderStillOpen = false;
     }
-    i++;
   }
-  if (tmp == true){
+  if (isOrderStillOpen){
     *params.logFile << "<Bittrex> Order " << orderId << " does not exist" << std::endl;
   }
-  return tmp;  
+  return isOrderStillOpen;  
 }
 
 double getActivePos(Parameters& params) {

@@ -78,7 +78,7 @@ Parameters::Parameters(std::string fileName) {
   trailingLim = getDouble(getParameter("TrailingSpreadLim", configFile));
   trailingCount = getUnsigned(getParameter("TrailingSpreadCount", configFile));
   orderBookFactor = getDouble(getParameter("OrderBookFactor", configFile));
-  demoMode = getBool(getParameter("DemoMode", configFile));
+  isDemoMode = getBool(getParameter("DemoMode", configFile));
   leg1 = getParameter("Leg1", configFile);
   leg2 = getParameter("Leg2", configFile);
   verbose = getBool(getParameter("Verbose", configFile));
