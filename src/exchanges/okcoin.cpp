@@ -24,7 +24,7 @@ static RestApi& queryHandle(Parameters &params)
 quote_t getQuote(Parameters &params)
 {
   auto &exchange = queryHandle(params);
-  unique_json root { exchange.getRequest("/api/ticker.do?ok=1") };
+  unique_json root { exchange.getRequest("/api/v1/ticker.do?symbol=btc_usd") };
   const char *quote = json_string_value(json_object_get(json_object_get(root.get(), "ticker"), "buy"));
   auto bidValue = quote ? std::stod(quote) : 0.0;
 
