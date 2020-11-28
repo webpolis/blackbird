@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/butor/blackbird.svg?branch=master)](https://travis-ci.org/butor/blackbird)  [![Blackbird chat](https://badges.gitter.im/blackbird_bitcoin_arbitrage/Lobby.svg)](https://gitter.im/blackbird_bitcoin_arbitrage/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) ![license](https://img.shields.io/badge/license-MIT-blue.svg)
+[![Build Status](https://travis-ci.org/webpolis/blackbird.svg?branch=master)](https://travis-ci.org/webpolis/blackbird)  [![Blackbird chat](https://badges.gitter.im/blackbird_bitcoin_arbitrage/Lobby.svg)](https://gitter.im/blackbird_bitcoin_arbitrage/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) ![license](https://img.shields.io/badge/license-MIT-blue.svg)
 
 <p align="center">
 <img src="https://cloud.githubusercontent.com/assets/11370278/10808535/02230d46-7dc3-11e5-92d8-da15cae8c6e9.png" width="50%" alt="Blackbird Bitcoin Arbitrage">
@@ -28,7 +28,7 @@ Unlike other Bitcoin arbitrage systems, Blackbird doesn't sell but actually _sho
 
 2. The strategy doesn't need to transfer funds (USD or BTC) between Bitcoin exchanges. The buy/sell and sell/buy trading activities are done in parallel on two different exchanges, independently. Advantage: no need to deal with transfer latency issues.
 
-More details about _short selling_ and _market neutrality_ can be found on <a href="https://github.com/butor/blackbird/issues/100" target="_blank">issue #100</a>.
+More details about _short selling_ and _market neutrality_ can be found on <a href="https://github.com/webpolis/blackbird/issues/100" target="_blank">issue #100</a>.
 
 ### Disclaimer
 
@@ -63,7 +63,7 @@ Note: on Bitfinex, your money has to be available on the _Margin_ account.
 | <a href="https://www.bitstamp.net" target="_blank">Bitstamp</a> | ✓ |  | ✓ | |
 | <a href="https://gemini.com" target="_blank">Gemini</a> | ✓ |  | ✓ | |
 | <a href="https://www.kraken.com" target="_blank">Kraken</a> | ✓ | ✓ | | Validation in progress. Shorting is currently in testing | 
-| <a href="https://exmo.com" target="_blank">EXMO</a> | ✓ |  | | New exchange from PR <a href="https://github.com/butor/blackbird/pull/336" target="_blank">#336</a>. <b>Might be a <a href="https://bitcointalk.org/index.php?topic=1919799.0" target="_blank">scam</a></b> |
+| <a href="https://exmo.com" target="_blank">EXMO</a> | ✓ |  | | New exchange from PR <a href="https://github.com/webpolis/blackbird/pull/336" target="_blank">#336</a>. <b>Might be a <a href="https://bitcointalk.org/index.php?topic=1919799.0" target="_blank">scam</a></b> |
 | <a href="https://www.quadrigacx.com" target="_blank">QuadrigaCX</a> | ✓ |  |  |
 | <a href="https://www.gdax.com" target="_blank">GDAX</a> | ✓ |  |  | Validation in progress. Shorting is not currently supported. |
 
@@ -132,7 +132,7 @@ Download the source from GitHub with:
 
     mkdir blackbird
     cd blackbird
-    git clone --recursive  git://github.com/butor/blackbird.git .
+    git clone --recursive  git://github.com/webpolis/blackbird.git .
 
 Alternatively, if you already have the existing source tree use:
 
@@ -162,7 +162,7 @@ If all goes well this produces a Blackbird executable in the project directory.
   sudo apt-get install libssl-dev libjansson-dev libcurl4-openssl-dev libsqlite3-dev sendemail make gcc g++
   mkdir blackbird
   cd blackbird
-  git clone --recursive  git://github.com/butor/blackbird.git .
+  git clone --recursive  git://github.com/webpolis/blackbird.git .
   cmake -B./build -H. -DCMAKE_BUILD_TYPE=Release
   cmake --build ./build -- install
   ```
@@ -181,7 +181,7 @@ If all goes well this produces a Blackbird executable in the project directory.
   ```
   mkdir blackbird
   cd blackbird
-  git clone --recursive  git://github.com/butor/blackbird.git .
+  git clone --recursive  git://github.com/webpolis/blackbird.git .
   ```
 Alternatively, if you already have the existing source tree use:
   ```
@@ -211,7 +211,7 @@ Alternatively, if you already have the existing source tree use:
   brew install cmake openssl jansson curl sqlite3 sendemail
   mkdir blackbird
   cd blackbird
-  git clone --recursive  git://github.com/butor/blackbird.git .
+  git clone --recursive  git://github.com/webpolis/blackbird.git .
   cmake -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -B./build -H. -DCMAKE_BUILD_TYPE=Release
   cmake --build ./build -- install
   ```
@@ -240,8 +240,8 @@ Once you have successfully launched Blackbird following the instructions in the 
 
 ### Contact
 
-* If you found a bug, please open a new <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _bug_
-* If you have a general question or have troubles running Blackbird, you can open a new  <a href="https://github.com/butor/blackbird/issues" target="_blank">issue</a> with the label _question_ or _help wanted_
+* If you found a bug, please open a new <a href="https://github.com/webpolis/blackbird/issues" target="_blank">issue</a> with the label _bug_
+* If you have a general question or have troubles running Blackbird, you can open a new  <a href="https://github.com/webpolis/blackbird/issues" target="_blank">issue</a> with the label _question_ or _help wanted_
 * For anything else you can contact the author at julien.hamilton@gmail.com
 
 ### Log Output Example
